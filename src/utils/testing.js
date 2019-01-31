@@ -3,7 +3,7 @@ import { mount as enzymeMount } from "enzyme";
 import fetch from "node-fetch";
 import _ from "./lodash";
 import sinon from "sinon";
-import { generateUid } from "d2/uid";
+import { generateUid } from "d2/lib/uid";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 

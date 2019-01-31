@@ -3310,12 +3310,11 @@ d2@31.1.1, d2@~31.1:
     jsdoc "^3.5.5"
     whatwg-fetch "^2.0.3"
 
-d2@^31.1.1:
-  version "31.2.3"
-  resolved "https://registry.yarnpkg.com/d2/-/d2-31.2.3.tgz#f69f5c977494f477e5dd505d556744b317b0d099"
-  integrity sha512-g1Aj02sSd/hpGdf2qVSszu19rq25meV7bZdECFqOHGaLXehyZ+QMkzS4+DM4wNtrRMzSCTQZxNoxvBYPqRf73Q==
+d2@^30.0.2:
+  version "30.0.4"
+  resolved "https://registry.yarnpkg.com/d2/-/d2-30.0.4.tgz#ba51a43e7daedeb47e01c45aef71649bad1b2159"
+  integrity sha512-GjTfqPq7KAakeN398jnzh0DO7kTofy18UoARJqcASU6RvcVjlJNnRpanHbbaSe05BrjVZx4j05niwDn/VVqJ4w==
   dependencies:
-    babel-jest "^22.4.3"
     docdash "^0.4.0"
     jsdoc "^3.5.5"
     whatwg-fetch "^2.0.3"
