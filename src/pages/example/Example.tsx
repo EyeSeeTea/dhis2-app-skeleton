@@ -23,7 +23,10 @@ export default function Example(props: ExampleProps) {
 
     useEffect(() => {
         function set() {
-            const { cancel, response } = api.models.dataSets.get({ pageSize: 5 });
+            const { cancel, response } = api.models.dataSets.get({
+                fields: { id: true },
+                pageSize: 5,
+            });
             response.then(response_ => setDataSets(response_.data.objects));
             return cancel;
         }

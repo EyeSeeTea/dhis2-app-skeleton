@@ -2,13 +2,12 @@ import React from "react";
 import { render, fireEvent, waitForDomChange } from "@testing-library/react";
 import { SnackbarProvider } from "d2-ui-components";
 import "@testing-library/jest-dom/extend-expect";
-import MockAdapter from "axios-mock-adapter";
 
 import Example from "../Example";
-import D2Api from "d2-api";
+import { getMockApi } from "d2-api";
 import { ApiContext } from "../../../contexts/api-context";
 
-const api = new D2Api();
+const { api, mock } = getMockApi();
 
 function getComponent({ name = "Some Name" } = {}) {
     return render(
@@ -22,8 +21,7 @@ function getComponent({ name = "Some Name" } = {}) {
 
 describe("Example", () => {
     beforeEach(() => {
-        const mock = new MockAdapter(api.connection);
-        mock.onGet("/dataSets", { params: { pageSize: 5 } }).reply(200, {
+        mock.onGet("/dataSets", { params: { fields: "id", pageSize: 5 } }).reply(200, {
             pager: {
                 page: 1,
                 pageCount: 3,
