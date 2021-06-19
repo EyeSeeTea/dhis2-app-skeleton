@@ -1,27 +1,19 @@
-import _ from "lodash";
 import { D2Api } from "../types/d2-api";
 
-export function getMajorVersion(version: string): number {
-    const apiVersion = _.get(version.split("."), 1);
-    if (!apiVersion) throw new Error(`Invalid version: ${version}`);
-    return Number(apiVersion);
+interface Instance {
+    url: string;
+    username?: string;
+    password?: string;
 }
 
-export function getD2APiFromInstance(instance: DhisInstance) {
-    const auth =
-        instance.type === "external" ? { username: instance.username, password: instance.password } : undefined;
+export function getD2APiFromInstance(instance: Instance) {
+    if (instance.username && instance.password) {
+        return new D2Api({
+            baseUrl: instance.url,
+            auth: { username: instance.username, password: instance.password },
+            backend: "fetch",
+        });
+    }
 
-    return new D2Api({ baseUrl: instance.url, auth, backend: "fetch" });
+    return new D2Api({ baseUrl: instance.url, backend: "fetch" });
 }
-
-export type DhisInstance =
-    | {
-          type: "local";
-          url: string;
-      }
-    | {
-          type: "external";
-          url: string;
-          username: string;
-          password: string;
-      };

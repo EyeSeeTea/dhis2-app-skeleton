@@ -1,12 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/node_modules
+# Dependencies
+node_modules
 
-# testing
-/coverage
-
-# production
+# Production
 manifest.webapp
 /build
 
@@ -20,22 +17,19 @@ manifest.webapp
 *.sublime-workspace
 *.code-workspace
 *.zip
+.idea/*
+.eslintcache
 
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-src/locales/
-src/react-app.d.ts
-src/react-app-env.d.ts
-scripts/
-bak
-.eslintcache
+# DHIS2
+.d2
+src/locales
 
-# cypress
+# Cypress
 cypress/screenshots/
 cypress/videos/
 cypress/fixtures/
-
-# IntelliJ
-.idea/*

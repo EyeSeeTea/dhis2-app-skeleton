@@ -1,25 +1,19 @@
-import { render, RenderResult } from "@testing-library/react";
 import { SnackbarProvider } from "@eyeseetea/d2-ui-components";
+import { render, RenderResult } from "@testing-library/react";
 import { ReactNode } from "react";
-import { getCompositionRoot } from "../compositionRoot";
+import { getCompositionRoot } from "../CompositionRoot";
+import { User } from "../domain/entities/User";
 import { getMockApi } from "../types/d2-api";
-import { AppContext, AppContextState } from "../webapp/contexts/app-context";
-import { User } from "./../models/User";
+import { AppContext, AppContextState } from "../webapp/contexts/AppContext";
 
-export function getTestUser() {
-    return new User({
+export function getTestUser(): User {
+    return {
         id: "xE7jOejl9FI",
-        displayName: "John Traore",
+        name: "John Traore",
         username: "admin",
-        organisationUnits: [
-            {
-                level: 1,
-                id: "ImspTQPwCqd",
-                path: "/ImspTQPwCqd",
-            },
-        ],
+        organisationUnits: [{ level: 1, id: "ImspTQPwCqd", path: "/ImspTQPwCqd" }],
         userRoles: [],
-    });
+    };
 }
 
 export function getTestConfig() {

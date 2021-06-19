@@ -1,27 +1,20 @@
-/** @format */
+const { config } = require("@dhis2/cli-style");
 
 module.exports = {
     extends: [
-        "react-app",
-        "eslint:recommended",
-        "plugin:react/recommended",
-        "plugin:cypress/recommended",
+        config.eslintReact,
         "plugin:@typescript-eslint/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:import/typescript",
     ],
     parser: "@typescript-eslint/parser",
     rules: {
+        "no-use-before-define": "off",
+        "no-debugger": "warn",
         "no-console": ["warn", { allow: ["debug", "warn", "error"] }],
-        "@typescript-eslint/camelcase": "off",
-        "@typescript-eslint/explicit-function-return-type": ["off"],
-        "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
-        "react/prop-types": "off",
-        "react/display-name": "off",
         "react/react-in-jsx-scope": "off",
-        "no-unused-expressions": "off",
-        "no-useless-concat": "off",
-        "no-useless-constructor": "off",
-        "no-unexpected-multiline": "off",
-        "default-case": "off",
+        "@typescript-eslint/camelcase": "off",
+        "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-empty-interface": "off",
@@ -35,19 +28,5 @@ module.exports = {
         "@typescript-eslint/member-delimiter-style": "off",
         "@typescript-eslint/type-annotation-spacing": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
-        "no-use-before-define": "off",
-        "no-debugger": "warn",
-        "no-extra-semi": "off",
-        "no-mixed-spaces-and-tabs": "off",
-        "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn",
-    },
-    plugins: ["cypress", "@typescript-eslint", "react-hooks"],
-    env: { "cypress/globals": true },
-    settings: {
-        react: {
-            pragma: "React",
-            version: "16.6.0",
-        },
     },
 };
