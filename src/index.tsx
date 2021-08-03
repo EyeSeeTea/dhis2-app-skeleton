@@ -44,7 +44,7 @@ async function main() {
 
         ReactDOM.render(
             <Provider config={{ baseUrl, apiVersion: 30 }}>
-                <App api={api} d2={d2} />
+                <App api={api} d2={d2} instance={instance} />
             </Provider>,
             document.getElementById("root")
         );

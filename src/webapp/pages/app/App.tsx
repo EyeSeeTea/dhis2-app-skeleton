@@ -18,7 +18,7 @@ import { AppConfig } from "./AppConfig";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
 
-const App = ({ api, d2 }: { api: D2Api; d2: D2 }) => {
+const App: React.FC<AppProps> = ({ api, d2, instance }) => {
     const { baseUrl } = useConfig();
     const [showShareButton, setShowShareButton] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -26,7 +26,6 @@ const App = ({ api, d2 }: { api: D2Api; d2: D2 }) => {
 
     useEffect(() => {
         async function setup() {
-            const instance = new Instance({ url: baseUrl });
             const compositionRoot = getCompositionRoot(instance);
             const { data: currentUser } = await compositionRoot.instance.getCurrentUser().runAsync();
             if (!currentUser) throw new Error("User not logged in");
@@ -47,7 +46,7 @@ const App = ({ api, d2 }: { api: D2Api; d2: D2 }) => {
         <MuiThemeProvider theme={muiTheme}>
             <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                 <SnackbarProvider>
-                    <HeaderBar appName="Data Management" />
+                    <HeaderBar appName="Skeleton App" />
 
                     <div id="app" className="content">
                         <AppContext.Provider value={appContext}>
@@ -61,6 +60,8 @@ const App = ({ api, d2 }: { api: D2Api; d2: D2 }) => {
         </MuiThemeProvider>
     );
 };
+
+export type AppProps = { api: D2Api; d2: D2; instance: Instance };
 
 type D2 = object;
 
