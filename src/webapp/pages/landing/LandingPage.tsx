@@ -1,48 +1,28 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { Landing } from "./Landing";
-import { MenuCardProps } from "./MenuCard";
+import { Card, CardGrid } from "../../components/card-grid/CardGrid";
 
-const LandingPage: React.FC = () => {
+export const LandingPage: React.FC = () => {
     const history = useHistory();
 
-    const cards: {
-        title: string;
-        key: string;
-        isVisible?: boolean;
-        children: MenuCardProps[];
-    }[] = [
+    const cards: Card[] = [
         {
             title: "Section",
             key: "main",
             children: [
                 {
-                    name: "With List",
-                    description: "This entry has only a list action.",
+                    name: "John",
+                    description: "Entry point 1",
                     listAction: () => history.push("/for/John"),
                 },
                 {
-                    name: "List/add",
-                    description: "This action has list and add icons",
-                    addAction: () => history.push("/for"),
+                    name: "Mary",
+                    description: "Entry point 2",
                     listAction: () => history.push("/for/Mary"),
-                },
-            ],
-        },
-        {
-            title: "Configuration",
-            key: "configuration",
-            children: [
-                {
-                    name: "Stub configuration",
-                    description: "Configuration",
-                    listAction: () => history.push("/for/Configuration"),
                 },
             ],
         },
     ];
 
-    return <Landing cards={cards} />;
+    return <CardGrid cards={cards} />;
 };
-
-export default LandingPage;
