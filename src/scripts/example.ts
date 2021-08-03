@@ -15,7 +15,7 @@ async function main() {
     try {
         const args = parser.parse_args();
         const contents = fs.readFileSync(args.input_file, "utf8");
-        console.log(contents);
+        console.debug(contents);
     } catch (err) {
         console.error(err);
         process.exit(1);
