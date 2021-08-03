@@ -1,4 +1,3 @@
-import { useConfig } from "@dhis2/app-runtime";
 import { HeaderBar } from "@dhis2/ui";
 import { SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { MuiThemeProvider } from "@material-ui/core/styles";
@@ -10,16 +9,15 @@ import { appConfig } from "../../../app-config";
 import { getCompositionRoot } from "../../../CompositionRoot";
 import { Instance } from "../../../domain/entities/Instance";
 import { D2Api } from "../../../types/d2-api";
+import Share from "../../components/share/Share";
 import { AppContext, AppContextState } from "../../contexts/app-context";
 import { Router } from "../Router";
-import Share from "../../components/share/Share";
 import "./App.css";
 import { AppConfig } from "./AppConfig";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
 
 const App: React.FC<AppProps> = ({ api, d2, instance }) => {
-    const { baseUrl } = useConfig();
     const [showShareButton, setShowShareButton] = useState(false);
     const [loading, setLoading] = useState(true);
     const [appContext, setAppContext] = useState<AppContextState | null>(null);
@@ -38,7 +36,7 @@ const App: React.FC<AppProps> = ({ api, d2, instance }) => {
             setLoading(false);
         }
         setup();
-    }, [d2, api, baseUrl]);
+    }, [d2, api, instance]);
 
     if (loading) return null;
 
