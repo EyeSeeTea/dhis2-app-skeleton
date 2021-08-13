@@ -1,25 +1,20 @@
 import { render, RenderResult } from "@testing-library/react";
 import { SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { ReactNode } from "react";
-import { getCompositionRoot } from "../compositionRoot";
+import { getCompositionRoot } from "../CompositionRoot";
 import { getMockApi } from "../types/d2-api";
 import { AppContext, AppContextState } from "../webapp/contexts/app-context";
-import { User } from "./../models/User";
+import { Instance } from "../data/entities/Instance";
+import { User } from "../domain/entities/User";
 
-export function getTestUser() {
-    return new User({
+export function getTestUser(): User {
+    return {
         id: "xE7jOejl9FI",
-        displayName: "John Traore",
+        name: "John Traore",
         username: "admin",
-        organisationUnits: [
-            {
-                level: 1,
-                id: "ImspTQPwCqd",
-                path: "/ImspTQPwCqd",
-            },
-        ],
+        userGroups: [],
         userRoles: [],
-    });
+    };
 }
 
 export function getTestConfig() {
@@ -31,16 +26,18 @@ export function getTestD2() {
 }
 
 export function getTestContext() {
-    const { api, mock } = getMockApi();
+    // Mock api was working with axios but not with fetch
+    const { api } = getMockApi();
+    const instance = new Instance({ url: "http://localhost:8080" });
     const context = {
         api: api,
         d2: getTestD2(),
         currentUser: getTestUser(),
         config: getTestConfig(),
-        compositionRoot: getCompositionRoot(api),
+        compositionRoot: getCompositionRoot(instance),
     };
 
-    return { mock, api, context };
+    return { api, context };
 }
 
 export function getReactComponent(children: ReactNode, context: AppContextState): RenderResult {

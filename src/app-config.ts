@@ -1,5 +1,3 @@
-import { AppConfig } from "./webapp/components/app/AppConfig";
-
 export const appConfig: AppConfig = {
     appKey: "dhis2-app-skeleton",
     appearance: {
@@ -21,3 +19,25 @@ export const appConfig: AppConfig = {
         feedbackOptions: {},
     },
 };
+
+export interface AppConfig {
+    appKey: string;
+    appearance: {
+        showShareButton: boolean;
+    };
+    feedback?: {
+        token: string[];
+        createIssue: boolean;
+        sendToDhis2UserGroups: string[];
+        issues: {
+            repository: string;
+            title: string;
+            body: string;
+        };
+        snapshots: {
+            repository: string;
+            branch: string;
+        };
+        feedbackOptions: object;
+    };
+}

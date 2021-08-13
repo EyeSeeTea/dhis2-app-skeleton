@@ -1,63 +1,54 @@
-import { useConfig } from "@dhis2/app-runtime";
 import { HeaderBar } from "@dhis2/ui";
-import { LinearProgress } from "@material-ui/core";
-import { MuiThemeProvider } from "@material-ui/core/styles";
 import { SnackbarProvider } from "@eyeseetea/d2-ui-components";
+import { MuiThemeProvider } from "@material-ui/core/styles";
 import _ from "lodash";
 //@ts-ignore
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
 import { appConfig } from "../../../app-config";
-import { getCompositionRoot } from "../../../compositionRoot";
-import { User } from "../../../models/User";
+import { getCompositionRoot } from "../../../CompositionRoot";
+import { Instance } from "../../../data/entities/Instance";
 import { D2Api } from "../../../types/d2-api";
+import Share from "../../components/share/Share";
 import { AppContext, AppContextState } from "../../contexts/app-context";
-import Root from "../../pages/root/RootPage";
-import Share from "../share/Share";
+import { Router } from "../Router";
 import "./App.css";
+import { AppConfig } from "./AppConfig";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
-import { AppConfig } from "./AppConfig";
 
-const App = ({ api, d2 }: { api: D2Api; d2: D2 }) => {
-    const { baseUrl } = useConfig();
+const App: React.FC<AppProps> = ({ api, d2, instance }) => {
     const [showShareButton, setShowShareButton] = useState(false);
     const [loading, setLoading] = useState(true);
     const [appContext, setAppContext] = useState<AppContextState | null>(null);
 
     useEffect(() => {
         async function setup() {
-            const compositionRoot = getCompositionRoot(api);
-            const [config, currentUser] = await Promise.all([{}, User.getCurrent(api)]);
-            const appContext: AppContextState = { d2, api, config, currentUser, compositionRoot };
+            const compositionRoot = getCompositionRoot(instance);
+            const { data: currentUser } = await compositionRoot.instance.getCurrentUser().runAsync();
+            if (!currentUser) throw new Error("User not logged in");
+
             const isShareButtonVisible = _(appConfig).get("appearance.showShareButton") || false;
 
-            setAppContext(appContext);
+            setAppContext({ api, currentUser, compositionRoot });
             setShowShareButton(isShareButtonVisible);
             initFeedbackTool(d2, appConfig);
             setLoading(false);
         }
         setup();
-    }, [d2, api]);
+    }, [d2, api, instance]);
 
-    if (loading) {
-        return (
-            <div style={styles.loadWrapper}>
-                <h3>Connecting to {baseUrl}...</h3>
-                <LinearProgress />
-            </div>
-        );
-    }
+    if (loading) return null;
 
     return (
         <MuiThemeProvider theme={muiTheme}>
             <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                 <SnackbarProvider>
-                    <HeaderBar appName="Data Management" />
+                    <HeaderBar appName="Skeleton App" />
 
                     <div id="app" className="content">
                         <AppContext.Provider value={appContext}>
-                            <Root />
+                            <Router />
                         </AppContext.Provider>
                     </div>
 
@@ -67,6 +58,8 @@ const App = ({ api, d2 }: { api: D2Api; d2: D2 }) => {
         </MuiThemeProvider>
     );
 };
+
+export type AppProps = { api: D2Api; d2: D2; instance: Instance };
 
 type D2 = object;
 
@@ -89,9 +82,5 @@ function initFeedbackTool(d2: D2, appConfig: AppConfig): void {
         window.$.feedbackDhis2(d2, appKey, feedbackOptions);
     }
 }
-
-const styles = {
-    loadWrapper: { margin: 20 },
-};
 
 export default React.memo(App);

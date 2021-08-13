@@ -8,17 +8,15 @@ $ yarn install
 
 ## Development
 
-Start development server:
+Start a development server using a DHIS2 instance in http://localhost:8080:
 
 ```
 $ PORT=8081 REACT_APP_DHIS2_BASE_URL="http://localhost:8080" yarn start
 ```
 
-Linting:
+Now in your browser, go to `http://localhost:8081`.
 
-```
-$ yarn lint
-```
+NOTE: Create a file `.env.local` (copy it from `.env`) to set custom environment variables so you can simply run `yarn start`.
 
 ## Tests
 
@@ -69,8 +67,6 @@ $ yarn build-webapp
 ### i18n
 
 ```
-$ yarn update-po
-# ... add/edit translations in i18n/*.po files ...
 $ yarn localize
 ```
 
