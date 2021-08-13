@@ -12,6 +12,6 @@ function getComponent({ name = "Some Name" } = {}): RenderResult {
 describe("Example component", () => {
     test("renders a greeting", async () => {
         const component = getComponent();
-        await waitFor(() => expect(component.queryByText("Hello Some Name!")).toBeInTheDocument());
+        await waitFor(() => expect(component.queryByText("Hello Some Name")).toBeInTheDocument());
     });
 });
