@@ -43,7 +43,7 @@ const Title = styled(Typography)`
     font-weight: 300;
 `;
 
-const Button = ({ onClick }: ButtonProps) => (
+const Button: React.FC<ButtonProps> = ({ onClick }) => (
     <Tooltip title={i18n.t("Help")}>
         <IconButton onClick={onClick}>
             <Icon color="primary">help</Icon>
