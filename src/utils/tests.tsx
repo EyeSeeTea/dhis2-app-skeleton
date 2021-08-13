@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { getCompositionRoot } from "../CompositionRoot";
 import { getMockApi } from "../types/d2-api";
 import { AppContext, AppContextState } from "../webapp/contexts/app-context";
-import { Instance } from "../domain/entities/Instance";
+import { Instance } from "../data/entities/Instance";
 import { User } from "../domain/entities/User";
 
 export function getTestUser(): User {

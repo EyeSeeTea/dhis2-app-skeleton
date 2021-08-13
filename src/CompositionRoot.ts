@@ -1,5 +1,5 @@
-import { InstanceDefaultRepository } from "./data/InstanceDefaultRepository";
-import { Instance } from "./domain/entities/Instance";
+import { Instance } from "./data/entities/Instance";
+import { InstanceDefaultRepository } from "./data/repositories/InstanceDefaultRepository";
 import { GetCurrentUserUseCase } from "./domain/usecases/GetCurrentUserUseCase";
 import { GetInstanceVersionUseCase } from "./domain/usecases/GetInstanceVersionUseCase";
 

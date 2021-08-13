@@ -1,11 +1,11 @@
 import { D2Api } from "@eyeseetea/d2-api/2.34";
-import { FutureData } from "../domain/entities/Future";
-import { Instance } from "../domain/entities/Instance";
-import { User } from "../domain/entities/User";
-import { InstanceRepository } from "../domain/repositories/InstanceRepository";
-import { cache } from "../utils/cache";
-import { getD2APiFromInstance } from "../utils/d2-api";
-import { apiToFuture } from "../utils/futures";
+import { FutureData } from "../../domain/entities/Future";
+import { User } from "../../domain/entities/User";
+import { InstanceRepository } from "../../domain/repositories/InstanceRepository";
+import { cache } from "../../utils/cache";
+import { getD2APiFromInstance } from "../../utils/d2-api";
+import { apiToFuture } from "../../utils/futures";
+import { Instance } from "../entities/Instance";
 
 export class InstanceDefaultRepository implements InstanceRepository {
     private api: D2Api;

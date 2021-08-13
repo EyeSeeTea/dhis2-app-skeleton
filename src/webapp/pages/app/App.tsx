@@ -7,7 +7,7 @@ import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
 import { appConfig } from "../../../app-config";
 import { getCompositionRoot } from "../../../CompositionRoot";
-import { Instance } from "../../../domain/entities/Instance";
+import { Instance } from "../../../data/entities/Instance";
 import { D2Api } from "../../../types/d2-api";
 import Share from "../../components/share/Share";
 import { AppContext, AppContextState } from "../../contexts/app-context";

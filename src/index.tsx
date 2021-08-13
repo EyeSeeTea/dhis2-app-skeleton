@@ -4,7 +4,7 @@ import axios from "axios";
 import { init } from "d2";
 import _ from "lodash";
 import ReactDOM from "react-dom";
-import { Instance } from "./domain/entities/Instance";
+import { Instance } from "./data/entities/Instance";
 import { getD2APiFromInstance } from "./utils/d2-api";
 import App from "./webapp/pages/app/App";
 
