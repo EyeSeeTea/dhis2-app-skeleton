@@ -3,6 +3,10 @@
 context("Example page", () => {
     before(() => {
         cy.login("admin");
-        cy.visit("#/for");
+        cy.visit("/");
+    });
+
+    it("should contain sections", () => {
+        cy.contains("Section");
     });
 });
