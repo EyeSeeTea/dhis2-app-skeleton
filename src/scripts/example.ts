@@ -1,25 +1,27 @@
-import { ArgumentParser } from "argparse";
-import fs from "fs";
+import { command, run, string, option } from "cmd-ts";
+import path from "path";
+import { D2Api } from "../types/d2-api";
 
-async function main() {
-    const parser = new ArgumentParser({
-        description: "Some example, read file",
+function main() {
+    const cmd = command({
+        name: path.basename(__filename),
+        description: "Show DHIS2 instance info",
+        args: {
+            url: option({
+                type: string,
+                long: "dhis2-url",
+                short: "u",
+                description: "DHIS2 base URL. Example: http://USERNAME:PASSWORD@localhost:8080",
+            }),
+        },
+        handler: async args => {
+            const api = new D2Api({ baseUrl: args.url });
+            const info = await api.system.info.getData();
+            console.debug(info);
+        },
     });
 
-    parser.add_argument("-f", "--input-file", {
-        required: true,
-        help: "Input file",
-        metavar: "PATH",
-    });
-
-    try {
-        const args = parser.parse_args();
-        const contents = fs.readFileSync(args.input_file, "utf8");
-        console.debug(contents);
-    } catch (err) {
-        console.error(err);
-        process.exit(1);
-    }
+    run(cmd, process.argv.slice(2));
 }
 
 main();
