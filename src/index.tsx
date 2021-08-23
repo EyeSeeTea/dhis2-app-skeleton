@@ -55,7 +55,7 @@ async function main() {
                 </a>
             </h3>
         ) : (
-            <h3>err.toString()</h3>
+            <h3>{err.toString()}</h3>
         );
         ReactDOM.render(<div>{feedback}</div>, document.getElementById("root"));
     }
