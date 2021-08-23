@@ -8,15 +8,15 @@ $ yarn install
 
 ## Development
 
-Start a development server using a DHIS2 instance in http://localhost:8080:
+Start the development server:
 
 ```
 $ PORT=8081 REACT_APP_DHIS2_BASE_URL="http://localhost:8080" yarn start
 ```
 
-Now in your browser, go to `http://localhost:8081`.
+Now in your browser, go to `http://localhost:8081`. Note that requests to DHIS2 will be transparently proxied (see `src/setupProxy.js`) from `http://localhost:8081/dhis2/rest-of-path` to `http://localhost:8080/rest-of-path` to avoid CORS and cross-domain problems.
 
-NOTE: Create a file `.env.local` (copy it from `.env`) to set custom environment variables so you can simply run `yarn start`.
+Create a file `.env.local` (copy it from `.env`) to set custom environment variables so you can simply run `yarn start`.
 
 ## Tests
 
