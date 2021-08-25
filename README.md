@@ -14,22 +14,25 @@ Start the development server:
 $ PORT=8081 REACT_APP_DHIS2_BASE_URL="http://localhost:8080" yarn start
 ```
 
-Now in your browser, go to `http://localhost:8081`. Note that requests to DHIS2 will be transparently proxied (see `src/setupProxy.js`) from `http://localhost:8081/dhis2/rest-of-path` to `http://localhost:8080/rest-of-path` to avoid CORS and cross-domain problems.
+Now in your browser, go to `http://localhost:8081`.
 
-Create a file `.env.local` (copy it from `.env`) to set custom environment variables so you can simply run `yarn start`.
+Requests to DHIS2 will be transparently proxied (see `src/setupProxy.js`) from `http://localhost:8081/dhis2/path` to `http://localhost:8080/path` to avoid CORS and cross-domain problems.
+
+Create a file `.env.local` (copy it from `.env`) to customize environment variables so you can simply run `yarn start`.
 
 ## Tests
 
-Run unit tests:
+### Unit tests
 
 ```
 $ yarn test
 ```
 
-Run integration tests locally:
+### Integration tests (Cypress)
+
+Create the required users for testing (`cypress/support/App.ts`) in your instance and run:
 
 ```
-$ export CYPRESS_DHIS2_AUTH='admin:district'
 $ export CYPRESS_EXTERNAL_API="http://localhost:8080"
 $ export CYPRESS_ROOT_URL=http://localhost:8081
 
@@ -39,9 +42,6 @@ $ yarn cy:e2e:run
 # interactive UI
 $ yarn cy:e2e:open
 ```
-
-For this to work in Travis, you will have to create an environment variable `CYPRESS_DHIS2_AUTH`
-(Settings -> Environment Variables) with the `user:password` used in your testing DHIS2 instance.
 
 ## Build app ZIP
 
