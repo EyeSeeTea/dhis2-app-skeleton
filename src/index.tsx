@@ -1,3 +1,4 @@
+import "./webapp/utils/wdyr";
 import { Provider } from "@dhis2/app-runtime";
 import i18n from "@dhis2/d2-i18n";
 import axios from "axios";
@@ -6,7 +7,7 @@ import _ from "lodash";
 import ReactDOM from "react-dom";
 import { Instance } from "./data/entities/Instance";
 import { getD2APiFromInstance } from "./utils/d2-api";
-import App from "./webapp/pages/app/App";
+import { App } from "./webapp/pages/app/App";
 
 async function getBaseUrl() {
     if (process.env.NODE_ENV === "development") {
