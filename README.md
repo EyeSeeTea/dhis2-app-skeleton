@@ -46,7 +46,7 @@ For this to work in Travis, you will have to create an environment variable `CYP
 ## Build app ZIP
 
 ```
-$ yarn build-webapp
+$ yarn build
 ```
 
 ## Some development tips

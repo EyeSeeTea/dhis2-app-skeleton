@@ -83,11 +83,10 @@
         "wait-on": "5.3.0"
     },
     "scripts": {
-        "prestart": "yarn localize && yarn prettify && d2-manifest package.json manifest.webapp",
         "start": "react-scripts start",
         "prebuild": "yarn localize && yarn test",
-        "build": "rm -rf build/ && d2-manifest package.json manifest.webapp && react-scripts build && yarn run manifest && cp -r i18n icon.png build",
-        "build-webapp": "yarn build && rm -f $npm_package_name.zip && cd build && zip -r ../$npm_package_name.zip *",
+        "build-folder": "rm -rf build/ && d2-manifest package.json manifest.webapp && react-scripts build && yarn run manifest && cp -r i18n icon.png build",
+        "build": "yarn build-folder && rm -f $npm_package_name.zip && cd build && zip --quiet -r ../$npm_package_name.zip *",
         "test": "jest --passWithNoTests",
         "lint": "eslint src cypress --ext .js,.jsx,.ts,.tsx",
         "eject": "react-scripts eject",
