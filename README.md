@@ -16,9 +16,13 @@ $ PORT=8081 REACT_APP_DHIS2_BASE_URL="http://localhost:8080" yarn start
 
 Now in your browser, go to `http://localhost:8081`.
 
-Requests to DHIS2 will be transparently proxied (see `src/setupProxy.js`) from `http://localhost:8081/dhis2/path` to `http://localhost:8080/path` to avoid CORS and cross-domain problems.
+Notes:
 
-Create a file `.env.local` (copy it from `.env`) to customize environment variables so you can simply run `yarn start`.
+-   Requests to DHIS2 will be transparently proxied (see `src/setupProxy.js`) from `http://localhost:8081/dhis2/path` to `http://localhost:8080/path` to avoid CORS and cross-domain problems.
+
+-   Create a file `.env.local` (copy it from `.env`) to customize environment variables so you can simply run `yarn start`.
+
+-   [why-did-you-render](https://github.com/welldone-software/why-did-you-render) is installed, but it does not work when using standard react scripts (`yarn start`). Instead, use `yarn craco-start` to debug re-renders with WDYR. Note that hot reloading does not work out-of-the-box with [craco](https://github.com/gsoft-inc/craco).
 
 ## Tests
 
