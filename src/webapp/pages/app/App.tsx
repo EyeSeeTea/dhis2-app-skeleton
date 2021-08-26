@@ -67,14 +67,6 @@ export const App: React.FC<AppProps> = React.memo(function App({ api, d2, instan
 
 type D2 = object;
 
-declare global {
-    interface Window {
-        $: {
-            feedbackDhis2(d2: D2, appKey: string, feedbackOptions: object): void;
-        };
-    }
-}
-
 function initFeedbackTool(d2: D2, appConfig: AppConfig): void {
     const appKey = _(appConfig).get("appKey");
 

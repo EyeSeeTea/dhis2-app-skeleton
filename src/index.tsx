@@ -8,9 +8,19 @@ import ReactDOM from "react-dom";
 import { Instance } from "./data/entities/Instance";
 import { getD2APiFromInstance } from "./utils/d2-api";
 import { App } from "./webapp/pages/app/App";
+import { D2Api } from "./types/d2-api";
+
+declare global {
+    interface Window {
+        $: { feedbackDhis2(d2: object, appKey: string, feedbackOptions: object): void };
+        api: D2Api;
+    }
+}
+
+const isDev = process.env.NODE_ENV === "development";
 
 async function getBaseUrl() {
-    if (process.env.NODE_ENV === "development") {
+    if (isDev) {
         return "/dhis2"; // See src/setupProxy.js
     } else {
         const { data: manifest } = await axios.get("manifest.webapp");
@@ -36,7 +46,7 @@ async function main() {
         const d2 = await init({ baseUrl: baseUrl + "/api", schemas: [] });
         const instance = new Instance({ url: baseUrl });
         const api = getD2APiFromInstance(instance);
-        Object.assign(window, { app: { d2, api } });
+        if (isDev) window.api = api;
 
         const userSettings = await api.get<{ keyUiLocale: string }>("/userSettings").getData();
         configI18n(userSettings);
