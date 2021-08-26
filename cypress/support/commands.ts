@@ -3,15 +3,9 @@ import * as qs from "qs";
 
 const appUrl: string = Cypress.env("ROOT_URL") || "";
 
-const dhis2Url = "http://localhost:8081/dhis2";
+const dhis2Url: string = appUrl + "/dhis2";
 
 function setup() {
-    if (!dhis2Url) {
-        throw new Error("CYPRESS_EXTERNAL_API not set");
-    } else if (!appUrl) {
-        throw new Error("CYPRESS_ROOT_URL not set");
-    }
-
     Cypress.config("baseUrl", appUrl);
 
     Cypress.Cookies.defaults({ preserve: "JSESSIONID" });
