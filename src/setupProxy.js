@@ -14,10 +14,12 @@ const redirectPaths = ["/dhis-web-pivot", "/dhis-web-data-visualizer"];
 
 const dhis2UrlVar = "REACT_APP_DHIS2_BASE_URL";
 const dhis2AuthVar = "REACT_APP_DHIS2_AUTH";
+const proxyLogLevel = "REACT_APP_PROXY_LOG_LEVEL";
 
 module.exports = function (app) {
     const targetUrl = process.env[dhis2UrlVar];
     const auth = process.env[dhis2AuthVar];
+    const logLevel = process.env[proxyLogLevel] || "warn";
 
     if (!targetUrl) {
         console.error(`Set ${dhis2UrlVar} to base DHIS2 URL`);
@@ -27,7 +29,7 @@ module.exports = function (app) {
     const proxy = createProxyMiddleware({
         target: targetUrl,
         auth,
-        logLevel: "debug",
+        logLevel,
         changeOrigin: true,
         pathRewrite: { "^/dhis2/": "/" },
         onProxyReq: function (proxyReq, req, res) {
