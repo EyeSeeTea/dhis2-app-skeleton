@@ -2,7 +2,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { Card, CardGrid } from "../../components/card-grid/CardGrid";
 
-export const LandingPage: React.FC = () => {
+export const LandingPage: React.FC = React.memo(() => {
     const history = useHistory();
 
     const cards: Card[] = [
@@ -25,4 +25,4 @@ export const LandingPage: React.FC = () => {
     ];
 
     return <CardGrid cards={cards} />;
-};
+});

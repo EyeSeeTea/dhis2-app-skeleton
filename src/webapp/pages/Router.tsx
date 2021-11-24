@@ -1,8 +1,9 @@
+import React from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
 import { ExamplePage } from "./example/ExamplePage";
 import { LandingPage } from "./landing/LandingPage";
 
-export const Router = () => {
+export const Router: React.FC = React.memo(() => {
     return (
         <HashRouter>
             <Switch>
@@ -16,4 +17,4 @@ export const Router = () => {
             </Switch>
         </HashRouter>
     );
-};
+});

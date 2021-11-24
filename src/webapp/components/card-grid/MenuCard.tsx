@@ -12,33 +12,35 @@ import React from "react";
 import styled from "styled-components";
 import i18n from "../../../locales";
 
-export const MenuCard: React.FC<MenuCardProps> = ({ name, description, addAction, listAction = () => {} }) => {
-    return (
-        <Card>
-            <Header onClick={listAction} title={name} />
+export const MenuCard: React.FC<MenuCardProps> = React.memo(
+    ({ name, description, addAction, listAction = () => {} }) => {
+        return (
+            <Card>
+                <Header onClick={listAction} title={name} />
 
-            <Content>{description}</Content>
+                <Content>{description}</Content>
 
-            <Actions disableSpacing>
-                {addAction && (
-                    <Tooltip title={i18n.t("Add")} placement="top">
-                        <IconButton key="add" onClick={addAction}>
-                            <AddIcon />
-                        </IconButton>
-                    </Tooltip>
-                )}
+                <Actions disableSpacing>
+                    {addAction && (
+                        <Tooltip title={i18n.t("Add")} placement="top">
+                            <IconButton key="add" onClick={addAction}>
+                                <AddIcon />
+                            </IconButton>
+                        </Tooltip>
+                    )}
 
-                {listAction && (
-                    <Tooltip title={i18n.t("List")} placement="top">
-                        <IconButton key="list" onClick={listAction}>
-                            <ViewListIcon />
-                        </IconButton>
-                    </Tooltip>
-                )}
-            </Actions>
-        </Card>
-    );
-};
+                    {listAction && (
+                        <Tooltip title={i18n.t("List")} placement="top">
+                            <IconButton key="list" onClick={listAction}>
+                                <ViewListIcon />
+                            </IconButton>
+                        </Tooltip>
+                    )}
+                </Actions>
+            </Card>
+        );
+    }
+);
 
 export interface MenuCardProps {
     name: string;

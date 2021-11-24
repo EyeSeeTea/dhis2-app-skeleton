@@ -17,7 +17,13 @@ import { AppConfig } from "./AppConfig";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
 
-const App: React.FC<AppProps> = ({ api, d2, instance }) => {
+export interface AppProps {
+    api: D2Api;
+    d2: D2;
+    instance: Instance;
+}
+
+export const App: React.FC<AppProps> = React.memo(function App({ api, d2, instance }) {
     const [showShareButton, setShowShareButton] = useState(false);
     const [loading, setLoading] = useState(true);
     const [appContext, setAppContext] = useState<AppContextState | null>(null);
@@ -57,19 +63,9 @@ const App: React.FC<AppProps> = ({ api, d2, instance }) => {
             </OldMuiThemeProvider>
         </MuiThemeProvider>
     );
-};
-
-export type AppProps = { api: D2Api; d2: D2; instance: Instance };
+});
 
 type D2 = object;
-
-declare global {
-    interface Window {
-        $: {
-            feedbackDhis2(d2: D2, appKey: string, feedbackOptions: object): void;
-        };
-    }
-}
 
 function initFeedbackTool(d2: D2, appConfig: AppConfig): void {
     const appKey = _(appConfig).get("appKey");
@@ -82,5 +78,3 @@ function initFeedbackTool(d2: D2, appConfig: AppConfig): void {
         window.$.feedbackDhis2(d2, appKey, feedbackOptions);
     }
 }
-
-export default React.memo(App);

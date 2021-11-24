@@ -41,9 +41,9 @@
     "devDependencies": {
         "@babel/core": "7.14.8",
         "@babel/preset-typescript": "7.14.5",
+        "@testing-library/cypress": "^8.0.0",
         "@testing-library/jest-dom": "5.14.1",
         "@testing-library/react": "12.0.0",
-        "@types/argparse": "2.0.10",
         "@types/axios-mock-adapter": "1.10.0",
         "@types/classnames": "2.3.1",
         "@types/jest": "26.0.24",
@@ -57,10 +57,12 @@
         "@types/styled-components": "5.1.11",
         "@typescript-eslint/eslint-plugin": "4.29.0",
         "@typescript-eslint/parser": "4.29.0",
-        "argparse": "2.0.1",
+        "@welldone-software/why-did-you-render": "^6.2.1",
         "axios-mock-adapter": "1.19.0",
         "babel-core": "6.26.3",
         "babel-eslint": "10.1.0",
+        "cmd-ts": "^0.7.0",
+        "craco": "^0.0.3",
         "cypress": "8.1.0",
         "cypress-xpath": "1.6.2",
         "eslint": "7.32.0",
@@ -73,6 +75,7 @@
         "eslint-plugin-prettier": "3.4.0",
         "eslint-plugin-react": "7.24.0",
         "eslint-plugin-react-hooks": "4.2.0",
+        "eslint-plugin-unused-imports": "^1.1.4",
         "http-proxy-middleware": "^2.0.1",
         "husky": "7.0.1",
         "jest": "27.0.6",
@@ -84,11 +87,11 @@
         "wait-on": "5.3.0"
     },
     "scripts": {
-        "prestart": "yarn localize && yarn prettify && d2-manifest package.json manifest.webapp",
         "start": "react-scripts start",
+        "craco-start": "craco start",
         "prebuild": "yarn localize && yarn test",
-        "build": "rm -rf build/ && d2-manifest package.json manifest.webapp && react-scripts build && yarn run manifest && cp -r i18n icon.png build",
-        "build-webapp": "yarn build && rm -f $npm_package_name.zip && cd build && zip -r ../$npm_package_name.zip *",
+        "build-folder": "rm -rf build/ && d2-manifest package.json manifest.webapp && react-scripts build && yarn run manifest && cp -r i18n icon.png build",
+        "build": "yarn build-folder && rm -f $npm_package_name.zip && cd build && zip --quiet -r ../$npm_package_name.zip *",
         "test": "jest --passWithNoTests",
         "lint": "eslint src cypress --ext .js,.jsx,.ts,.tsx",
         "eject": "react-scripts eject",
@@ -101,7 +104,7 @@
         "cy:e2e:open": "NODE_ENV=test CYPRESS_E2E=true cypress open",
         "cy:e2e:run": "NODE_ENV=test CYPRESS_E2E=true cypress run --browser chrome",
         "prepare": "husky install",
-        "script-example": "npx ts-node -P tsconfig-cli.json src/scripts/example.ts"
+        "script-example": "npx ts-node src/scripts/example.ts"
     },
     "manifest.webapp": {
         "name": "DHIS2 Skeleton App",

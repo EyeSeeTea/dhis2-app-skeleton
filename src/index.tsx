@@ -1,3 +1,4 @@
+import "./webapp/utils/wdyr";
 import { Provider } from "@dhis2/app-runtime";
 import i18n from "@dhis2/d2-i18n";
 import axios from "axios";
@@ -6,13 +7,21 @@ import _ from "lodash";
 import ReactDOM from "react-dom";
 import { Instance } from "./data/entities/Instance";
 import { getD2APiFromInstance } from "./utils/d2-api";
-import App from "./webapp/pages/app/App";
+import { App } from "./webapp/pages/app/App";
+import { D2Api } from "./types/d2-api";
+
+declare global {
+    interface Window {
+        $: { feedbackDhis2(d2: object, appKey: string, feedbackOptions: object): void };
+        api: D2Api;
+    }
+}
+
+const isDev = process.env.NODE_ENV === "development";
 
 async function getBaseUrl() {
-    if (process.env.NODE_ENV === "development") {
-        const baseUrl = process.env.REACT_APP_DHIS2_BASE_URL || "http://localhost:8080";
-        console.debug(`[DEV] DHIS2 instance: ${baseUrl}`);
-        return baseUrl.replace(/\/*$/, "");
+    if (isDev) {
+        return "/dhis2"; // See src/setupProxy.js
     } else {
         const { data: manifest } = await axios.get("manifest.webapp");
         return manifest.activities.dhis.href;
@@ -37,7 +46,7 @@ async function main() {
         const d2 = await init({ baseUrl: baseUrl + "/api", schemas: [] });
         const instance = new Instance({ url: baseUrl });
         const api = getD2APiFromInstance(instance);
-        Object.assign(window, { d2, api });
+        if (isDev) window.api = api;
 
         const userSettings = await api.get<{ keyUiLocale: string }>("/userSettings").getData();
         configI18n(userSettings);
@@ -50,17 +59,16 @@ async function main() {
         );
     } catch (err) {
         console.error(err);
-        const message = err.toString().match("Unable to get schemas") ? (
+        const feedback = err.toString().match("Unable to get schemas") ? (
             <h3 style={{ margin: 20 }}>
                 <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
                     Login
                 </a>
-                {` ${baseUrl}`}
             </h3>
         ) : (
-            err.toString()
+            <h3>{err.toString()}</h3>
         );
-        ReactDOM.render(<div>{message}</div>, document.getElementById("root"));
+        ReactDOM.render(<div>{feedback}</div>, document.getElementById("root"));
     }
 }
 
