@@ -88,7 +88,7 @@
     },
     "scripts": {
         "start": "react-scripts start",
-        "craco-start": "craco start",
+        "start-profiling": "craco start",
         "postinstall": "yarn localize",
         "prebuild": "yarn localize && yarn test",
         "build-folder": "rm -rf build/ && d2-manifest package.json manifest.webapp && react-scripts build && yarn run manifest && cp -r i18n icon.png build",
