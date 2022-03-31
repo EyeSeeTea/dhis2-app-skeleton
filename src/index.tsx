@@ -59,14 +59,15 @@ async function main() {
         );
     } catch (err) {
         console.error(err);
-        const feedback = err.toString().match("Unable to get schemas") ? (
+        const error = `${err}`;
+        const feedback = error.match("Unable to get schemas") ? (
             <h3 style={{ margin: 20 }}>
                 <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
                     Login
                 </a>
             </h3>
         ) : (
-            <h3>{err.toString()}</h3>
+            <h3>{error}</h3>
         );
         ReactDOM.render(<div>{feedback}</div>, document.getElementById("root"));
     }
