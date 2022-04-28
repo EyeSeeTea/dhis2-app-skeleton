@@ -1,5 +1,6 @@
 import { HeaderBar } from "@dhis2/ui";
 import { SnackbarProvider } from "@eyeseetea/d2-ui-components";
+import { Feedback } from "@eyeseetea/feedback-component";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import _ from "lodash";
 //@ts-ignore
@@ -51,7 +52,7 @@ export const App: React.FC<AppProps> = React.memo(function App({ api, d2, instan
             <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                 <SnackbarProvider>
                     <HeaderBar appName="Skeleton App" />
-
+                    <Feedback />
                     <div id="app" className="content">
                         <AppContext.Provider value={appContext}>
                             <Router />
