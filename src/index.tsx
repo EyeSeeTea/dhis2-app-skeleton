@@ -12,7 +12,6 @@ import { D2Api } from "./types/d2-api";
 
 declare global {
     interface Window {
-        $: { feedbackDhis2(d2: object, appKey: string, feedbackOptions: object): void };
         api: D2Api;
     }
 }
