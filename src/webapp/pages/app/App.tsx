@@ -6,7 +6,7 @@ import _ from "lodash";
 //@ts-ignore
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
-import { appConfig } from "../../../app-config";
+import { AppConfig, appConfig } from "../../../app-config";
 import { getCompositionRoot } from "../../../CompositionRoot";
 import { Instance } from "../../../data/entities/Instance";
 import { D2Api } from "../../../types/d2-api";
@@ -14,7 +14,6 @@ import Share from "../../components/share/Share";
 import { AppContext, AppContextState } from "../../contexts/app-context";
 import { Router } from "../Router";
 import "./App.css";
-import { AppConfig } from "./AppConfig";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
 
@@ -52,7 +51,7 @@ export const App: React.FC<AppProps> = React.memo(function App({ api, d2, instan
             <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                 <SnackbarProvider>
                     <HeaderBar appName="Skeleton App" />
-                    <Feedback />
+                    <Feedback options={appConfig.feedback} username={appContext?.currentUser.username} />
                     <div id="app" className="content">
                         <AppContext.Provider value={appContext}>
                             <Router />
