@@ -11,6 +11,9 @@ export const appConfig: AppConfig = {
             title: "[User feedback] {title}",
             body: "## dhis2\n\nUsername: {username}\n\n{body}",
         },
+        layoutOptions: {
+            buttonPosition: "bottom-start",
+        },
     },
 };
 
