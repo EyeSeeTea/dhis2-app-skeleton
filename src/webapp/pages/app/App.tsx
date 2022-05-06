@@ -50,7 +50,11 @@ export const App: React.FC<AppProps> = React.memo(function App({ api, d2, instan
             <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                 <SnackbarProvider>
                     <HeaderBar appName="Skeleton App" />
-                    <Feedback options={appConfig.feedback} username={appContext?.currentUser.username} />
+
+                    {appConfig.feedback && appContext && (
+                        <Feedback options={appConfig.feedback} username={appContext?.currentUser.username} />
+                    )}
+
                     <div id="app" className="content">
                         <AppContext.Provider value={appContext}>
                             <Router />
