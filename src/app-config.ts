@@ -6,10 +6,12 @@ export const appConfig: AppConfig = {
         showShareButton: true,
     },
     feedback: {
-        clickUp: {
-            listId: "176458462",
-            title: "[User feedback] {title}",
-            body: "## dhis2\n\nUsername: {username}\n\n{body}",
+        repositories: {
+            clickUp: {
+                listId: "176458462",
+                title: "[User feedback] {title}",
+                body: "## dhis2\n\nUsername: {username}\n\n{body}",
+            },
         },
         layoutOptions: {
             buttonPosition: "bottom-start",
