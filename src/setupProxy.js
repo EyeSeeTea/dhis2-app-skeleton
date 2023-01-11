@@ -11,8 +11,6 @@ require("isomorphic-fetch");
       only need the Basic Auth header, but other endpoints work only with a session cookie.
 */
 
-const redirectPaths = ["/dhis-web-pivot", "/dhis-web-data-visualizer"];
-
 const dhis2UrlVar = "REACT_APP_DHIS2_BASE_URL";
 const dhis2AuthVar = "REACT_APP_DHIS2_AUTH";
 const proxyLogLevel = "REACT_APP_PROXY_LOG_LEVEL";
@@ -39,8 +37,7 @@ module.exports = function (app) {
         logLevel,
         changeOrigin: true,
         pathRewrite: { "^/dhis2/": "/" },
-        onProxyReq: function (proxyReq, req, res) {
-            const { path } = proxyReq;
+        onProxyReq: function (proxyReq, _req, _res) {
             if (cookieHeader) proxyReq.setHeader("cookie", cookieHeader);
         },
     });
@@ -48,7 +45,9 @@ module.exports = function (app) {
     app.use(["/dhis2"], proxy);
 };
 
-function getD2Cookie(targetUrl, auth) {
+async function getD2Cookie(targetUrl, auth) {
+    if (!targetUrl || !auth) return;
+
     const authBase64 = new Buffer(auth).toString("base64");
 
     return fetch(targetUrl + "/api/me.json", {
