@@ -1,8 +1,7 @@
-import { UseCase } from "../../CompositionRoot";
 import { FutureData } from "../entities/Future";
 import { InstanceRepository } from "../repositories/InstanceRepository";
 
-export class GetInstanceVersionUseCase implements UseCase {
+export class GetInstanceVersionUseCase {
     constructor(private instanceRepository: InstanceRepository) {}
 
     public execute(): FutureData<string> {

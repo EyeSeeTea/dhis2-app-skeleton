@@ -1,7 +1,6 @@
 import "./webapp/utils/wdyr";
 import { Provider } from "@dhis2/app-runtime";
 import i18n from "@dhis2/d2-i18n";
-import axios from "axios";
 import { init } from "d2";
 import _ from "lodash";
 import ReactDOM from "react-dom";
@@ -23,7 +22,7 @@ async function getBaseUrl() {
     if (isDev) {
         return "/dhis2"; // See src/setupProxy.js
     } else {
-        const { data: manifest } = await axios.get("manifest.webapp");
+        const manifest = await fetch("manifest.webapp").then(res => res.json());
         return manifest.activities.dhis.href;
     }
 }

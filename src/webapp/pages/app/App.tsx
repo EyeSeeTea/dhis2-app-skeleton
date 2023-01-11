@@ -30,8 +30,8 @@ export const App: React.FC<AppProps> = React.memo(function App({ api, d2, instan
 
     useEffect(() => {
         async function setup() {
-            const compositionRoot = getCompositionRoot(instance);
-            const { data: currentUser } = await compositionRoot.instance.getCurrentUser().runAsync();
+            const compositionRoot = getCompositionRoot(api, instance);
+            const currentUser = (await compositionRoot.users.getCurrent.execute().runAsync()).data;
             if (!currentUser) throw new Error("User not logged in");
 
             const isShareButtonVisible = _(appConfig).get("appearance.showShareButton") || false;
