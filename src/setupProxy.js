@@ -1,16 +1,15 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { createProxyMiddleware } = require("http-proxy-middleware");
+require("isomorphic-fetch");
 
 /* react-script automatically executes src/setupProxy.js on init. Tasks:
 
     - Proxy requests from /dhis2/xyz to $REACT_APP_DHIS2_BASE_URL/xyz. Reason: Avoid problems with
       CORS and cross-domain cookies, as the app connects only to the local development server.
 
-    - Redirect paths in `redirectPaths` to the original DHIS2 URL. Reason: some apps, i.e. Pivot Table App,
-      do not work through the proxy. Tipically, these links are rendered on iframed dashboards.
+    - We perform a initial fetch to DHIS2 to retrieve a session cookie. API endpoints
+      only need the Basic Auth header, but other endpoints work only with a session cookie.
 */
-
-const redirectPaths = ["/dhis-web-pivot", "/dhis-web-data-visualizer"];
 
 const dhis2UrlVar = "REACT_APP_DHIS2_BASE_URL";
 const dhis2AuthVar = "REACT_APP_DHIS2_AUTH";
@@ -26,23 +25,35 @@ module.exports = function (app) {
         process.exit(1);
     }
 
+    let cookieHeader = undefined;
+
+    getD2Cookie(targetUrl, auth).then(cookie => {
+        cookieHeader = cookie;
+    });
+
     const proxy = createProxyMiddleware({
         target: targetUrl,
         auth,
         logLevel,
         changeOrigin: true,
         pathRewrite: { "^/dhis2/": "/" },
-        onProxyReq: function (proxyReq, req, res) {
-            const { path } = proxyReq;
-            const shouldRedirect = redirectPaths.some(redirectPath => path.startsWith(redirectPath));
-
-            if (shouldRedirect) {
-                const redirectUrl = targetUrl.replace(/\/$/, "") + path;
-                res.location(redirectUrl);
-                res.sendStatus(302);
-            }
+        onProxyReq: function (proxyReq, _req, _res) {
+            if (cookieHeader) proxyReq.setHeader("cookie", cookieHeader);
         },
     });
 
     app.use(["/dhis2"], proxy);
 };
+
+async function getD2Cookie(targetUrl, auth) {
+    if (!targetUrl || !auth) return;
+
+    const authBase64 = new Buffer(auth).toString("base64");
+
+    return fetch(targetUrl + "/api/me.json", {
+        headers: new Headers({
+            Authorization: "Basic " + authBase64,
+            "Content-Type": "application/json",
+        }),
+    }).then(res => res.headers.get("set-cookie"));
+}

@@ -1,12 +1,11 @@
-import { UseCase } from "../../CompositionRoot";
 import { FutureData } from "../entities/Future";
 import { User } from "../entities/User";
-import { InstanceRepository } from "../repositories/InstanceRepository";
+import { UserRepository } from "../repositories/UserRepository";
 
-export class GetCurrentUserUseCase implements UseCase {
-    constructor(private instanceRepository: InstanceRepository) {}
+export class GetCurrentUserUseCase {
+    constructor(private usersRepository: UserRepository) {}
 
     public execute(): FutureData<User> {
-        return this.instanceRepository.getCurrentUser();
+        return this.usersRepository.getCurrent();
     }
 }

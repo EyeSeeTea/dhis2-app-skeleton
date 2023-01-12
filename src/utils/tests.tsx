@@ -34,7 +34,7 @@ export function getTestContext() {
         d2: getTestD2(),
         currentUser: getTestUser(),
         config: getTestConfig(),
-        compositionRoot: getCompositionRoot(instance),
+        compositionRoot: getCompositionRoot(api, instance),
     };
 
     return { api, context };

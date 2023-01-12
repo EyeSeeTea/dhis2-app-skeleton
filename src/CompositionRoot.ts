@@ -1,35 +1,22 @@
 import { Instance } from "./data/entities/Instance";
 import { InstanceDefaultRepository } from "./data/repositories/InstanceDefaultRepository";
+import { UserD2Repository } from "./data/repositories/UserD2Repository";
 import { GetCurrentUserUseCase } from "./domain/usecases/GetCurrentUserUseCase";
 import { GetInstanceVersionUseCase } from "./domain/usecases/GetInstanceVersionUseCase";
+import { D2Api } from "./types/d2-api";
 
-export function getCompositionRoot(instance: Instance) {
+export function getCompositionRoot(api: D2Api, instance: Instance) {
     const instanceRepository = new InstanceDefaultRepository(instance);
+    const usersRepository = new UserD2Repository(api);
 
     return {
-        instance: getExecute({
-            getCurrentUser: new GetCurrentUserUseCase(instanceRepository),
+        instance: {
             getVersion: new GetInstanceVersionUseCase(instanceRepository),
-        }),
+        },
+        users: {
+            getCurrent: new GetCurrentUserUseCase(usersRepository),
+        },
     };
 }
 
 export type CompositionRoot = ReturnType<typeof getCompositionRoot>;
-
-function getExecute<UseCases extends Record<Key, UseCase>, Key extends keyof UseCases>(
-    useCases: UseCases
-): { [K in Key]: UseCases[K]["execute"] } {
-    const keys = Object.keys(useCases) as Key[];
-    const initialOutput = {} as { [K in Key]: UseCases[K]["execute"] };
-
-    return keys.reduce((output, key) => {
-        const useCase = useCases[key];
-        const execute = useCase.execute.bind(useCase) as UseCases[typeof key]["execute"];
-        output[key] = execute;
-        return output;
-    }, initialOutput);
-}
-
-export interface UseCase {
-    execute: Function;
-}
