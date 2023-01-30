@@ -8,13 +8,13 @@ import { Instance } from "../data/entities/Instance";
 import { User } from "../domain/entities/User";
 
 export function getTestUser(): User {
-    return {
+    return new User({
         id: "xE7jOejl9FI",
         name: "John Traore",
         username: "admin",
         userGroups: [],
         userRoles: [],
-    };
+    });
 }
 
 export function getTestConfig() {

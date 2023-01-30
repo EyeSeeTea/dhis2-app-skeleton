@@ -16,12 +16,12 @@ export class UserD2Repository implements UserRepository {
     }
 
     private buildUser(d2User: D2User) {
-        return {
+        return new User({
             id: d2User.id,
             name: d2User.displayName,
             userGroups: d2User.userGroups,
             ...d2User.userCredentials,
-        };
+        });
     }
 }
 
