@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { NamedRef } from "./Ref";
 
 export interface UserData {
