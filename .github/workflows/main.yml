@@ -43,5 +43,5 @@ jobs:
             - name: Run jest tests
               run: yarn test
 
-            - name: Run typescript tests
+            - name: Build typescript
               run: npx tsc
