@@ -1,5 +1,5 @@
 import { User, UserRole } from "../User";
-import { describe, expect, it } from "@jest/globals";
+import { describe, expect, it } from "vitest";
 import { NamedRef } from "../Ref";
 
 describe("User", () => {
