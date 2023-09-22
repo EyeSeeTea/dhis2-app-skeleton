@@ -1,6 +1,5 @@
-import { User, UserRole } from "../User";
 import { describe, expect, it } from "vitest";
-import { NamedRef } from "../Ref";
+import { createAdminUser, createNonAdminUser, createUserWithGroups } from "./userFixtures";
 
 describe("User", () => {
     it("should be admin if has a role with authority ALL", () => {
@@ -36,35 +35,3 @@ describe("User", () => {
         expect(user.belongToUserGroup(nonExistedUserGroupId)).toBe(false);
     });
 });
-
-function createAdminUser(): User {
-    const adminRoles = [{ id: "Hg7n0MwzUQn", name: "Super user", authorities: ["ALL"] }];
-
-    return createUser(adminRoles, []);
-}
-
-function createNonAdminUser(): User {
-    const nonAdminRoles = [{ id: "Hg7n0MwzUQn", name: "Malaria", authorities: ["F_EXPORT_DATA"] }];
-
-    return createUser(nonAdminRoles, []);
-}
-
-function createUserWithGroups(userGroups: NamedRef[] = []): User {
-    return new User({
-        id: "YjJdEO6d38H",
-        name: "Example test",
-        username: "example",
-        userRoles: [],
-        userGroups,
-    });
-}
-
-function createUser(userRoles: UserRole[], userGroups: NamedRef[] = []): User {
-    return new User({
-        id: "YjJdEO6d38H",
-        name: "Example test",
-        username: "example",
-        userRoles,
-        userGroups,
-    });
-}

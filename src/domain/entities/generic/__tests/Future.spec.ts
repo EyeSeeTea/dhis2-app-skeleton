@@ -253,7 +253,7 @@ function nextTick() {
     return new Promise(process.nextTick);
 }
 
-async function expectAsync<E, D>(
+export async function expectAsync<E, D>(
     value$: Future<E, D>,
     options: { toEqual: D; toThrow?: undefined } | { toEqual?: undefined; toThrow: E }
 ): Promise<void> {
