@@ -107,7 +107,8 @@ export class Future<E, D> {
 
                     queue.push(queueItem$);
 
-                    if (queue.length >= options.concurrency) await $(rcpromise.CancellablePromise.race(queue));
+                    if (queue.length >= options.concurrency)
+                        await $(rcpromise.CancellablePromise.race(queue));
                 }
 
                 await $(rcpromise.CancellablePromise.all(queue));
@@ -165,7 +166,12 @@ export function getJSON<U>(url: string): Future<TypeError | SyntaxError, U> {
             .then(res => res.json() as U) // exceptions: SyntaxError
             .then(data => resolve(data))
             .catch((error: unknown) => {
-                if (error && typeof error === "object" && "name" in error && error.name === "AbortError") {
+                if (
+                    error &&
+                    typeof error === "object" &&
+                    "name" in error &&
+                    error.name === "AbortError"
+                ) {
                     throw new Cancellation();
                 } else if (error instanceof TypeError || error instanceof SyntaxError) {
                     reject(error);

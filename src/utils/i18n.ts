@@ -10,7 +10,8 @@ interface Options {
     lng: string;
 }
 
-type GetNamespace<Str extends string> = Record<ExtractVars<Str>, string | number> & Partial<Options>;
+type GetNamespace<Str extends string> = Record<ExtractVars<Str>, string | number> &
+    Partial<Options>;
 
 type ExtractVars<Str extends string> = Str extends `${string}{{${infer Var}}}${infer StrRest}`
     ? Var | ExtractVars<StrRest>

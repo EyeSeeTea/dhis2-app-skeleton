@@ -53,7 +53,13 @@ const Button: React.FC<ButtonProps> = ({ onClick }) => (
 );
 
 const HelpButton: React.FC<{ text: string }> = ({ text }) => (
-    <DialogButton buttonComponent={Button} title={i18n.t("Help")} maxWidth={"sm"} fullWidth={true} contents={text} />
+    <DialogButton
+        buttonComponent={Button}
+        title={i18n.t("Help")}
+        maxWidth={"sm"}
+        fullWidth={true}
+        contents={text}
+    />
 );
 
 const IconButton = styled(MUIIConButton)`

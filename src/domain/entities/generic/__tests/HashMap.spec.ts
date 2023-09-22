@@ -117,7 +117,7 @@ describe("transformations", () => {
                 ["a", "a1"],
                 ["b", "b2"],
                 ["c", "c3"],
-            ],
+            ]
         );
     });
 
@@ -168,7 +168,7 @@ describe("filtering by key or value", () => {
     test("pickBy", () => {
         expectMapPairsToEqual(
             mapAbc123.pickBy(([k, v]) => k !== "b" && v > 2),
-            [["c", 3]],
+            [["c", 3]]
         );
     });
 
@@ -179,7 +179,7 @@ describe("filtering by key or value", () => {
     test("omitBy", () => {
         expectMapPairsToEqual(
             mapAbc123.omitBy(([k, v]) => k === "b" || v === 1),
-            [["c", 3]],
+            [["c", 3]]
         );
     });
 });

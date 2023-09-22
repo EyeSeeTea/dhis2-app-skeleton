@@ -51,7 +51,9 @@ async function getData(): Promise<CompositionRootResult> {
 
     const auth = env["VITE_DHIS2_AUTH"];
     const [username = "", password = ""] = auth.split(":");
-    const api = auth ? new D2Api({ baseUrl: baseUrl, auth: { username, password } }) : new D2Api({ baseUrl: baseUrl });
+    const api = auth
+        ? new D2Api({ baseUrl: baseUrl, auth: { username, password } })
+        : new D2Api({ baseUrl: baseUrl });
     const compositionRoot = getWebappCompositionRoot(api);
 
     const userSettings = await api.get<{ keyUiLocale: string }>("/userSettings").getData();
@@ -87,6 +89,9 @@ const configI18n = ({ keyUiLocale }: { keyUiLocale: string }) => {
     document.documentElement.setAttribute("dir", isLangRTL(keyUiLocale) ? "rtl" : "ltr");
 };
 
-type Result<Data, E> = { type: "loading" } | { type: "loaded"; data: Data } | { type: "error"; error: E };
+type Result<Data, E> =
+    | { type: "loading" }
+    | { type: "loaded"; data: Data }
+    | { type: "error"; error: E };
 
 type CompositionRootResult = Result<Data, { baseUrl: string; error: Error }>;

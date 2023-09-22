@@ -143,7 +143,7 @@ export class Collection<T> {
         return _c(
             this.xs
                 .slice(0, this.xs.length - n + 1)
-                .map((_x, idx) => [this.xs[idx], this.xs[idx + 1]] as [T, T]),
+                .map((_x, idx) => [this.xs[idx], this.xs[idx + 1]] as [T, T])
         );
     }
 
@@ -222,7 +222,7 @@ export class Collection<T> {
             return _c(ys as T[]).flatMap(x =>
                 _c(zss)
                     .cartesian()
-                    .map(zs => [x, ...zs]),
+                    .map(zs => [x, ...zs])
             ) as any;
         }
     }

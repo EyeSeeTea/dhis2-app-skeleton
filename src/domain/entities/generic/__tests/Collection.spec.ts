@@ -22,7 +22,7 @@ describe("Collection", () => {
         expect(
             _([[1, 2], [3], [], [4, 5]])
                 .flatten()
-                .toArray(),
+                .toArray()
         ).toEqual([1, 2, 3, 4, 5]);
     });
 
@@ -116,7 +116,7 @@ describe("Collection", () => {
             values
                 .splitAt([1, 3])
                 .value()
-                .map(xs => xs.value()),
+                .map(xs => xs.value())
         ).toEqual([[0], [1, 2], [3, 4, 5]]);
     });
 
@@ -155,7 +155,7 @@ describe("Collection", () => {
         expect(
             _(["a", "ab", "b", "c", "abc", "de", "xyz"])
                 .uniqBy(s => s.length)
-                .toArray(),
+                .toArray()
         ).toEqual(["a", "ab", "abc"]);
     });
 
@@ -186,7 +186,7 @@ describe("Collection", () => {
         expect(
             values
                 .sortBy(x => x, { compareFn: (a, b) => (a === 1 ? -1 : b === 1 ? +1 : 0) })
-                .toArray(),
+                .toArray()
         ).toEqual([1, 2, 33, 4]);
     });
 
@@ -230,7 +230,7 @@ describe("Collection", () => {
         expect(
             _([[1, 2], [3, 4], [5]])
                 .cartesian()
-                .toArray(),
+                .toArray()
         ).toEqual([
             [1, 3, 5],
             [1, 4, 5],
@@ -260,7 +260,7 @@ describe("Collection", () => {
                     [obj => obj.value, "asc"],
                     [obj => obj.id, "desc"],
                 ])
-                .toArray(),
+                .toArray()
         ).toEqual(sortedObjects);
     });
 
@@ -268,7 +268,7 @@ describe("Collection", () => {
         expect(
             _([1, 2, 3])
                 .zipLongest(_(["a", "b"]))
-                .toArray(),
+                .toArray()
         ).toEqual([
             [1, "a"],
             [2, "b"],

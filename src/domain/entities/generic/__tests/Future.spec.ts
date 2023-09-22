@@ -52,7 +52,9 @@ describe("toPromise", () => {
     });
 
     it("converts an error Async to promise", async () => {
-        await expect(Future.error(new Error("message")).toPromise()).rejects.toThrow(new Error("message"));
+        await expect(Future.error(new Error("message")).toPromise()).rejects.toThrow(
+            new Error("message")
+        );
     });
 });
 
@@ -230,7 +232,11 @@ describe("joinObj", () => {
 
 describe("sequential", () => {
     it("returns an async containing all the values as an array", async () => {
-        const values$ = Future.sequential([Future.success(1), Future.success(2), Future.success(3)]);
+        const values$ = Future.sequential([
+            Future.success(1),
+            Future.success(2),
+            Future.success(3),
+        ]);
         await expectAsync(values$, { toEqual: [1, 2, 3] });
     });
 });
