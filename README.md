@@ -29,6 +29,12 @@ Now in your browser, go to `http://localhost:8081`.
 $ yarn test
 ```
 
+## Docs
+
+```
+$ yarn generate-docs
+```
+
 ## Some development tips
 
 ### Clean architecture folder structure
