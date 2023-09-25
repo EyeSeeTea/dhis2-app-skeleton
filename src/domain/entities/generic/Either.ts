@@ -1,11 +1,18 @@
-type EitherValueError<Error> = { type: "error"; error: Error; data?: never };
-type EitherValueSuccess<Data> = { type: "success"; error?: never; data: Data };
-type EitherValue<Error, Data> = EitherValueError<Error> | EitherValueSuccess<Data>;
-
-type MatchObject<Error, Data, Res> = {
-    success: (data: Data) => Res;
-    error: (error: Error) => Res;
-};
+/**
+ * Either a success value or an error. Example:
+ *
+ * ```
+ * Either.success<{ message: string }, string>("9")
+ *     .map(s => parseInt(s))
+ *     .flatMap(x => {
+ *         return x > 0 ? Either.success(Math.sqrt(x)) : Either.error({ message: "negative!" });
+ *     })
+ *     .match({
+ *         success: x => console.log(`Value is ${x}`),
+ *         error: error => console.error(`Some error: ${error.message}`),
+ *     }); // prints `Value is 3`
+ * ```
+ */
 
 export class Either<Error, Data> {
     constructor(public value: EitherValue<Error, Data>) {}
@@ -32,7 +39,9 @@ export class Either<Error, Data> {
     }
 
     mapError<Error1>(fn: (error: Error) => Error1): Either<Error1, Data> {
-        return this.flatMapError(error => new Either<Error1, Data>({ type: "error", error: fn(error) }));
+        return this.flatMapError(
+            error => new Either<Error1, Data>({ type: "error", error: fn(error) })
+        );
     }
 
     flatMap<Data1>(fn: (data: Data) => Either<Error, Data1>): Either<Error, Data1> {
@@ -66,3 +75,12 @@ export class Either<Error, Data> {
         });
     }
 }
+
+type EitherValueError<Error> = { type: "error"; error: Error; data?: never };
+type EitherValueSuccess<Data> = { type: "success"; error?: never; data: Data };
+type EitherValue<Error, Data> = EitherValueError<Error> | EitherValueSuccess<Data>;
+
+type MatchObject<Error, Data, Res> = {
+    success: (data: Data) => Res;
+    error: (error: Error) => Res;
+};

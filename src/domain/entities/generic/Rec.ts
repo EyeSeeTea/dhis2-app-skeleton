@@ -1,3 +1,16 @@
+/**
+ * Expand methods for Javascript objects. An example:
+ *
+ * ```
+ * import _r from "./Rec";
+ *
+ * const obj = _r({ x: 1, y: 2, s: "hello" })
+ *     .pick(["x", "y"])
+ *     .merge(_r({ z: 3 }))
+ *     .value(); // { x: 1, y: 2, z: 3}
+ * ```
+ */
+
 export class Rec<T extends BaseObj> {
     protected constructor(protected obj: T) {}
 
@@ -14,6 +27,10 @@ export class Rec<T extends BaseObj> {
     }
 
     toObject(): T {
+        return this.obj;
+    }
+
+    value(): T {
         return this.obj;
     }
 
@@ -39,6 +56,10 @@ export class Rec<T extends BaseObj> {
         const merged = { ...this.obj, ...rec2.obj } as Merge<T, T2>;
         return new Rec(merged);
     }
+}
+
+export default function _r<T extends BaseObj>(obj: T): Rec<T> {
+    return Rec.from(obj);
 }
 
 type Merge<T1, T2> = Omit<T1, keyof T2> & T2;

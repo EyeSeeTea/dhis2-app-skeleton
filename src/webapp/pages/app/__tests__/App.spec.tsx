@@ -2,6 +2,7 @@ import { fireEvent, render } from "@testing-library/react";
 
 import App from "../App";
 import { getTestContext } from "../../../../utils/tests";
+import { Provider } from "@dhis2/app-runtime";
 
 describe("App", () => {
     it("renders the feedback component", async () => {
@@ -22,5 +23,9 @@ describe("App", () => {
 
 function getView() {
     const { compositionRoot } = getTestContext();
-    return render(<App compositionRoot={compositionRoot} />);
+    return render(
+        <Provider config={{ baseUrl: "http://localhost:8080", apiVersion: 30 }}>
+            <App compositionRoot={compositionRoot} />
+        </Provider>
+    );
 }

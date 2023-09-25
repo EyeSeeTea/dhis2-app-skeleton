@@ -41,6 +41,15 @@ $ yarn test
 -   `i18n/`: Contains literal translations (gettext format)
 -   `public/`: General non-React webapp resources.
 
+## Data structures
+
+-   `Future.ts`: Async values, similar to promises, but cancellables and with type-safe errors.
+-   `Collection.ts`: Similar to Lodash, provides a wrapper over JS arrays.
+-   `Obj.ts`: Similar to Lodash, provides a wrapper over JS objects.
+-   `HashMap.ts`: Similar to ES6 map, but immutable.
+-   `Struct.ts`: Base class for typical classes with attributes. Features: create, update.
+-   `Either.ts`: Either a success value or an error.
+
 ## Docs
 
 We use [TypeDoc](https://typedoc.org/example/):

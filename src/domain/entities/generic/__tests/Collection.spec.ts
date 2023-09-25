@@ -163,6 +163,10 @@ describe("Collection", () => {
         expect(_([1, 2, 3]).reduce((acc, x) => acc + x, 10)).toEqual(16);
     });
 
+    test("reverse", () => {
+        expect(_([1, 2, 3]).reverse().toArray()).toEqual([3, 2, 1]);
+    });
+
     test("sort (strings)", () => {
         expect(_(["a", "c", "b"]).sort().toArray()).toEqual(["a", "b", "c"]);
         expect(_(["22", "3", "1"]).sort().toArray()).toEqual(["1", "22", "3"]);

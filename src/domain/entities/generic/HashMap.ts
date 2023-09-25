@@ -1,6 +1,18 @@
 import { Collection } from "./Collection";
 import * as imap from "typed-immutable-map";
 
+/**
+ * Like ES6 Map, but immutable.
+ *
+ * ```
+ * import HashMap from "./HashMap";
+ *
+ * const map = HashMap.fromObject({ x: 1, y: 2, z: 3 })
+ *     .invert()
+ *     .pickBy(([key, value]) => key > 1)
+ *     .values(); // ["y", "z"]
+ */
+
 /* Immutable Hash Map. Keys and values can be of any type. */
 
 export class HashMap<K, V> {

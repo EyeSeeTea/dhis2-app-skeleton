@@ -1,8 +1,19 @@
 import { HashMap } from "./HashMap";
 
-export default function _c<T>(xs: T[]): Collection<T> {
-    return Collection.from(xs);
-}
+/**
+ * Wrap a collection of values, expanding methods for Javascript Arrays. An example:
+ *
+ * ```
+ * import _ from "./Collection";
+ *
+ * const values = _(["1", "2", "3", "3", "4"])
+ *     .map(x => parseInt(x))
+ *     .filter(x => x > 1)
+ *     .uniq()
+ *     .reverse()
+ *     .value(); // [4, 3, 2]
+ * ```
+ */
 
 export class Collection<T> {
     protected xs: T[];
@@ -99,6 +110,10 @@ export class Collection<T> {
 
     sort(): Collection<T> {
         return this.sortWith(defaultCompareFn);
+    }
+
+    reverse(): Collection<T> {
+        return _c([...this.xs].reverse());
     }
 
     sortWith(compareFn: CompareFn<T>): Collection<T> {
@@ -307,3 +322,7 @@ function compareArray<T>(a: T, b: T, items: OrderItem<T>[]): CompareRes {
 }
 
 type OrderItem<T> = [(obj: T) => unknown, "asc" | "desc"];
+
+export default function _c<T>(xs: T[]): Collection<T> {
+    return Collection.from(xs);
+}

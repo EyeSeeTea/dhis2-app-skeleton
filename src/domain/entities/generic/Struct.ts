@@ -1,3 +1,18 @@
+/**
+ * Base class for typical classes with attributes. Features: create, update.
+ *
+ * ```
+ * class Counter extends Struct<{ id: Id; value: number }>() {
+ *     add(value: number): Counter {
+ *         return this._update({ value: this.value + value });
+ *     }
+ * }
+ *
+ * const counter1 = Counter.create({ id: "some-counter", value: 1 });
+ * const counter2 = counter1._update({ value: 2 });
+ * ```
+ */
+
 export function Struct<Attrs>() {
     abstract class Base {
         constructor(_attributes: Attrs) {
