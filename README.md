@@ -5,7 +5,9 @@ $ nvm use # uses node version in .nvmrc
 $ yarn install
 ```
 
-## Build production app ZIP
+## Build
+
+Build a production distributable DHIS2 zip file:
 
 ```
 $ yarn build
@@ -13,7 +15,7 @@ $ yarn build
 
 ## Development
 
-Copy `.env` to `.env.local` and set the desired DHIS2 instance variables. Then start the development server:
+Copy `.env` to `.env.local` and configure DHIS2 instance to use. Then start the development server:
 
 ```
 $ yarn start
@@ -23,34 +25,33 @@ Now in your browser, go to `http://localhost:8081`.
 
 ## Tests
 
-### Unit tests
-
 ```
 $ yarn test
-```
-
-## Docs
-
-```
-$ yarn generate-docs
 ```
 
 ## Some development tips
 
 ### Clean architecture folder structure
 
--   `i18n/`: Contains literal translations (gettext format)
--   `public/`: Main app folder with a `index.html`, exposes the APP, contains the feedback-tool.
--   `src/pages`: Main React components.
--   `src/domain`: Domain layer of the app (clean architecture)
--   `src/data`: Data of the app (clean architecture)
--   `src/components`: Reusable React components.
--   `src/types`: `.d.ts` file types for modules without TS definitions.
+-   `src/domain`: Domain layer of the app (entities, use cases, repository definitions)
+-   `src/data`: Data of the app (repository implementations)
+-   `src/webapp/pages`: Main React components.
+-   `src/webapp/components`: React components.
 -   `src/utils`: Misc utilities.
--   `src/locales`: Auto-generated, do not update or add to the version control.
--   `cypress/integration/`: Cypress integration tests.
+-   `i18n/`: Contains literal translations (gettext format)
+-   `public/`: General non-React webapp resources.
+
+## Docs
+
+We use [TypeDoc](https://typedoc.org/example/):
+
+```
+$ yarn generate-docs
+```
 
 ### i18n
+
+Update i18n .po files from `i18n.t(...)` calls in the source code:
 
 ```
 $ yarn localize
@@ -64,4 +65,4 @@ Check the example script, entry `"script-example"`in `package.json`->scripts and
 
 -   Requests to DHIS2 will be transparently proxied (see `vite.config.ts` -> `server.proxy`) from `http://localhost:8081/dhis2/xyz` to `${VITE_DHIS2_BASE_URL}/xyz`. This prevents CORS and cross-domain problems.
 
--   To use `.env` variables within the React app: `import.meta.env.NAME`
+-   You can use `.env` variables within the React app: `const value = import.meta.env.NAME;`
