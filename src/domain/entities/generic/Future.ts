@@ -1,6 +1,15 @@
 import * as rcpromise from "real-cancellable-promise";
 import { Cancellation } from "real-cancellable-promise";
 
+/**
+ * Futures are async values similar to promises, with some differences:
+ *   - Futures are only executed when their method `run` is called.
+ *   - Futures are cancellable (thus, they can be easily used in a `React.useEffect`, for example).
+ *   - Futures have fully typed errors. Subclass Error if you need full stack traces.
+ *   - You may still use async/await monad-style blocks (check Future.block).
+ *
+ * More info: https://github.com/EyeSeeTea/know-how/wiki/Async-futures
+ */
 export class Future<E, D> {
     private constructor(private _promise: () => rcpromise.CancellablePromise<D>) {}
 
@@ -166,12 +175,7 @@ export function getJSON<U>(url: string): Future<TypeError | SyntaxError, U> {
             .then(res => res.json() as U) // exceptions: SyntaxError
             .then(data => resolve(data))
             .catch((error: unknown) => {
-                if (
-                    error &&
-                    typeof error === "object" &&
-                    "name" in error &&
-                    error.name === "AbortError"
-                ) {
+                if (isNamedError(error) && error.name === "AbortError") {
                     throw new Cancellation();
                 } else if (error instanceof TypeError || error instanceof SyntaxError) {
                     reject(error);
@@ -182,4 +186,8 @@ export function getJSON<U>(url: string): Future<TypeError | SyntaxError, U> {
 
         return () => abortController.abort();
     });
+}
+
+function isNamedError(error: unknown): error is { name: string } {
+    return Boolean(error && typeof error === "object" && "name" in error);
 }
