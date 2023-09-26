@@ -38,3 +38,5 @@ cypress/fixtures/
 
 # IntelliJ
 .idea/*
+
+docs/
