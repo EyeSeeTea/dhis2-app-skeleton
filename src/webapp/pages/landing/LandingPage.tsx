@@ -29,11 +29,11 @@ export const LandingPage: React.FC = React.memo(() => {
 
     return (
         <>
-            <CardGrid cards={cards} />
             <Typography variant="h6">
-                {" "}
                 Current user: {currentUser.name} [{currentUser.id}]
             </Typography>
+
+            <CardGrid cards={cards} />
         </>
     );
 });

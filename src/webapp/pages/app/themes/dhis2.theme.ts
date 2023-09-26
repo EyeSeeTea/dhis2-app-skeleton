@@ -1,7 +1,7 @@
 import { createTheme } from "@material-ui/core/styles";
 
 // Color palette from https://projects.invisionapp.com/share/A7LT4TJYETS#/screens/302550228_Color
-export const colors = {
+const colors = {
     accentPrimary: "#1976d2",
     accentPrimaryDark: "#004BA0",
     accentPrimaryLight: "#63A4FF",
@@ -26,7 +26,7 @@ export const colors = {
     info: "#EAF4FF",
 };
 
-export const palette = {
+const palette = {
     common: {
         white: colors.white,
         black: colors.black,
