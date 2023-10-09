@@ -1,87 +1,77 @@
 ## Setup
 
-Install dependencies:
-
 ```
+$ nvm use # uses node version in .nvmrc
 $ yarn install
 ```
 
-## Development
+## Build
 
-Start the development server:
-
-```
-$ PORT=8081 REACT_APP_DHIS2_BASE_URL="http://localhost:8080" yarn start
-```
-
-Now in your browser, go to `http://localhost:8081`.
-
-Notes:
-
--   Requests to DHIS2 will be transparently proxied (see `src/setupProxy.js`) from `http://localhost:8081/dhis2/path` to `http://localhost:8080/path` to avoid CORS and cross-domain problems.
-
--   The optional environment variable `REACT_APP_DHIS2_AUTH=USERNAME:PASSWORD` forces some credentials to be used by the proxy. This variable is usually not set, so the app has the same user logged in at `REACT_APP_DHIS2_BASE_URL`.
-
--   The optional environment variable `REACT_APP_PROXY_LOG_LEVEL` can be helpful to debug the proxyfied requests (accepts: "warn" | "debug" | "info" | "error" | "silent")
-
--   Create a file `.env.local` (copy it from `.env`) to customize environment variables so you can simply run `yarn start`.
-
--   [why-did-you-render](https://github.com/welldone-software/why-did-you-render) is installed, but it does not work when using standard react scripts (`yarn start`). Instead, use `yarn start-profiling` to debug re-renders with WDYR. Note that hot reloading does not work out-of-the-box with [craco](https://github.com/gsoft-inc/craco).
-
-## Tests
-
-### Unit tests
-
-```
-$ yarn test
-```
-
-### Integration tests (Cypress)
-
-Create the required users for testing (`cypress/support/App.ts`) in your instance and run:
-
-```
-$ export CYPRESS_EXTERNAL_API="http://localhost:8080"
-$ export CYPRESS_ROOT_URL=http://localhost:8081
-
-# non-interactive
-$ yarn cy:e2e:run
-
-# interactive UI
-$ yarn cy:e2e:open
-```
-
-## Build app ZIP
+Build a production distributable DHIS2 zip file:
 
 ```
 $ yarn build
 ```
 
+## Development
+
+Copy `.env` to `.env.local` and configure DHIS2 instance to use. Then start the development server:
+
+```
+$ yarn start
+```
+
+Now in your browser, go to `http://localhost:8081`.
+
+## Tests
+
+```
+$ yarn test
+```
+
 ## Some development tips
 
-### Structure
+### Clean architecture folder structure
 
--   `i18n/`: Contains literal translations (gettext format)
--   `public/`: Main app folder with a `index.html`, exposes the APP, contains the feedback-tool.
--   `src/pages`: Main React components.
--   `src/domain`: Domain layer of the app (clean architecture)
--   `src/data`: Data of the app (clean architecture)
--   `src/components`: Reusable React components.
--   `src/types`: `.d.ts` file types for modules without TS definitions.
+-   `src/domain`: Domain layer of the app (entities, use cases, repository definitions)
+-   `src/data`: Data of the app (repository implementations)
+-   `src/webapp/pages`: Main React components.
+-   `src/webapp/components`: React components.
 -   `src/utils`: Misc utilities.
--   `src/locales`: Auto-generated, do not update or add to the version control.
--   `cypress/integration/`: Cypress integration tests.
+-   `i18n/`: Contains literal translations (gettext format)
+-   `public/`: General non-React webapp resources.
+
+## Data structures
+
+-   `Future.ts`: Async values, similar to promises, but cancellables and with type-safe errors.
+-   `Collection.ts`: Similar to Lodash, provides a wrapper over JS arrays.
+-   `Obj.ts`: Similar to Lodash, provides a wrapper over JS objects.
+-   `HashMap.ts`: Similar to ES6 map, but immutable.
+-   `Struct.ts`: Base class for typical classes with attributes. Features: create, update.
+-   `Either.ts`: Either a success value or an error.
+
+## Docs
+
+We use [TypeDoc](https://typedoc.org/example/):
+
+```
+$ yarn generate-docs
+```
 
 ### i18n
+
+Update i18n .po files from `i18n.t(...)` calls in the source code:
 
 ```
 $ yarn localize
 ```
 
-### App context
-
-The file `src/contexts/app-context.ts` holds some general context so typical infrastructure objects (`api`, `d2`, ...) are readily available. Add your own global objects if necessary.
-
 ### Scripts
 
 Check the example script, entry `"script-example"`in `package.json`->scripts and `src/scripts/example.ts`.
+
+### Misc Notes
+
+-   Requests to DHIS2 will be transparently proxied (see `vite.config.ts` -> `server.proxy`) from `http://localhost:8081/dhis2/xyz` to `${VITE_DHIS2_BASE_URL}/xyz`. This prevents CORS and cross-domain problems.
+
+-   You can use `.env` variables within the React app: `const value = import.meta.env.NAME;`

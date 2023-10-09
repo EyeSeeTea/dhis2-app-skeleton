@@ -1,0 +1,93 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`App > navigates to page 1`] = `
+<DocumentFragment>
+  <header
+    class="jsx-2837859311 "
+  />
+  <div
+    class="Component-root-24 Component-root-25"
+  >
+    <button
+      class="MuiButtonBase-root MuiButton-root MuiButton-contained Component-root-26 Component-root-27 MuiButton-containedPrimary MuiButton-disableElevation"
+      tabindex="0"
+      type="button"
+    >
+      <span
+        class="MuiButton-label"
+      >
+        Send feedback
+        <span
+          class="MuiButton-endIcon MuiButton-iconSizeMedium"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"
+            />
+          </svg>
+        </span>
+      </span>
+      <span
+        class="MuiTouchRipple-root"
+      />
+    </button>
+  </div>
+  <div
+    class="content"
+    id="app"
+  >
+    <div>
+      <button
+        aria-label="Back"
+        class="MuiButtonBase-root MuiIconButton-root sc-gsnTZi sc-dkzDqf gEgEZ iDppS MuiIconButton-colorSecondary"
+        data-test="page-header-back"
+        tabindex="0"
+        type="button"
+      >
+        <span
+          class="MuiIconButton-label"
+        >
+          <span
+            aria-hidden="true"
+            class="material-icons MuiIcon-root MuiIcon-colorPrimary"
+          >
+            arrow_back
+          </span>
+        </span>
+        <span
+          class="MuiTouchRipple-root"
+        />
+      </button>
+      <h5
+        class="MuiTypography-root sc-bczRLJ WGVdy MuiTypography-h5 MuiTypography-gutterBottom"
+        data-test="page-header-title"
+      >
+        Detail page
+      </h5>
+    </div>
+    <h2
+      class="sc-hKMtZM eeDtie"
+    >
+      Hello John
+    </h2>
+  </div>
+  <div>
+    <div
+      style="bottom: -3px; right: 100px; position: fixed; z-index: 10002;"
+    >
+      <button
+        style="text-shadow: none; background-color: rgb(255, 152, 0); color: white; width: 65px; height: 38.5px; cursor: pointer; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 2px; background-clip: padding-box; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);"
+      >
+        <i
+          class="fa fa-share icon-xlarge"
+        />
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;

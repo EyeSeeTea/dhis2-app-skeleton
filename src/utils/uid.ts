@@ -1,4 +1,3 @@
-import _ from "lodash";
 // @ts-ignore
 import MD5 from "md5.js";
 
@@ -47,13 +46,7 @@ export function generateUid(): string {
 }
 
 const fullUidRegex = /^[a-zA-Z]{1}[a-zA-Z0-9]{10}$/;
-const uidRegex = /[a-zA-Z]{1}[a-zA-Z0-9]{10}/g;
 
 export function isValidUid(code: string | undefined | null): boolean {
     return !!code && fullUidRegex.test(code);
-}
-
-export function extractUids(code: string | undefined | null): string[] {
-    const matches = code?.matchAll(uidRegex);
-    return _.compact(Array.from(matches ?? []).map(([string]) => string));
 }

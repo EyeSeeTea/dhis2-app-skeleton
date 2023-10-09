@@ -1,4 +1,4 @@
-import { FutureData } from "../entities/Future";
+import { FutureData } from "../../data/api-futures";
 import { User } from "../entities/User";
 import { UserRepository } from "../repositories/UserRepository";
 
