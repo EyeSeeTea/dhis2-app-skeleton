@@ -1,6 +1,7 @@
+import { Struct } from "./generic/Struct";
 import { NamedRef } from "./Ref";
 
-export interface UserData {
+export interface UserAttrs {
     id: string;
     name: string;
     username: string;
@@ -12,22 +13,7 @@ export interface UserRole extends NamedRef {
     authorities: string[];
 }
 
-export class User {
-    public readonly id: string;
-    public readonly name: string;
-    public readonly username: string;
-
-    private readonly userGroups: NamedRef[];
-    private readonly userRoles: UserRole[];
-
-    constructor(data: UserData) {
-        this.id = data.id;
-        this.name = data.name;
-        this.username = data.username;
-        this.userRoles = data.userRoles;
-        this.userGroups = data.userGroups;
-    }
-
+export class User extends Struct<UserAttrs>() {
     belongToUserGroup(userGroupUid: string): boolean {
         return this.userGroups.some(({ id }) => id === userGroupUid);
     }

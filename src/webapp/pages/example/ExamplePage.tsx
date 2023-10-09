@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import i18n from "../../../locales";
+import i18n from "../../../utils/i18n";
 import { PageHeader } from "../../components/page-header/PageHeader";
 
 export const ExamplePage: React.FC<ExamplePageProps> = React.memo(props => {

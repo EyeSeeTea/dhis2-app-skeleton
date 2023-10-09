@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ExamplePage > renders the feedback component 1`] = `
+<DocumentFragment>
+  <div>
+    <button
+      aria-label="Back"
+      class="MuiButtonBase-root MuiIconButton-root sc-gsnTZi sc-dkzDqf gEgEZ iDppS MuiIconButton-colorSecondary"
+      data-test="page-header-back"
+      tabindex="0"
+      type="button"
+    >
+      <span
+        class="MuiIconButton-label"
+      >
+        <span
+          aria-hidden="true"
+          class="material-icons MuiIcon-root MuiIcon-colorPrimary"
+        >
+          arrow_back
+        </span>
+      </span>
+      <span
+        class="MuiTouchRipple-root"
+      />
+    </button>
+    <h5
+      class="MuiTypography-root sc-bczRLJ WGVdy MuiTypography-h5 MuiTypography-gutterBottom"
+      data-test="page-header-title"
+    >
+      Detail page
+    </h5>
+  </div>
+  <h2
+    class="sc-hKMtZM eeDtie"
+  >
+    Hello Mary
+  </h2>
+</DocumentFragment>
+`;

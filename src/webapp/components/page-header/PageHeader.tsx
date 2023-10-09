@@ -2,9 +2,9 @@ import { ButtonProps, Icon, IconButton as MUIIConButton, Tooltip } from "@materi
 import { Variant } from "@material-ui/core/styles/createTypography";
 import Typography from "@material-ui/core/Typography";
 import { DialogButton } from "@eyeseetea/d2-ui-components";
-import React from "react";
-import i18n from "../../../locales";
+import React, { PropsWithChildren } from "react";
 import styled from "styled-components";
+import i18n from "../../../utils/i18n";
 
 export const PageHeader: React.FC<PageHeaderProps> = React.memo(props => {
     const { variant = "h5", title, onBackClick, helpText, children } = props;
@@ -32,7 +32,7 @@ export const PageHeader: React.FC<PageHeaderProps> = React.memo(props => {
     );
 });
 
-export interface PageHeaderProps {
+export interface PageHeaderProps extends PropsWithChildren {
     variant?: Variant;
     title: string;
     onBackClick?: () => void;
@@ -53,7 +53,13 @@ const Button: React.FC<ButtonProps> = ({ onClick }) => (
 );
 
 const HelpButton: React.FC<{ text: string }> = ({ text }) => (
-    <DialogButton buttonComponent={Button} title={i18n.t("Help")} maxWidth={"sm"} fullWidth={true} contents={text} />
+    <DialogButton
+        buttonComponent={Button}
+        title={i18n.t("Help")}
+        maxWidth={"sm"}
+        fullWidth={true}
+        contents={text}
+    />
 );
 
 const IconButton = styled(MUIIConButton)`
