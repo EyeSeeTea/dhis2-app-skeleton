@@ -10,10 +10,13 @@ type Repositories = {
     usersRepository: UserRepository;
 };
 
-function getCompositionRoot(repositories: Repositories) {
+function getCompositionRoot(repositories: Repositories, api?: D2Api) {
     return {
         users: {
             getCurrent: new GetCurrentUserUseCase(repositories.usersRepository),
+        },
+        api: {
+            get: api,
         },
     };
 }
@@ -23,7 +26,7 @@ export function getWebappCompositionRoot(api: D2Api) {
         usersRepository: new UserD2Repository(api),
     };
 
-    return getCompositionRoot(repositories);
+    return getCompositionRoot(repositories, api);
 }
 
 export function getTestCompositionRoot() {

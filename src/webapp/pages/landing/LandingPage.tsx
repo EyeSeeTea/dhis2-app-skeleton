@@ -23,6 +23,11 @@ export const LandingPage: React.FC = React.memo(() => {
                     description: "Entry point 2",
                     listAction: () => history.push("/for/Mary"),
                 },
+                {
+                    name: "Products",
+                    description: "Coding Dojo Clean Architecture Kata",
+                    listAction: () => history.push("/products"),
+                },
             ],
         },
     ];
