@@ -26,9 +26,7 @@ export const ProductsPage: React.FC = React.memo(() => {
     const { compositionRoot, currentUser } = useAppContext();
     const snackbar = useSnackbar();
 
-    const [showEditQuantityDialog, setShowEditQuantityDialog] = useState(false);
-    const [editingProgramEvent, setEditingProgramEvent] = useState<Product | undefined>(undefined);
-    const [editingEventId, setEditingEventId] = useState<string | undefined>(undefined);
+    const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
     const [editedQuantity, setEditedQuantity] = useState<string | undefined>(undefined);
     const [quantityError, setQuantityError] = useState<string | undefined>(undefined);
 
@@ -44,10 +42,8 @@ export const ProductsPage: React.FC = React.memo(() => {
 
                 getProduct(id).run(
                     product => {
-                        setEditingEventId(product.id);
-                        setEditingProgramEvent(product);
+                        setEditingProduct(product);
                         setEditedQuantity(product.quantity.toString() || "");
-                        setShowEditQuantityDialog(true);
                     },
                     error => {
                         snackbar.error(error.message);
@@ -121,21 +117,19 @@ export const ProductsPage: React.FC = React.memo(() => {
     const tableProps = useObjectsTable(baseConfig, getProducts);
 
     function cancelEditQuantity(): void {
-        setShowEditQuantityDialog(false);
-        setEditingEventId(undefined);
         setEditedQuantity(undefined);
-        setEditingProgramEvent(undefined);
+        setEditingProduct(undefined);
         setQuantityError(undefined);
     }
 
     async function saveEditQuantity(): Promise<void> {
         const api = compositionRoot.api.get;
 
-        if (editingProgramEvent && api) {
+        if (editingProduct && api) {
             const quantity = +(editedQuantity || "0");
 
             const editedEvent: Product = {
-                ...editingProgramEvent,
+                ...editingProduct,
                 quantity,
                 status: quantity === 0 ? 0 : 1,
             };
@@ -144,7 +138,7 @@ export const ProductsPage: React.FC = React.memo(() => {
                 .getAll({
                     fields: { $all: true },
                     program: "x7s8Yurmj7Q",
-                    event: editingEventId,
+                    event: editingProduct.id,
                 })
                 .getData();
 
@@ -175,9 +169,7 @@ export const ProductsPage: React.FC = React.memo(() => {
                 );
             }
 
-            setShowEditQuantityDialog(false);
-            setEditingEventId(undefined);
-            setEditingProgramEvent(undefined);
+            setEditingProduct(undefined);
             setEditedQuantity(undefined);
             reload();
         }
@@ -214,7 +206,7 @@ export const ProductsPage: React.FC = React.memo(() => {
                 onChangeSearch={undefined}
             />
             <ConfirmationDialog
-                isOpen={showEditQuantityDialog}
+                isOpen={editingProduct !== undefined}
                 title={i18n.t("Update Quantity")}
                 onCancel={cancelEditQuantity}
                 cancelText={i18n.t("Cancel")}
