@@ -2,19 +2,17 @@ import {
     ConfirmationDialog,
     ObjectsList,
     TableConfig,
-    TablePagination,
-    TableSorting,
     useObjectsTable,
     useSnackbar,
 } from "@eyeseetea/d2-ui-components";
 
 import React, { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useAppContext } from "../../contexts/app-context";
-import { useReload } from "../../hooks/use-reload";
 import i18n from "../../../utils/i18n";
 import SystemUpdateAltIcon from "@material-ui/icons/SystemUpdateAlt";
 import { TextField, Typography } from "@material-ui/core";
 import styled from "styled-components";
+import { useProducts } from "./useProducts";
 
 const dataElements = {
     title: "qkvNoqnBdPk",
@@ -35,7 +33,6 @@ type ProductStatus = "active" | "inactive";
 
 export const ProductsPage: React.FC = React.memo(() => {
     const { compositionRoot, currentUser } = useAppContext();
-    const [reloadKey, reload] = useReload();
     const snackbar = useSnackbar();
 
     const [showEditQuantityDialog, setShowEditQuantityDialog] = useState(false);
@@ -45,6 +42,8 @@ export const ProductsPage: React.FC = React.memo(() => {
     const [editingEventId, setEditingEventId] = useState<string | undefined>(undefined);
     const [editedQuantity, setEditedQuantity] = useState<string | undefined>(undefined);
     const [quantityError, setQuantityError] = useState<string | undefined>(undefined);
+
+    const { getRows, reload } = useProducts();
 
     const updatingQuantity = useCallback(
         async (id: string) => {
@@ -140,44 +139,6 @@ export const ProductsPage: React.FC = React.memo(() => {
             },
         }),
         [compositionRoot.api.get?.baseUrl, updatingQuantity]
-    );
-
-    const getRows = useMemo(
-        () =>
-            async (
-                _search: string,
-                paging: TablePagination,
-                sorting: TableSorting<ProgramEvent>
-            ) => {
-                const api = compositionRoot.api.get;
-
-                const data = await api?.events
-                    .get({
-                        fields: eventsFields,
-                        program: "x7s8Yurmj7Q",
-                        page: paging.page,
-                        pageSize: paging.pageSize,
-                        order: `${sorting.field}:${sorting.order}`,
-                    })
-                    .getData();
-
-                const events = data?.events.map(buildProgramEvent);
-
-                const emptyPager = {
-                    page: 1,
-                    pageCount: 1,
-                    total: 0,
-                    pageSize: 10,
-                };
-
-                console.debug("Reloading", reloadKey);
-
-                return {
-                    pager: data?.pager || emptyPager,
-                    objects: events || [],
-                };
-            },
-        [compositionRoot.api.get, reloadKey]
     );
 
     const tableProps = useObjectsTable(baseConfig, getRows);
