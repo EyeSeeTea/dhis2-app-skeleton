@@ -10,8 +10,6 @@ import { ProductRepository } from "../../domain/repositories/ProductRepository";
 import { D2Api } from "../../types/d2-api";
 import { apiToFuture, FutureData } from "../api-futures";
 
-const program = "x7s8Yurmj7Q";
-
 export class ProductD2Repository implements ProductRepository {
     constructor(private api: D2Api) {}
 
@@ -28,7 +26,7 @@ export class ProductD2Repository implements ProductRepository {
                 order: `${sorting.field}:${sorting.order}`,
             })
         ).map(response => {
-            const events = response.events.map(this.buildProduct);
+            const events = response.events.map(event => this.buildProduct(event));
 
             return {
                 pager: response.pager,
@@ -97,10 +95,7 @@ export class ProductD2Repository implements ProductRepository {
                 event.dataValues
                     .find(dv => dv.dataElement === dataElements.title)
                     ?.value.toString() || "",
-            image:
-                event.dataValues
-                    .find(dv => dv.dataElement === dataElements.image)
-                    ?.value.toString() || "",
+            image: `${this.api.baseUrl}/api/events/files?dataElementUid=${dataElements.image}&eventUid=${event.event}`,
             quantity: +(
                 event.dataValues.find(dv => dv.dataElement === dataElements.quantity)?.value || 0
             ),
@@ -110,6 +105,8 @@ export class ProductD2Repository implements ProductRepository {
         };
     }
 }
+
+const program = "x7s8Yurmj7Q";
 
 const dataElements = {
     title: "qkvNoqnBdPk",

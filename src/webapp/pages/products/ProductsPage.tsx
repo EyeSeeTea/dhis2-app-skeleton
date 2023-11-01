@@ -15,13 +15,6 @@ import styled from "styled-components";
 import { useProducts } from "./useProducts";
 import { Product, ProductStatus } from "../../../domain/entities/Product";
 
-const dataElements = {
-    title: "qkvNoqnBdPk",
-    image: "m1yv8j2av5I",
-    quantity: "PZ7qxiDlYZ8",
-    status: "AUsNzRGzRuC",
-};
-
 export const ProductsPage: React.FC = React.memo(() => {
     const { compositionRoot, currentUser } = useAppContext();
     const snackbar = useSnackbar();
@@ -66,9 +59,8 @@ export const ProductsPage: React.FC = React.memo(() => {
                     name: "image",
                     text: i18n.t("Image"),
                     sortable: false,
-                    getValue: event => {
-                        const url = `${compositionRoot.api.get?.baseUrl}/api/events/files?dataElementUid=${dataElements.image}&eventUid=${event.id}`;
-                        return <img src={url} alt={event.title} width={100} />;
+                    getValue: product => {
+                        return <img src={product.image} alt={product.title} width={100} />;
                     },
                 },
 
@@ -81,8 +73,8 @@ export const ProductsPage: React.FC = React.memo(() => {
                     name: "status",
                     text: i18n.t("Status"),
                     sortable: false,
-                    getValue: event => {
-                        const status = event.status === 0 ? "inactive" : "active";
+                    getValue: product => {
+                        const status = product.status === 0 ? "inactive" : "active";
 
                         return (
                             <StatusContainer status={status}>
@@ -111,7 +103,7 @@ export const ProductsPage: React.FC = React.memo(() => {
                 pageSizeInitialValue: 10,
             },
         }),
-        [compositionRoot.api.get?.baseUrl, updatingQuantity]
+        [updatingQuantity]
     );
 
     const tableProps = useObjectsTable(baseConfig, getProducts);
@@ -137,9 +129,9 @@ export const ProductsPage: React.FC = React.memo(() => {
             compositionRoot.products.save.execute(editedProduct).run(
                 () => {
                     snackbar.success(`Quantity ${editedQuantity} for ${editedProduct.title} saved`);
+                    reload();
                     setEditingProduct(undefined);
                     setEditedQuantity(undefined);
-                    reload();
                 },
                 () => {
                     snackbar.error(
