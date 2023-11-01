@@ -13,6 +13,7 @@ import SystemUpdateAltIcon from "@material-ui/icons/SystemUpdateAlt";
 import { TextField, Typography } from "@material-ui/core";
 import styled from "styled-components";
 import { useProducts } from "./useProducts";
+import { Product, ProductStatus } from "../../../domain/entities/Product";
 
 const dataElements = {
     title: "qkvNoqnBdPk",
@@ -21,24 +22,12 @@ const dataElements = {
     status: "AUsNzRGzRuC",
 };
 
-interface ProgramEvent {
-    id: string;
-    title: string;
-    image: string;
-    quantity: number;
-    status: number;
-}
-
-type ProductStatus = "active" | "inactive";
-
 export const ProductsPage: React.FC = React.memo(() => {
     const { compositionRoot, currentUser } = useAppContext();
     const snackbar = useSnackbar();
 
     const [showEditQuantityDialog, setShowEditQuantityDialog] = useState(false);
-    const [editingProgramEvent, setEditingProgramEvent] = useState<ProgramEvent | undefined>(
-        undefined
-    );
+    const [editingProgramEvent, setEditingProgramEvent] = useState<Product | undefined>(undefined);
     const [editingEventId, setEditingEventId] = useState<string | undefined>(undefined);
     const [editedQuantity, setEditedQuantity] = useState<string | undefined>(undefined);
     const [quantityError, setQuantityError] = useState<string | undefined>(undefined);
@@ -53,22 +42,23 @@ export const ProductsPage: React.FC = React.memo(() => {
                     return;
                 }
 
-                const product = await getProduct(id);
-
-                if (product) {
-                    setEditingEventId(product.id);
-                    setEditingProgramEvent(product);
-                    setEditedQuantity(product.quantity.toString() || "");
-                    setShowEditQuantityDialog(true);
-                } else {
-                    snackbar.error(`Event with id ${id} not found`);
-                }
+                getProduct(id).run(
+                    product => {
+                        setEditingEventId(product.id);
+                        setEditingProgramEvent(product);
+                        setEditedQuantity(product.quantity.toString() || "");
+                        setShowEditQuantityDialog(true);
+                    },
+                    error => {
+                        snackbar.error(error.message);
+                    }
+                );
             }
         },
         [currentUser, getProduct, snackbar]
     );
 
-    const baseConfig: TableConfig<ProgramEvent> = useMemo(
+    const baseConfig: TableConfig<Product> = useMemo(
         () => ({
             columns: [
                 {
@@ -144,7 +134,7 @@ export const ProductsPage: React.FC = React.memo(() => {
         if (editingProgramEvent && api) {
             const quantity = +(editedQuantity || "0");
 
-            const editedEvent: ProgramEvent = {
+            const editedEvent: Product = {
                 ...editingProgramEvent,
                 quantity,
                 status: quantity === 0 ? 0 : 1,
@@ -218,7 +208,7 @@ export const ProductsPage: React.FC = React.memo(() => {
         <Container>
             <Typography variant="h4">{i18n.t("Products")}</Typography>
 
-            <ObjectsList<ProgramEvent>
+            <ObjectsList<Product>
                 {...tableProps}
                 columns={tableProps.columns}
                 onChangeSearch={undefined}
