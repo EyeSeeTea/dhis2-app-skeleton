@@ -128,50 +128,25 @@ export const ProductsPage: React.FC = React.memo(() => {
         if (editingProduct && api) {
             const quantity = +(editedQuantity || "0");
 
-            const editedEvent: Product = {
+            const editedProduct: Product = {
                 ...editingProduct,
                 quantity,
                 status: quantity === 0 ? 0 : 1,
             };
 
-            const data = await api?.events
-                .getAll({
-                    fields: { $all: true },
-                    program: "x7s8Yurmj7Q",
-                    event: editingProduct.id,
-                })
-                .getData();
-
-            const editingD2Event = data.events[0];
-
-            if (!editingD2Event) return;
-
-            const d2Event = {
-                ...editingD2Event,
-                dataValues: editingD2Event?.dataValues.map(dv => {
-                    if (dv.dataElement === dataElements.quantity) {
-                        return { ...dv, value: editedEvent.quantity };
-                    } else if (dv.dataElement === dataElements.status) {
-                        return { ...dv, value: editedEvent.status };
-                    } else {
-                        return dv;
-                    }
-                }),
-            };
-
-            const response = await api.events.post({}, { events: [d2Event] }).getData();
-
-            if (response.status === "OK") {
-                snackbar.success(`Quantity ${editedQuantity} for ${editedEvent.title} saved`);
-            } else {
-                snackbar.error(
-                    `An error has ocurred saving quantity ${editedQuantity} for ${editedEvent.title}`
-                );
-            }
-
-            setEditingProduct(undefined);
-            setEditedQuantity(undefined);
-            reload();
+            compositionRoot.products.save.execute(editedProduct).run(
+                () => {
+                    snackbar.success(`Quantity ${editedQuantity} for ${editedProduct.title} saved`);
+                    setEditingProduct(undefined);
+                    setEditedQuantity(undefined);
+                    reload();
+                },
+                () => {
+                    snackbar.error(
+                        `An error has ocurred saving quantity ${editedQuantity} for ${editedProduct.title}`
+                    );
+                }
+            );
         }
     }
 

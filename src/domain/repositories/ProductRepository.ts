@@ -8,5 +8,8 @@ export interface ProductRepository {
         paging: TablePagination,
         sorting: TableSorting<Product>
     ): FutureData<PaginatedReponse<Product>>;
+
     getProduct(Id: Id): FutureData<Product>;
+
+    save(product: Product): FutureData<void>;
 }

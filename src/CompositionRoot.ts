@@ -8,6 +8,7 @@ import { UserRepository } from "./domain/repositories/UserRepository";
 import { GetCurrentUserUseCase } from "./domain/usecases/GetCurrentUserUseCase";
 import { GetProductByIdUseCase } from "./domain/usecases/GetProductByIdUseCase";
 import { GetProductsUseCase } from "./domain/usecases/GetProductsUseCase";
+import { SaveProductUseCase } from "./domain/usecases/SaveProductUseCase";
 import { D2Api } from "./types/d2-api";
 
 export type CompositionRoot = ReturnType<typeof getCompositionRoot>;
@@ -28,6 +29,7 @@ function getCompositionRoot(repositories: Repositories, api?: D2Api) {
         products: {
             getAll: new GetProductsUseCase(repositories.productRepository),
             getById: new GetProductByIdUseCase(repositories.productRepository),
+            save: new SaveProductUseCase(repositories.productRepository),
         },
     };
 }

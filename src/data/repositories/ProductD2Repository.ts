@@ -1,14 +1,16 @@
+import { EventStatus } from "@eyeseetea/d2-api";
 import { Product } from "../../domain/entities/Product";
 import {
     PaginatedReponse,
     TablePagination,
     TableSorting,
 } from "../../domain/entities/TablePagination";
-import { User } from "../../domain/entities/User";
 import { Future } from "../../domain/entities/generic/Future";
 import { ProductRepository } from "../../domain/repositories/ProductRepository";
 import { D2Api } from "../../types/d2-api";
 import { apiToFuture, FutureData } from "../api-futures";
+
+const program = "x7s8Yurmj7Q";
 
 export class ProductD2Repository implements ProductRepository {
     constructor(private api: D2Api) {}
@@ -34,29 +36,71 @@ export class ProductD2Repository implements ProductRepository {
             };
         });
     }
+
     getProduct(id: string): FutureData<Product> {
+        return this.getEvent(id).map(event => this.buildProduct(event));
+    }
+
+    save(product: Product): FutureData<void> {
+        return this.getEvent(product.id).flatMap(event => {
+            if (event) {
+                const editedEvent = {
+                    ...event,
+                    dataValues: event.dataValues.map(dv => {
+                        if (dv.dataElement === dataElements.quantity) {
+                            return { ...dv, value: product.quantity.toString() };
+                        } else if (dv.dataElement === dataElements.status) {
+                            return { ...dv, value: product.status.toString() };
+                        } else {
+                            return dv;
+                        }
+                    }),
+                };
+
+                return apiToFuture(this.api.events.post({}, { events: [editedEvent] })).map(
+                    postResponse => {
+                        if (postResponse.status === "OK") {
+                            Future.success(undefined);
+                        } else {
+                            Future.error(`An error has ocurred saving product`);
+                        }
+                    }
+                );
+            } else {
+                return Future.error(new Error(`Product not found by id ${product.id}`));
+            }
+        });
+    }
+
+    private getEvent(eventId: string): FutureData<Event> {
         return apiToFuture(
             this.api.events.getAll({
                 fields: eventsFields,
-                program: "x7s8Yurmj7Q",
-                event: id,
+                program: program,
+                event: eventId,
             })
         ).flatMap(response => {
             const event = response.events[0];
 
             if (event) {
-                return Future.success(this.buildProduct(event));
+                return Future.success(event);
             } else {
-                return Future.error(new Error(`Product not found by id ${id}`));
+                return Future.error(new Error(`Product not found by id ${eventId}`));
             }
         });
     }
 
-    buildProduct(event: Event): Product {
+    private buildProduct(event: Event): Product {
         return {
             id: event.event,
-            title: event.dataValues.find(dv => dv.dataElement === dataElements.title)?.value || "",
-            image: event.dataValues.find(dv => dv.dataElement === dataElements.image)?.value || "",
+            title:
+                event.dataValues
+                    .find(dv => dv.dataElement === dataElements.title)
+                    ?.value.toString() || "",
+            image:
+                event.dataValues
+                    .find(dv => dv.dataElement === dataElements.image)
+                    ?.value.toString() || "",
             quantity: +(
                 event.dataValues.find(dv => dv.dataElement === dataElements.quantity)?.value || 0
             ),
@@ -76,17 +120,30 @@ const dataElements = {
 
 const eventsFields = {
     event: true,
-    dataValues: { dataElement: true, value: true },
+    orgUnit: true,
+    program: true,
+    status: true,
     eventDate: true,
+    programStage: true,
+    dataValues: { dataElement: true, value: true },
 } as const;
 
 export interface Event {
     event: string;
-    dataValues: DataValue[];
+    orgUnit: string;
+    program: string;
+    status: EventStatus;
     eventDate: string;
+    attributeOptionCombo?: string;
+    trackedEntityInstance?: string;
+    programStage?: string;
+    dataValues: Array<{
+        dataElement: string;
+        value: string | number | boolean;
+    }>;
 }
 
 export interface DataValue {
     dataElement: string;
-    value: string;
+    value: string | number | boolean;
 }

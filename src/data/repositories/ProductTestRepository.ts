@@ -21,4 +21,8 @@ export class ProductTestRepository implements ProductRepository {
     getProduct(_Id: string): FutureData<Product> {
         return Future.error(new Error("Product not found"));
     }
+
+    save(_product: Product): FutureData<void> {
+        return Future.success(undefined);
+    }
 }
