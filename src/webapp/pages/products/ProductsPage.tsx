@@ -43,7 +43,7 @@ export const ProductsPage: React.FC = React.memo(() => {
     const [editedQuantity, setEditedQuantity] = useState<string | undefined>(undefined);
     const [quantityError, setQuantityError] = useState<string | undefined>(undefined);
 
-    const { getRows, reload } = useProducts();
+    const { getProducts, getProduct, reload } = useProducts();
 
     const updatingQuantity = useCallback(
         async (id: string) => {
@@ -53,32 +53,19 @@ export const ProductsPage: React.FC = React.memo(() => {
                     return;
                 }
 
-                const api = compositionRoot.api.get;
+                const product = await getProduct(id);
 
-                const data = await api?.events
-                    .getAll({
-                        fields: eventsFields,
-                        program: "x7s8Yurmj7Q",
-                        event: id,
-                    })
-                    .getData();
-
-                const event = data?.events[0];
-
-                if (event) {
-                    const events = data?.events.map(buildProgramEvent);
-                    const event = events[0];
-
-                    setEditingEventId(data?.events[0]?.event);
-                    setEditingProgramEvent(event);
-                    setEditedQuantity(event?.quantity.toString() || "");
+                if (product) {
+                    setEditingEventId(product.id);
+                    setEditingProgramEvent(product);
+                    setEditedQuantity(product.quantity.toString() || "");
                     setShowEditQuantityDialog(true);
                 } else {
                     snackbar.error(`Event with id ${id} not found`);
                 }
             }
         },
-        [compositionRoot.api.get, currentUser, snackbar]
+        [currentUser, getProduct, snackbar]
     );
 
     const baseConfig: TableConfig<ProgramEvent> = useMemo(
@@ -141,7 +128,7 @@ export const ProductsPage: React.FC = React.memo(() => {
         [compositionRoot.api.get?.baseUrl, updatingQuantity]
     );
 
-    const tableProps = useObjectsTable(baseConfig, getRows);
+    const tableProps = useObjectsTable(baseConfig, getProducts);
 
     function cancelEditQuantity(): void {
         setShowEditQuantityDialog(false);
@@ -260,24 +247,6 @@ export const ProductsPage: React.FC = React.memo(() => {
     );
 });
 
-function buildProgramEvent(event: Event): ProgramEvent {
-    return {
-        id: event.event,
-        title: event.dataValues.find(dv => dv.dataElement === dataElements.title)?.value || "",
-        image: event.dataValues.find(dv => dv.dataElement === dataElements.image)?.value || "",
-        quantity: +(
-            event.dataValues.find(dv => dv.dataElement === dataElements.quantity)?.value || 0
-        ),
-        status: +(event.dataValues.find(dv => dv.dataElement === dataElements.status)?.value || 0),
-    };
-}
-
-const eventsFields = {
-    event: true,
-    dataValues: { dataElement: true, value: true },
-    eventDate: true,
-} as const;
-
 const Container = styled.div`
     padding: 32px;
 `;
@@ -292,14 +261,3 @@ const StatusContainer = styled.div<{ status: ProductStatus }>`
     border-radius: 20px;
     width: 100px;
 `;
-
-export interface Event {
-    event: string;
-    dataValues: DataValue[];
-    eventDate: string;
-}
-
-export interface DataValue {
-    dataElement: string;
-    value: string;
-}

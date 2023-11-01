@@ -1,54 +1,73 @@
 import { TablePagination, TableSorting } from "../../../domain/entities/TablePagination";
 import { useAppContext } from "../../contexts/app-context";
 import { useReload } from "../../hooks/use-reload";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 export function useProducts() {
     const { compositionRoot } = useAppContext();
     const [reloadKey, reload] = useReload();
 
-    const getRows = useMemo(
-        () =>
-            async (
-                _search: string,
-                paging: TablePagination,
-                sorting: TableSorting<ProgramEvent>
-            ) => {
-                const api = compositionRoot.api.get;
+    const getProducts = useMemo(
+        () => async (_search: string, paging: TablePagination, sorting: TableSorting<Product>) => {
+            const api = compositionRoot.api.get;
 
-                const data = await api?.events
-                    .get({
-                        fields: eventsFields,
-                        program: "x7s8Yurmj7Q",
-                        page: paging.page,
-                        pageSize: paging.pageSize,
-                        order: `${sorting.field}:${sorting.order}`,
-                    })
-                    .getData();
+            const data = await api?.events
+                .get({
+                    fields: eventsFields,
+                    program: "x7s8Yurmj7Q",
+                    page: paging.page,
+                    pageSize: paging.pageSize,
+                    order: `${sorting.field}:${sorting.order}`,
+                })
+                .getData();
 
-                const events = data?.events.map(buildProgramEvent);
+            const events = data?.events.map(buildProgramEvent);
 
-                const emptyPager = {
-                    page: 1,
-                    pageCount: 1,
-                    total: 0,
-                    pageSize: 10,
-                };
+            const emptyPager = {
+                page: 1,
+                pageCount: 1,
+                total: 0,
+                pageSize: 10,
+            };
 
-                console.debug("Reloading", reloadKey);
+            console.debug("Reloading", reloadKey);
 
-                return {
-                    pager: data?.pager || emptyPager,
-                    objects: events || [],
-                };
-            },
+            return {
+                pager: data?.pager || emptyPager,
+                objects: events || [],
+            };
+        },
         [compositionRoot.api.get, reloadKey]
     );
 
-    return { getRows, reload };
+    const getProduct = useCallback(
+        async (id: string) => {
+            const api = compositionRoot.api.get;
+
+            const data = await api?.events
+                .getAll({
+                    fields: eventsFields,
+                    program: "x7s8Yurmj7Q",
+                    event: id,
+                })
+                .getData();
+
+            const event = data?.events[0];
+
+            if (event) {
+                const events = data?.events.map(buildProgramEvent);
+                return events[0];
+            } else {
+                return undefined;
+            }
+        },
+        [compositionRoot.api.get]
+    );
+
+    return { getProducts, getProduct, reload };
 }
 
-function buildProgramEvent(event: Event): ProgramEvent {
+function buildProgramEvent(event: Event): Product {
     return {
         id: event.event,
         title: event.dataValues.find(dv => dv.dataElement === dataElements.title)?.value || "",
@@ -67,7 +86,7 @@ const dataElements = {
     status: "AUsNzRGzRuC",
 };
 
-export interface ProgramEvent {
+export interface Product {
     id: string;
     title: string;
     image: string;
