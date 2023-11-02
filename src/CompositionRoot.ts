@@ -2,13 +2,12 @@ import { ProductD2Repository } from "./data/repositories/ProductD2Repository";
 import { ProductTestRepository } from "./data/repositories/ProductTestRepository";
 import { UserD2Repository } from "./data/repositories/UserD2Repository";
 import { UserTestRepository } from "./data/repositories/UserTestRepository";
-import { Future } from "./domain/entities/generic/Future";
 import { ProductRepository } from "./domain/repositories/ProductRepository";
 import { UserRepository } from "./domain/repositories/UserRepository";
 import { GetCurrentUserUseCase } from "./domain/usecases/GetCurrentUserUseCase";
 import { GetProductByIdUseCase } from "./domain/usecases/GetProductByIdUseCase";
 import { GetProductsUseCase } from "./domain/usecases/GetProductsUseCase";
-import { SaveProductUseCase } from "./domain/usecases/SaveProductUseCase";
+import { UpdateProductUseCase } from "./domain/usecases/UpdateProductUseCase";
 import { D2Api } from "./types/d2-api";
 
 export type CompositionRoot = ReturnType<typeof getCompositionRoot>;
@@ -29,7 +28,7 @@ function getCompositionRoot(repositories: Repositories, api?: D2Api) {
         products: {
             getAll: new GetProductsUseCase(repositories.productRepository),
             getById: new GetProductByIdUseCase(repositories.productRepository),
-            save: new SaveProductUseCase(repositories.productRepository),
+            update: new UpdateProductUseCase(repositories.productRepository),
         },
     };
 }

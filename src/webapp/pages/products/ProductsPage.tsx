@@ -6,8 +6,7 @@ import {
     useSnackbar,
 } from "@eyeseetea/d2-ui-components";
 
-import React, { ChangeEvent, useCallback, useMemo, useState } from "react";
-import { useAppContext } from "../../contexts/app-context";
+import React, { ChangeEvent, useEffect, useMemo } from "react";
 import i18n from "../../../utils/i18n";
 import SystemUpdateAltIcon from "@material-ui/icons/SystemUpdateAlt";
 import { TextField, Typography } from "@material-ui/core";
@@ -16,36 +15,27 @@ import { useProducts } from "./useProducts";
 import { Product, ProductStatus } from "../../../domain/entities/Product";
 
 export const ProductsPage: React.FC = React.memo(() => {
-    const { compositionRoot, currentUser } = useAppContext();
     const snackbar = useSnackbar();
 
-    const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
-    const [editedQuantity, setEditedQuantity] = useState<string | undefined>(undefined);
-    const [quantityError, setQuantityError] = useState<string | undefined>(undefined);
+    const {
+        getProducts,
+        globalMessage,
+        currentProduct,
+        updateProductQuantity,
+        cancelEditQuantity,
+        onChangeQuantity,
+        saveEditQuantity,
+    } = useProducts();
 
-    const { getProducts, getProduct, reload } = useProducts();
+    useEffect(() => {
+        if (!globalMessage) return;
 
-    const updatingQuantity = useCallback(
-        async (id: string) => {
-            if (id) {
-                if (!currentUser.isAdmin()) {
-                    snackbar.error(i18n.t("Only admin users can edit quantity od a product"));
-                    return;
-                }
-
-                getProduct(id).run(
-                    product => {
-                        setEditingProduct(product);
-                        setEditedQuantity(product.quantity.toString() || "");
-                    },
-                    error => {
-                        snackbar.error(error.message);
-                    }
-                );
-            }
-        },
-        [currentUser, getProduct, snackbar]
-    );
+        if (globalMessage?.type === "error") {
+            snackbar.error(globalMessage.text);
+        } else {
+            snackbar.success(globalMessage?.text);
+        }
+    }, [globalMessage, snackbar]);
 
     const baseConfig: TableConfig<Product> = useMemo(
         () => ({
@@ -90,7 +80,7 @@ export const ProductsPage: React.FC = React.memo(() => {
                     text: i18n.t("Update Quantity"),
                     icon: <SystemUpdateAltIcon />,
                     onClick: async (selectedIds: string[]) => {
-                        updatingQuantity(selectedIds[0] || "");
+                        updateProductQuantity(selectedIds[0] || "");
                     },
                 },
             ],
@@ -103,64 +93,15 @@ export const ProductsPage: React.FC = React.memo(() => {
                 pageSizeInitialValue: 10,
             },
         }),
-        [updatingQuantity]
+        [updateProductQuantity]
     );
 
     const tableProps = useObjectsTable(baseConfig, getProducts);
 
-    function cancelEditQuantity(): void {
-        setEditedQuantity(undefined);
-        setEditingProduct(undefined);
-        setQuantityError(undefined);
-    }
-
-    async function saveEditQuantity(): Promise<void> {
-        const api = compositionRoot.api.get;
-
-        if (editingProduct && api) {
-            const quantity = +(editedQuantity || "0");
-
-            const editedProduct: Product = {
-                ...editingProduct,
-                quantity,
-                status: quantity === 0 ? 0 : 1,
-            };
-
-            compositionRoot.products.save.execute(editedProduct).run(
-                () => {
-                    snackbar.success(`Quantity ${editedQuantity} for ${editedProduct.title} saved`);
-                    reload();
-                    setEditingProduct(undefined);
-                    setEditedQuantity(undefined);
-                },
-                () => {
-                    snackbar.error(
-                        `An error has ocurred saving quantity ${editedQuantity} for ${editedProduct.title}`
-                    );
-                }
-            );
-        }
-    }
-
     function handleChangeQuantity(
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ): void {
-        const isValidNumber = !isNaN(+event.target.value);
-
-        if (!isValidNumber) {
-            setQuantityError("Only numbers are allowed");
-            setEditedQuantity(event.target.value);
-        } else {
-            const value = Number(event.target.value);
-
-            if (value < 0) {
-                setQuantityError("Only positive numbers are allowed");
-            } else {
-                setQuantityError(undefined);
-            }
-
-            setEditedQuantity(event.target.value);
-        }
+        onChangeQuantity(event.target.value);
     }
 
     return (
@@ -172,26 +113,28 @@ export const ProductsPage: React.FC = React.memo(() => {
                 columns={tableProps.columns}
                 onChangeSearch={undefined}
             />
-            <ConfirmationDialog
-                isOpen={editingProduct !== undefined}
-                title={i18n.t("Update Quantity")}
-                onCancel={cancelEditQuantity}
-                cancelText={i18n.t("Cancel")}
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                onSave={saveEditQuantity}
-                saveText={i18n.t("Save")}
-                maxWidth="xs"
-                fullWidth
-                disableSave={quantityError !== undefined}
-            >
-                <TextField
-                    label={i18n.t("Quantity")}
-                    value={editedQuantity}
-                    onChange={handleChangeQuantity}
-                    error={quantityError !== undefined}
-                    helperText={quantityError}
-                />
-            </ConfirmationDialog>
+            {currentProduct !== undefined && (
+                <ConfirmationDialog
+                    isOpen={true}
+                    title={i18n.t("Update Quantity")}
+                    onCancel={cancelEditQuantity}
+                    cancelText={i18n.t("Cancel")}
+                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                    onSave={saveEditQuantity}
+                    saveText={i18n.t("Save")}
+                    maxWidth="xs"
+                    fullWidth
+                    disableSave={currentProduct.error !== undefined}
+                >
+                    <TextField
+                        label={i18n.t("Quantity")}
+                        value={currentProduct.quantity}
+                        onChange={handleChangeQuantity}
+                        error={currentProduct.error !== undefined}
+                        helperText={currentProduct.error}
+                    />
+                </ConfirmationDialog>
+            )}
         </Container>
     );
 });
