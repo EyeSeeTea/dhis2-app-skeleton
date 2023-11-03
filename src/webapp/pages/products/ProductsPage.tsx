@@ -19,6 +19,7 @@ export const ProductsPage: React.FC = React.memo(() => {
 
     const {
         getProducts,
+        pagination,
         globalMessage,
         currentProduct,
         updateProductQuantity,
@@ -88,11 +89,11 @@ export const ProductsPage: React.FC = React.memo(() => {
                 order: "asc" as const,
             },
             paginationOptions: {
-                pageSizeOptions: [10, 20, 50],
-                pageSizeInitialValue: 10,
+                pageSizeOptions: pagination.pageSizeOptions,
+                pageSizeInitialValue: pagination.pageSizeInitialValue,
             },
         }),
-        [updateProductQuantity]
+        [pagination, updateProductQuantity]
     );
 
     const tableProps = useObjectsTable(baseConfig, getProducts);

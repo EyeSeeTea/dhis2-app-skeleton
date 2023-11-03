@@ -18,6 +18,11 @@ interface GlobalMessage {
     type: "success" | "error";
 }
 
+const pagination = {
+    pageSizeOptions: [10, 20, 50],
+    pageSizeInitialValue: 10,
+};
+
 export function useProducts() {
     const { compositionRoot, currentUser } = useAppContext();
     const [reloadKey, reload] = useReload();
@@ -113,6 +118,7 @@ export function useProducts() {
 
     return {
         getProducts,
+        pagination,
         globalMessage,
         currentProduct,
         updateProductQuantity,
