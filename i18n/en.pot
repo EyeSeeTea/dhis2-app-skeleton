@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2023-10-10T05:56:17.371Z\n"
-"PO-Revision-Date: 2023-10-10T05:56:17.371Z\n"
+"POT-Creation-Date: 2023-11-03T14:20:46.033Z\n"
+"PO-Revision-Date: 2023-11-03T14:20:46.033Z\n"
 
 msgid "Add"
 msgstr ""
@@ -24,9 +24,6 @@ msgid "Hello {{name}}"
 msgstr ""
 
 msgid "Detail page"
-msgstr ""
-
-msgid "Only admin users can edit quantity od a product"
 msgstr ""
 
 msgid "Title"

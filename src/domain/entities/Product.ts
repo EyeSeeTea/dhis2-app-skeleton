@@ -5,7 +5,7 @@ import { Entity, EntityData } from "./generic/Entity";
 import { ValidationError, ValidationErrorKey } from "./generic/Errors";
 import { validateRequired } from "./generic/validations";
 
-export interface ProductData extends EntityData {
+interface ProductData extends EntityData {
     id: Id;
     title: string;
     image: string;
