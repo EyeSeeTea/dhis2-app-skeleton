@@ -1,5 +1,7 @@
 import { Product } from "../../../domain/entities/Product";
+import { Quantity } from "../../../domain/entities/Quantity";
 import { TablePagination, TableSorting } from "../../../domain/entities/TablePagination";
+import { validationErrorMessages } from "../../../domain/entities/generic/Errors";
 import { useAppContext } from "../../contexts/app-context";
 import { useReload } from "../../hooks/use-reload";
 import { useCallback, useMemo, useState } from "react";
@@ -7,7 +9,6 @@ import { useCallback, useMemo, useState } from "react";
 interface CurrentProduct {
     id: string;
     title: string;
-    image: string;
     quantity: string;
     error?: string;
 }
@@ -48,8 +49,7 @@ export function useProducts() {
                         setCurrentProduct({
                             id,
                             title: product.title,
-                            image: product.image,
-                            quantity: product.quantity.toString(),
+                            quantity: product.quantity.value.toString(),
                         });
                     },
                     error => {
@@ -68,57 +68,46 @@ export function useProducts() {
     function onChangeQuantity(quantity: string): void {
         if (!currentProduct) return;
 
-        const isValidNumber = !isNaN(+quantity);
-
-        if (!isValidNumber) {
-            setCurrentProduct({
-                ...currentProduct,
-                quantity: quantity,
-                error: "Only numbers are allowed",
-            });
-        } else {
-            const value = Number(quantity);
-
-            if (value < 0) {
+        Quantity.create(quantity).match({
+            error: errors => {
                 setCurrentProduct({
                     ...currentProduct,
                     quantity: quantity,
-                    error: "Only positive numbers are allowed",
+                    error: errors.map(error => validationErrorMessages[error]()).join("\n"),
                 });
-            } else {
-                setCurrentProduct({ ...currentProduct, quantity: quantity, error: undefined });
-            }
-        }
+            },
+            success: quantity => {
+                setCurrentProduct({
+                    ...currentProduct,
+                    quantity: quantity.value.toString(),
+                    error: undefined,
+                });
+            },
+        });
     }
 
     async function saveEditQuantity(): Promise<void> {
         const api = compositionRoot.api.get;
 
         if (currentProduct && api) {
-            const quantity = +(currentProduct.quantity || "0");
-
-            const product: Product = {
-                ...currentProduct,
-                quantity,
-                status: quantity === 0 ? 0 : 1,
-            };
-
-            compositionRoot.products.update.execute(currentUser, product).run(
-                () => {
-                    setGlobalMessage({
-                        type: "success",
-                        text: `Quantity ${currentProduct.quantity} for ${currentProduct.title} saved`,
-                    });
-                    reload();
-                    setCurrentProduct(undefined);
-                },
-                () => {
-                    setGlobalMessage({
-                        type: "error",
-                        text: `An error has ocurred saving quantity ${currentProduct.quantity} for ${currentProduct.title}`,
-                    });
-                }
-            );
+            compositionRoot.products.update
+                .execute(currentUser, currentProduct.id, currentProduct.quantity)
+                .run(
+                    () => {
+                        setGlobalMessage({
+                            type: "success",
+                            text: `Quantity ${currentProduct.quantity} for ${currentProduct.title} saved`,
+                        });
+                        reload();
+                        setCurrentProduct(undefined);
+                    },
+                    () => {
+                        setGlobalMessage({
+                            type: "error",
+                            text: `An error has ocurred saving quantity ${currentProduct.quantity} for ${currentProduct.title}`,
+                        });
+                    }
+                );
         }
     }
 

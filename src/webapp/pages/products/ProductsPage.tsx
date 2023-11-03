@@ -58,17 +58,16 @@ export const ProductsPage: React.FC = React.memo(() => {
                     name: "quantity",
                     text: i18n.t("Quantity"),
                     sortable: false,
+                    getValue: product => product.quantity.value,
                 },
                 {
                     name: "status",
                     text: i18n.t("Status"),
                     sortable: false,
                     getValue: product => {
-                        const status = product.status === 0 ? "inactive" : "active";
-
                         return (
-                            <StatusContainer status={status}>
-                                <Typography variant="body1">{status}</Typography>
+                            <StatusContainer status={product.status}>
+                                <Typography variant="body1">{product.status}</Typography>
                             </StatusContainer>
                         );
                     },

@@ -46,9 +46,9 @@ export class ProductD2Repository implements ProductRepository {
                     ...event,
                     dataValues: event.dataValues.map(dv => {
                         if (dv.dataElement === dataElements.quantity) {
-                            return { ...dv, value: product.quantity.toString() };
+                            return { ...dv, value: product.quantity.value };
                         } else if (dv.dataElement === dataElements.status) {
-                            return { ...dv, value: product.status.toString() };
+                            return { ...dv, value: product.status === "active" ? 1 : 0 };
                         } else {
                             return dv;
                         }
@@ -89,20 +89,15 @@ export class ProductD2Repository implements ProductRepository {
     }
 
     private buildProduct(event: Event): Product {
-        return {
-            id: event.event,
-            title:
-                event.dataValues
-                    .find(dv => dv.dataElement === dataElements.title)
-                    ?.value.toString() || "",
-            image: `${this.api.baseUrl}/api/events/files?dataElementUid=${dataElements.image}&eventUid=${event.event}`,
-            quantity: +(
-                event.dataValues.find(dv => dv.dataElement === dataElements.quantity)?.value || 0
-            ),
-            status: +(
-                event.dataValues.find(dv => dv.dataElement === dataElements.status)?.value || 0
-            ),
-        };
+        const id = event.event;
+        const title =
+            event.dataValues.find(dv => dv.dataElement === dataElements.title)?.value.toString() ||
+            "";
+        const image = `${this.api.baseUrl}/api/events/files?dataElementUid=${dataElements.image}&eventUid=${event.event}`;
+        const quantity =
+            event.dataValues.find(dv => dv.dataElement === dataElements.quantity)?.value || "0";
+
+        return Product.create(id, title, image, quantity.toString()).get();
     }
 }
 

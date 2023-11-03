@@ -58,6 +58,25 @@ export class Either<Error, Data> {
         });
     }
 
+    get(errorMessage?: string): Data {
+        return this.getOrThrow(errorMessage);
+    }
+
+    getOrThrow(errorMessage?: string): Data {
+        const throwFn = () => {
+            throw Error(
+                errorMessage
+                    ? errorMessage
+                    : "An error has ocurred retrieving value: " + JSON.stringify(this.value)
+            );
+        };
+
+        return this.match({
+            error: () => throwFn(),
+            success: value => value,
+        });
+    }
+
     static error<Error>(error: Error) {
         return new Either<Error, never>({ type: "error", error });
     }
