@@ -5,25 +5,19 @@ import { validationErrorMessages } from "../../../domain/entities/generic/Errors
 import { useAppContext } from "../../contexts/app-context";
 import { useReload } from "../../hooks/use-reload";
 import { useCallback, useMemo, useState } from "react";
-
-interface CurrentProduct {
-    id: string;
-    title: string;
-    quantity: string;
-    error?: string;
-}
-
-interface GlobalMessage {
-    text: string;
-    type: "success" | "error";
-}
+import { CurrentProduct, GlobalMessage, ProductsState } from "./ProductsState";
 
 const pagination = {
     pageSizeOptions: [10, 20, 50],
     pageSizeInitialValue: 10,
 };
 
-export function useProducts() {
+const initialSorting = {
+    field: "title" as const,
+    order: "asc" as const,
+};
+
+export function useProducts(): ProductsState {
     const { compositionRoot, currentUser } = useAppContext();
     const [reloadKey, reload] = useReload();
     const [globalMessage, setGlobalMessage] = useState<GlobalMessage | undefined>(undefined);
@@ -119,6 +113,7 @@ export function useProducts() {
     return {
         getProducts,
         pagination,
+        initialSorting,
         globalMessage,
         currentProduct,
         updateProductQuantity,
