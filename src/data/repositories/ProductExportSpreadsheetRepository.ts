@@ -4,17 +4,13 @@ import ExcelJS from "exceljs";
 
 export class ProductExportSpreadsheetRepository implements ProductExportRepository {
     async export(name: string, products: Product[]): Promise<void> {
+        // Create workbook
         const wb = new ExcelJS.Workbook();
 
-        // add worksheet ProductList
-        const sh = wb.addWorksheet("ProductsList");
-
-        // Add row header
-        sh.addRow(["id", "title", "quantity", "status"]);
-
+        // Get unique products
         let prs: Product[] = [];
         products.forEach(p => {
-            if (prs.some(pr => pr.equals(p))) return; // Skip if repeated product
+            if (prs.some(pr => pr.equals(p))) return;
             prs.push(p);
         });
 
@@ -29,13 +25,32 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             return 0;
         });
 
+        // add worksheet Active Products
+        const sh = wb.addWorksheet("Active Products");
+
+        // Add row header
+        sh.addRow(["Id", "Title", "Quantity", "Status"]);
+
         prs.forEach(p => {
-            // Add product row
-            sh.addRow([p.id, p.title, p.quantity.value, p.status]);
+            if (p.status === "active") {
+                sh.addRow([p.id, p.title, p.quantity.value, p.status]);
+            }
         });
 
-        // Second sheet: Summary
-        const sh2 = wb.addWorksheet("Summary");
+        // add worksheet Inactive Products
+        const sh2 = wb.addWorksheet("Inactive Products");
+
+        // Add row header
+        sh2.addRow(["Id", "Title", "Quantity", "Status"]);
+
+        prs.forEach(p => {
+            if (p.status === "inactive") {
+                sh2.addRow([p.id, p.title, p.quantity.value, p.status]);
+            }
+        });
+
+        // Add sheet Summary
+        const sh3 = wb.addWorksheet("Summary");
 
         let total = 0;
         let act = 0;
@@ -51,10 +66,10 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             }
         });
 
-        sh2.addRow(["# Products", "# Items total", "# Items active", "# Items inactive"]);
-        sh2.addRow([
+        sh3.addRow(["# Products", "# Items total", "# Items active", "# Items inactive"]);
+        sh3.addRow([
             // If a value is zero, render "-" instead
-            products.length > 0 ? products.length : "-",
+            prs.length > 0 ? prs.length : "-",
             total > 0 ? total : "-",
             act > 0 ? act : "-",
             inctv > 0 ? act : "-",
@@ -63,5 +78,3 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         await wb.xlsx.writeFile(name);
     }
 }
-
-console.log("test");
