@@ -25,7 +25,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             return 0;
         });
 
-        // add worksheet Active Products
+        // add worksheet for active products
         const sh = wb.addWorksheet("Active Products");
 
         // Add row header
@@ -37,7 +37,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             }
         });
 
-        // add worksheet Inactive Products
+        // add worksheet for inactive products
         const sh2 = wb.addWorksheet("Inactive Products");
 
         // Add row header
@@ -49,7 +49,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             }
         });
 
-        // Add sheet Summary
+        // Add sheet summary
         const sh3 = wb.addWorksheet("Summary");
 
         let total = 0;
@@ -68,13 +68,14 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
 
         sh3.addRow(["# Products", "# Items total", "# Items active", "# Items inactive"]);
         sh3.addRow([
-            // If a value is zero, render "-" instead
-            prs.length > 0 ? prs.length : "-",
-            total > 0 ? total : "-",
-            act > 0 ? act : "-",
-            inctv > 0 ? act : "-",
+            // If a value is zero, render an empty cell instead
+            prs.length > 0 ? prs.length : undefined,
+            total > 0 ? total : undefined,
+            act > 0 ? act : undefined,
+            inctv > 0 ? act : undefined,
         ]);
 
+        // Write xlsx file
         await wb.xlsx.writeFile(name);
     }
 }
