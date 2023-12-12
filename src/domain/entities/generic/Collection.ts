@@ -218,6 +218,17 @@ export class Collection<T> {
         return _c(output);
     }
 
+    uniqWith(comparator: (value1: T, value2: T) => boolean): Collection<T> {
+        const output: Array<T> = [];
+
+        for (const item of this.xs) {
+            const outputContainsItem = output.some(value => comparator(value, item));
+            if (!outputContainsItem) output.push(item);
+        }
+
+        return _c(output);
+    }
+
     reduce<U>(mapper: (acc: U, value: T) => U, initialAcc: U): U {
         return this.xs.reduce(mapper, initialAcc);
     }

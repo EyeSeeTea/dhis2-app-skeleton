@@ -159,6 +159,14 @@ describe("Collection", () => {
         ).toEqual(["a", "ab", "abc"]);
     });
 
+    test("uniqWith", () => {
+        expect(
+            _(["a", "ab", "b", "c", "abc", "de", "xyz"])
+                .uniqWith((s1, s2) => s1.length === s2.length)
+                .toArray()
+        ).toEqual(["a", "ab", "abc"]);
+    });
+
     test("reduce", () => {
         expect(_([1, 2, 3]).reduce((acc, x) => acc + x, 10)).toEqual(16);
     });
