@@ -75,7 +75,10 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             inctv > 0 ? act : undefined,
         ]);
 
-        // Write xlsx file
-        await wb.xlsx.writeFile(name);
+        this.saveWorkBook(wb, name);
+    }
+
+    protected async saveWorkBook(wb: ExcelJS.Workbook, name: string): Promise<void> {
+        wb.xlsx.writeFile(name);
     }
 }
