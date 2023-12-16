@@ -26,7 +26,11 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         // Create workbook
         const wb = new ExcelJS.Workbook();
 
-        this.createActiveProductsSheet(wb, productsSortedByTitle);
+        const activeProductsSheet = this.createActiveProductsSheet(productsSortedByTitle);
+        const sh = wb.addWorksheet(activeProductsSheet.name);
+
+        sh.addRow(activeProductsSheet.columns);
+        sh.addRows(activeProductsSheet.rows);
 
         this.createInactiveProductsSheet(wb, productsSortedByTitle);
 
@@ -35,10 +39,10 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         this.saveWorkBook(wb, name);
     }
 
-    private createActiveProductsSheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
+    private createActiveProductsSheet(productsSortedByTitle: Product[]): Sheet {
         const activeProducts = productsSortedByTitle.filter(product => product.status === "active");
 
-        const sheet: Sheet = {
+        return {
             name: "Active Products",
             columns: ["Id", "Title", "Quantity", "Status"],
             rows: activeProducts.map(product => ({
@@ -48,24 +52,28 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
                 status: product.status,
             })),
         };
-
-        const sh = wb.addWorksheet(sheet.name);
-
-        sh.addRow(sheet.columns);
-        sh.addRows(sheet.rows);
     }
 
     private createInactiveProductsSheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
-        const sh2 = wb.addWorksheet("Inactive Products");
+        const inactiveProducts = productsSortedByTitle.filter(
+            product => product.status === "inactive"
+        );
 
-        // Add row header
-        sh2.addRow(["Id", "Title", "Quantity", "Status"]);
+        const sheet: Sheet = {
+            name: "Inactive Products",
+            columns: ["Id", "Title", "Quantity", "Status"],
+            rows: inactiveProducts.map(product => ({
+                id: product.id,
+                title: product.title,
+                quantity: product.quantity.value,
+                status: product.status,
+            })),
+        };
 
-        productsSortedByTitle.forEach(p => {
-            if (p.status === "inactive") {
-                sh2.addRow([p.id, p.title, p.quantity.value, p.status]);
-            }
-        });
+        const sh2 = wb.addWorksheet(sheet.name);
+
+        sh2.addRow(sheet.columns);
+        sh2.addRows(sheet.rows);
     }
 
     private createSummarySheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
