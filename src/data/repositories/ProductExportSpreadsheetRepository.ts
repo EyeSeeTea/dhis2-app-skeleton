@@ -13,31 +13,16 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         // Create workbook
         const wb = new ExcelJS.Workbook();
 
-        // add worksheet for active products
-        const sh = wb.addWorksheet("Active Products");
+        this.createActiveProductsSheet(wb, productsSortedByTitle);
 
-        // Add row header
-        sh.addRow(["Id", "Title", "Quantity", "Status"]);
+        this.createInactiveProductsSheet(wb, productsSortedByTitle);
 
-        productsSortedByTitle.forEach(p => {
-            if (p.status === "active") {
-                sh.addRow([p.id, p.title, p.quantity.value, p.status]);
-            }
-        });
+        this.createSummarySheet(wb, productsSortedByTitle);
 
-        // add worksheet for inactive products
-        const sh2 = wb.addWorksheet("Inactive Products");
+        this.saveWorkBook(wb, name);
+    }
 
-        // Add row header
-        sh2.addRow(["Id", "Title", "Quantity", "Status"]);
-
-        productsSortedByTitle.forEach(p => {
-            if (p.status === "inactive") {
-                sh2.addRow([p.id, p.title, p.quantity.value, p.status]);
-            }
-        });
-
-        // Add sheet summary
+    private createSummarySheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
         const sh3 = wb.addWorksheet("Summary");
 
         let total = 0;
@@ -62,8 +47,32 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             act > 0 ? act : undefined,
             inctv > 0 ? act : undefined,
         ]);
+    }
 
-        this.saveWorkBook(wb, name);
+    private createInactiveProductsSheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
+        const sh2 = wb.addWorksheet("Inactive Products");
+
+        // Add row header
+        sh2.addRow(["Id", "Title", "Quantity", "Status"]);
+
+        productsSortedByTitle.forEach(p => {
+            if (p.status === "inactive") {
+                sh2.addRow([p.id, p.title, p.quantity.value, p.status]);
+            }
+        });
+    }
+
+    private createActiveProductsSheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
+        const sh = wb.addWorksheet("Active Products");
+
+        // Add row header
+        sh.addRow(["Id", "Title", "Quantity", "Status"]);
+
+        productsSortedByTitle.forEach(p => {
+            if (p.status === "active") {
+                sh.addRow([p.id, p.title, p.quantity.value, p.status]);
+            }
+        });
     }
 
     protected async saveWorkBook(wb: ExcelJS.Workbook, name: string): Promise<void> {
