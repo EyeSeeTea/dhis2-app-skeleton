@@ -32,7 +32,12 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         sh.addRow(activeProductsSheet.columns);
         sh.addRows(activeProductsSheet.rows);
 
-        this.createInactiveProductsSheet(wb, productsSortedByTitle);
+        const inactiveProductsSheet = this.createInactiveProductsSheet(wb, productsSortedByTitle);
+
+        const sh2 = wb.addWorksheet(inactiveProductsSheet.name);
+
+        sh2.addRow(inactiveProductsSheet.columns);
+        sh2.addRows(inactiveProductsSheet.rows);
 
         this.createSummarySheet(wb, productsSortedByTitle);
 
@@ -54,12 +59,15 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         };
     }
 
-    private createInactiveProductsSheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
+    private createInactiveProductsSheet(
+        wb: ExcelJS.Workbook,
+        productsSortedByTitle: Product[]
+    ): Sheet {
         const inactiveProducts = productsSortedByTitle.filter(
             product => product.status === "inactive"
         );
 
-        const sheet: Sheet = {
+        return {
             name: "Inactive Products",
             columns: ["Id", "Title", "Quantity", "Status"],
             rows: inactiveProducts.map(product => ({
@@ -69,11 +77,6 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
                 status: product.status,
             })),
         };
-
-        const sh2 = wb.addWorksheet(sheet.name);
-
-        sh2.addRow(sheet.columns);
-        sh2.addRows(sheet.rows);
     }
 
     private createSummarySheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
