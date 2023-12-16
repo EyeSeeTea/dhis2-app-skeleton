@@ -1,7 +1,20 @@
-import { Product } from "../../domain/entities/Product";
+import { Product, ProductStatus } from "../../domain/entities/Product";
 import { ProductExportRepository } from "../../domain/entities/ProductExportRepository";
 import ExcelJS from "exceljs";
 import _c from "../../domain/entities/generic/Collection";
+
+type Sheet = {
+    name: string;
+    columns: string[];
+    rows: Row[];
+};
+
+type Row = {
+    id: string;
+    title: string;
+    quantity: number;
+    status: ProductStatus;
+};
 
 export class ProductExportSpreadsheetRepository implements ProductExportRepository {
     async export(name: string, products: Product[]): Promise<void> {
@@ -23,15 +36,25 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
     }
 
     private createActiveProductsSheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
-        const sh = wb.addWorksheet("Active Products");
+        const activeProducts = productsSortedByTitle.filter(product => product.status === "active");
 
-        // Add row header
-        sh.addRow(["Id", "Title", "Quantity", "Status"]);
+        const sheet: Sheet = {
+            name: "Active Products",
+            columns: ["Id", "Title", "Quantity", "Status"],
+            rows: activeProducts.map(product => ({
+                id: product.id,
+                title: product.title,
+                quantity: product.quantity.value,
+                status: product.status,
+            })),
+        };
 
-        productsSortedByTitle.forEach(p => {
-            if (p.status === "active") {
-                sh.addRow([p.id, p.title, p.quantity.value, p.status]);
-            }
+        const sh = wb.addWorksheet(sheet.name);
+
+        sh.addRow(sheet.columns);
+
+        sheet.rows.forEach(row => {
+            sh.addRow(row);
         });
     }
 
