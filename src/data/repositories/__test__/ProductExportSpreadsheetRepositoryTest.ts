@@ -18,7 +18,7 @@ export class ProductExportSpreadsheetRepositoryTest extends ProductExportSpreads
     wb: ExcelJS.Workbook = new ExcelJS.Workbook();
     workBookName = "";
 
-    protected async saveWorkBook(wb: ExcelJS.Workbook, workBookName: string): Promise<void> {
+    protected async saveWorkbook(wb: ExcelJS.Workbook, workBookName: string): Promise<void> {
         this.wb = wb;
         this.workBookName = workBookName;
     }

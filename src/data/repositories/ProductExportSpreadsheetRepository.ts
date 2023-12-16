@@ -42,6 +42,12 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             ],
         };
 
+        const wb = this.buildExcelWorkbook(workbook);
+
+        this.saveWorkbook(wb, workbook.name);
+    }
+
+    private buildExcelWorkbook(workbook: Workbook) {
         const wb = new ExcelJS.Workbook();
 
         workbook.sheets.forEach(sheet => {
@@ -51,7 +57,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             sh.addRows(sheet.rows);
         });
 
-        this.saveWorkBook(wb, name);
+        return wb;
     }
 
     private splitProducts(products: Product[]) {
@@ -99,7 +105,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         };
     }
 
-    protected async saveWorkBook(wb: ExcelJS.Workbook, name: string): Promise<void> {
+    protected async saveWorkbook(wb: ExcelJS.Workbook, name: string): Promise<void> {
         wb.xlsx.writeFile(name);
     }
 }
