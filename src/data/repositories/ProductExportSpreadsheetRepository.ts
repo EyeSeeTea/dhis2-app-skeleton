@@ -23,21 +23,19 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             .sortBy(product => product.title)
             .value();
 
-        // Create workbook
+        const sheets = [
+            this.createActiveProductsSheet(productsSortedByTitle),
+            this.createInactiveProductsSheet(productsSortedByTitle),
+        ];
+
         const wb = new ExcelJS.Workbook();
 
-        const activeProductsSheet = this.createActiveProductsSheet(productsSortedByTitle);
-        const sh = wb.addWorksheet(activeProductsSheet.name);
+        sheets.forEach(sheet => {
+            const sh = wb.addWorksheet(sheet.name);
 
-        sh.addRow(activeProductsSheet.columns);
-        sh.addRows(activeProductsSheet.rows);
-
-        const inactiveProductsSheet = this.createInactiveProductsSheet(wb, productsSortedByTitle);
-
-        const sh2 = wb.addWorksheet(inactiveProductsSheet.name);
-
-        sh2.addRow(inactiveProductsSheet.columns);
-        sh2.addRows(inactiveProductsSheet.rows);
+            sh.addRow(sheet.columns);
+            sh.addRows(sheet.rows);
+        });
 
         this.createSummarySheet(wb, productsSortedByTitle);
 
@@ -59,10 +57,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         };
     }
 
-    private createInactiveProductsSheet(
-        wb: ExcelJS.Workbook,
-        productsSortedByTitle: Product[]
-    ): Sheet {
+    private createInactiveProductsSheet(productsSortedByTitle: Product[]): Sheet {
         const inactiveProducts = productsSortedByTitle.filter(
             product => product.status === "inactive"
         );
