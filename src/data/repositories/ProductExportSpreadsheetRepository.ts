@@ -8,21 +8,10 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         // Create workbook
         const wb = new ExcelJS.Workbook();
 
-        // Get unique products
-        const uniqueProducts = _c(products)
+        const productsSortedByTitle = _c(products)
             .uniqWith((product1, product2) => product1.equals(product2))
+            .sortBy(product => product.title)
             .value();
-
-        // Sort products by title
-        uniqueProducts.sort((a, b) => {
-            if (a.title < b.title) {
-                return -1;
-            }
-            if (a.title > b.title) {
-                return 1;
-            }
-            return 0;
-        });
 
         // add worksheet for active products
         const sh = wb.addWorksheet("Active Products");
@@ -30,7 +19,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         // Add row header
         sh.addRow(["Id", "Title", "Quantity", "Status"]);
 
-        uniqueProducts.forEach(p => {
+        productsSortedByTitle.forEach(p => {
             if (p.status === "active") {
                 sh.addRow([p.id, p.title, p.quantity.value, p.status]);
             }
@@ -42,7 +31,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         // Add row header
         sh2.addRow(["Id", "Title", "Quantity", "Status"]);
 
-        uniqueProducts.forEach(p => {
+        productsSortedByTitle.forEach(p => {
             if (p.status === "inactive") {
                 sh2.addRow([p.id, p.title, p.quantity.value, p.status]);
             }
@@ -55,7 +44,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         let act = 0;
         let inctv = 0;
 
-        uniqueProducts.forEach(p => {
+        productsSortedByTitle.forEach(p => {
             total += p.quantity.value;
             if (p.status === "active") {
                 act += p.quantity.value;
@@ -68,7 +57,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         sh3.addRow(["# Products", "# Items total", "# Items active", "# Items inactive"]);
         sh3.addRow([
             // If a value is zero, render an empty cell instead
-            uniqueProducts.length > 0 ? uniqueProducts.length : undefined,
+            productsSortedByTitle.length > 0 ? productsSortedByTitle.length : undefined,
             total > 0 ? total : undefined,
             act > 0 ? act : undefined,
             inctv > 0 ? act : undefined,
