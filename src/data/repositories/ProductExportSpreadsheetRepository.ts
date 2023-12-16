@@ -35,7 +35,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             sh.addRows(sheet.rows);
         });
 
-        this.createSummarySheet(wb, [...activeProducts, ...inactiveProducts]);
+        this.createSummarySheet(wb, activeProducts, inactiveProducts);
 
         this.saveWorkBook(wb, name);
     }
@@ -67,30 +67,21 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         };
     }
 
-    private createSummarySheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
+    private createSummarySheet(
+        wb: ExcelJS.Workbook,
+        activeProducts: Product[],
+        inactiveProducts: Product[]
+    ) {
+        const products = [...activeProducts, ...inactiveProducts];
         const sh3 = wb.addWorksheet("Summary");
 
-        let total = 0;
-        let act = 0;
-        let inctv = 0;
-
-        productsSortedByTitle.forEach(p => {
-            total += p.quantity.value;
-            if (p.status === "active") {
-                act += p.quantity.value;
-            }
-            if (p.status === "inactive") {
-                inctv += p.quantity.value;
-            }
-        });
+        const totalProducts = products.length;
+        const totalQuantity = sumQuantities(products);
+        const activeQuantity = sumQuantities(activeProducts);
+        const inactiveQuantity = sumQuantities(inactiveProducts);
 
         sh3.addRow(["# Products", "# Items total", "# Items active", "# Items inactive"]);
-        sh3.addRow([
-            numberOrUndefined(productsSortedByTitle.length),
-            numberOrUndefined(total),
-            numberOrUndefined(act),
-            numberOrUndefined(inctv),
-        ]);
+        sh3.addRow({ totalProducts, totalQuantity, activeQuantity, inactiveQuantity });
     }
 
     protected async saveWorkBook(wb: ExcelJS.Workbook, name: string): Promise<void> {
@@ -100,4 +91,12 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
 
 function numberOrUndefined(n: number): Maybe<number> {
     return n === 0 ? undefined : n;
+}
+
+function sumQuantities(products: Product[]): Maybe<number> {
+    return numberOrUndefined(
+        _c(products)
+            .map(product => product.quantity.value)
+            .sum()
+    );
 }
