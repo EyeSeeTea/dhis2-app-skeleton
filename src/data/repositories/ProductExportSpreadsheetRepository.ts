@@ -4,6 +4,11 @@ import ExcelJS from "exceljs";
 import _c from "../../domain/entities/generic/Collection";
 import { Maybe } from "../../utils/ts-utils";
 
+type Workbook = {
+    name: string;
+    sheets: Sheet<ProductRow | SummaryRow>[];
+};
+
 type Sheet<T> = {
     name: string;
     columns: string[];
@@ -28,15 +33,18 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
     async export(name: string, products: Product[]): Promise<void> {
         const { activeProducts, inactiveProducts } = this.splitProducts(products);
 
-        const sheets = [
-            this.createProductsSheet("Active Products", activeProducts),
-            this.createProductsSheet("Inactive Products", inactiveProducts),
-            this.createSummarySheet(activeProducts, inactiveProducts),
-        ];
+        const workbook: Workbook = {
+            name,
+            sheets: [
+                this.createProductsSheet("Active Products", activeProducts),
+                this.createProductsSheet("Inactive Products", inactiveProducts),
+                this.createSummarySheet(activeProducts, inactiveProducts),
+            ],
+        };
 
         const wb = new ExcelJS.Workbook();
 
-        sheets.forEach(sheet => {
+        workbook.sheets.forEach(sheet => {
             const sh = wb.addWorksheet(sheet.name);
 
             sh.addRow(sheet.columns);
