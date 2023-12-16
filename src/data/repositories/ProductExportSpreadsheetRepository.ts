@@ -52,10 +52,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         const sh = wb.addWorksheet(sheet.name);
 
         sh.addRow(sheet.columns);
-
-        sheet.rows.forEach(row => {
-            sh.addRow(row);
-        });
+        sh.addRows(sheet.rows);
     }
 
     private createInactiveProductsSheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
