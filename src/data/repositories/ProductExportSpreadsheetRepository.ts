@@ -22,6 +22,32 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         this.saveWorkBook(wb, name);
     }
 
+    private createActiveProductsSheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
+        const sh = wb.addWorksheet("Active Products");
+
+        // Add row header
+        sh.addRow(["Id", "Title", "Quantity", "Status"]);
+
+        productsSortedByTitle.forEach(p => {
+            if (p.status === "active") {
+                sh.addRow([p.id, p.title, p.quantity.value, p.status]);
+            }
+        });
+    }
+
+    private createInactiveProductsSheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
+        const sh2 = wb.addWorksheet("Inactive Products");
+
+        // Add row header
+        sh2.addRow(["Id", "Title", "Quantity", "Status"]);
+
+        productsSortedByTitle.forEach(p => {
+            if (p.status === "inactive") {
+                sh2.addRow([p.id, p.title, p.quantity.value, p.status]);
+            }
+        });
+    }
+
     private createSummarySheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
         const sh3 = wb.addWorksheet("Summary");
 
@@ -47,32 +73,6 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             act > 0 ? act : undefined,
             inctv > 0 ? act : undefined,
         ]);
-    }
-
-    private createInactiveProductsSheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
-        const sh2 = wb.addWorksheet("Inactive Products");
-
-        // Add row header
-        sh2.addRow(["Id", "Title", "Quantity", "Status"]);
-
-        productsSortedByTitle.forEach(p => {
-            if (p.status === "inactive") {
-                sh2.addRow([p.id, p.title, p.quantity.value, p.status]);
-            }
-        });
-    }
-
-    private createActiveProductsSheet(wb: ExcelJS.Workbook, productsSortedByTitle: Product[]) {
-        const sh = wb.addWorksheet("Active Products");
-
-        // Add row header
-        sh.addRow(["Id", "Title", "Quantity", "Status"]);
-
-        productsSortedByTitle.forEach(p => {
-            if (p.status === "active") {
-                sh.addRow([p.id, p.title, p.quantity.value, p.status]);
-            }
-        });
     }
 
     protected async saveWorkBook(wb: ExcelJS.Workbook, name: string): Promise<void> {
