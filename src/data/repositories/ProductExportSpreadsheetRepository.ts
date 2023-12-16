@@ -23,9 +23,15 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             .sortBy(product => product.title)
             .value();
 
+        const activeProducts = productsSortedByTitle.filter(product => product.status === "active");
+
+        const inactiveProducts = productsSortedByTitle.filter(
+            product => product.status === "inactive"
+        );
+
         const sheets = [
-            this.createActiveProductsSheet(productsSortedByTitle),
-            this.createInactiveProductsSheet(productsSortedByTitle),
+            this.creatProductsSheet("Active Products", activeProducts),
+            this.creatProductsSheet("Inactive Products", inactiveProducts),
         ];
 
         const wb = new ExcelJS.Workbook();
@@ -42,30 +48,11 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         this.saveWorkBook(wb, name);
     }
 
-    private createActiveProductsSheet(productsSortedByTitle: Product[]): Sheet {
-        const activeProducts = productsSortedByTitle.filter(product => product.status === "active");
-
+    private creatProductsSheet(sheetName: string, products: Product[]): Sheet {
         return {
-            name: "Active Products",
+            name: sheetName,
             columns: ["Id", "Title", "Quantity", "Status"],
-            rows: activeProducts.map(product => ({
-                id: product.id,
-                title: product.title,
-                quantity: product.quantity.value,
-                status: product.status,
-            })),
-        };
-    }
-
-    private createInactiveProductsSheet(productsSortedByTitle: Product[]): Sheet {
-        const inactiveProducts = productsSortedByTitle.filter(
-            product => product.status === "inactive"
-        );
-
-        return {
-            name: "Inactive Products",
-            columns: ["Id", "Title", "Quantity", "Status"],
-            rows: inactiveProducts.map(product => ({
+            rows: products.map(product => ({
                 id: product.id,
                 title: product.title,
                 quantity: product.quantity.value,
