@@ -2,6 +2,7 @@ import { Product, ProductStatus } from "../../domain/entities/Product";
 import { ProductExportRepository } from "../../domain/entities/ProductExportRepository";
 import ExcelJS from "exceljs";
 import _c from "../../domain/entities/generic/Collection";
+import { Maybe } from "../../utils/ts-utils";
 
 type Sheet = {
     name: string;
@@ -85,15 +86,18 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
 
         sh3.addRow(["# Products", "# Items total", "# Items active", "# Items inactive"]);
         sh3.addRow([
-            // If a value is zero, render an empty cell instead
-            productsSortedByTitle.length > 0 ? productsSortedByTitle.length : undefined,
-            total > 0 ? total : undefined,
-            act > 0 ? act : undefined,
-            inctv > 0 ? act : undefined,
+            numberOrUndefined(productsSortedByTitle.length),
+            numberOrUndefined(total),
+            numberOrUndefined(act),
+            numberOrUndefined(inctv),
         ]);
     }
 
     protected async saveWorkBook(wb: ExcelJS.Workbook, name: string): Promise<void> {
         wb.xlsx.writeFile(name);
     }
+}
+
+function numberOrUndefined(n: number): Maybe<number> {
+    return n === 0 ? undefined : n;
 }
