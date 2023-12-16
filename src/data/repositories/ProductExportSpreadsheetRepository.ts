@@ -18,16 +18,7 @@ type Row = {
 
 export class ProductExportSpreadsheetRepository implements ProductExportRepository {
     async export(name: string, products: Product[]): Promise<void> {
-        const productsSortedByTitle = _c(products)
-            .uniqWith((product1, product2) => product1.equals(product2))
-            .sortBy(product => product.title)
-            .value();
-
-        const activeProducts = productsSortedByTitle.filter(product => product.status === "active");
-
-        const inactiveProducts = productsSortedByTitle.filter(
-            product => product.status === "inactive"
-        );
+        const { activeProducts, inactiveProducts } = this.splitProducts(products);
 
         const sheets = [
             this.createProductsSheet("Active Products", activeProducts),
@@ -43,9 +34,23 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             sh.addRows(sheet.rows);
         });
 
-        this.createSummarySheet(wb, productsSortedByTitle);
+        this.createSummarySheet(wb, [...activeProducts, ...inactiveProducts]);
 
         this.saveWorkBook(wb, name);
+    }
+
+    private splitProducts(products: Product[]) {
+        const productsSortedByTitle = _c(products)
+            .uniqWith((product1, product2) => product1.equals(product2))
+            .sortBy(product => product.title)
+            .value();
+
+        const activeProducts = productsSortedByTitle.filter(product => product.status === "active");
+
+        const inactiveProducts = productsSortedByTitle.filter(
+            product => product.status === "inactive"
+        );
+        return { activeProducts, inactiveProducts, productsSortedByTitle };
     }
 
     private createProductsSheet(sheetName: string, products: Product[]): Sheet {
