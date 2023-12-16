@@ -30,8 +30,8 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         );
 
         const sheets = [
-            this.creatProductsSheet("Active Products", activeProducts),
-            this.creatProductsSheet("Inactive Products", inactiveProducts),
+            this.createProductsSheet("Active Products", activeProducts),
+            this.createProductsSheet("Inactive Products", inactiveProducts),
         ];
 
         const wb = new ExcelJS.Workbook();
@@ -48,7 +48,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         this.saveWorkBook(wb, name);
     }
 
-    private creatProductsSheet(sheetName: string, products: Product[]): Sheet {
+    private createProductsSheet(sheetName: string, products: Product[]): Sheet {
         return {
             name: sheetName,
             columns: ["Id", "Title", "Quantity", "Status"],
