@@ -1,6 +1,7 @@
 import { Product } from "../../domain/entities/Product";
 import { ProductExportRepository } from "../../domain/entities/ProductExportRepository";
 import ExcelJS from "exceljs";
+import _c from "../../domain/entities/generic/Collection";
 
 export class ProductExportSpreadsheetRepository implements ProductExportRepository {
     async export(name: string, products: Product[]): Promise<void> {
@@ -8,14 +9,12 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         const wb = new ExcelJS.Workbook();
 
         // Get unique products
-        let prs: Product[] = [];
-        products.forEach(p => {
-            if (prs.some(pr => pr.equals(p))) return;
-            prs.push(p);
-        });
+        const uniqueProducts = _c(products)
+            .uniqWith((product1, product2) => product1.equals(product2))
+            .value();
 
         // Sort products by title
-        prs.sort((a, b) => {
+        uniqueProducts.sort((a, b) => {
             if (a.title < b.title) {
                 return -1;
             }
@@ -31,7 +30,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         // Add row header
         sh.addRow(["Id", "Title", "Quantity", "Status"]);
 
-        prs.forEach(p => {
+        uniqueProducts.forEach(p => {
             if (p.status === "active") {
                 sh.addRow([p.id, p.title, p.quantity.value, p.status]);
             }
@@ -43,7 +42,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         // Add row header
         sh2.addRow(["Id", "Title", "Quantity", "Status"]);
 
-        prs.forEach(p => {
+        uniqueProducts.forEach(p => {
             if (p.status === "inactive") {
                 sh2.addRow([p.id, p.title, p.quantity.value, p.status]);
             }
@@ -56,7 +55,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         let act = 0;
         let inctv = 0;
 
-        prs.forEach(p => {
+        uniqueProducts.forEach(p => {
             total += p.quantity.value;
             if (p.status === "active") {
                 act += p.quantity.value;
@@ -69,7 +68,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         sh3.addRow(["# Products", "# Items total", "# Items active", "# Items inactive"]);
         sh3.addRow([
             // If a value is zero, render an empty cell instead
-            prs.length > 0 ? prs.length : undefined,
+            uniqueProducts.length > 0 ? uniqueProducts.length : undefined,
             total > 0 ? total : undefined,
             act > 0 ? act : undefined,
             inctv > 0 ? act : undefined,
