@@ -47,19 +47,6 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         this.saveWorkbook(wb, workbook.name);
     }
 
-    private buildExcelWorkbook(workbook: Workbook) {
-        const wb = new ExcelJS.Workbook();
-
-        workbook.sheets.forEach(sheet => {
-            const sh = wb.addWorksheet(sheet.name);
-
-            sh.addRow(sheet.columns);
-            sh.addRows(sheet.rows);
-        });
-
-        return wb;
-    }
-
     private splitProducts(products: Product[]) {
         const productsSortedByTitle = _c(products)
             .uniqWith((product1, product2) => product1.equals(product2))
@@ -103,6 +90,19 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             columns: ["# Products", "# Items total", "# Items active", "# Items inactive"],
             rows: [{ totalProducts, totalQuantity, activeQuantity, inactiveQuantity }],
         };
+    }
+
+    private buildExcelWorkbook(workbook: Workbook) {
+        const wb = new ExcelJS.Workbook();
+
+        workbook.sheets.forEach(sheet => {
+            const sh = wb.addWorksheet(sheet.name);
+
+            sh.addRow(sheet.columns);
+            sh.addRows(sheet.rows);
+        });
+
+        return wb;
     }
 
     protected async saveWorkbook(wb: ExcelJS.Workbook, name: string): Promise<void> {
