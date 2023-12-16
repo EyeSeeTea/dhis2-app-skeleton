@@ -5,13 +5,13 @@ import _c from "../../domain/entities/generic/Collection";
 
 export class ProductExportSpreadsheetRepository implements ProductExportRepository {
     async export(name: string, products: Product[]): Promise<void> {
-        // Create workbook
-        const wb = new ExcelJS.Workbook();
-
         const productsSortedByTitle = _c(products)
             .uniqWith((product1, product2) => product1.equals(product2))
             .sortBy(product => product.title)
             .value();
+
+        // Create workbook
+        const wb = new ExcelJS.Workbook();
 
         // add worksheet for active products
         const sh = wb.addWorksheet("Active Products");
