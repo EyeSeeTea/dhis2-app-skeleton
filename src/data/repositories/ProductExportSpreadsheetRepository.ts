@@ -4,17 +4,24 @@ import ExcelJS from "exceljs";
 import _c from "../../domain/entities/generic/Collection";
 import { Maybe } from "../../utils/ts-utils";
 
-type Sheet = {
+type Sheet<T> = {
     name: string;
     columns: string[];
-    rows: Row[];
+    rows: T[];
 };
 
-type Row = {
+type ProductRow = {
     id: string;
     title: string;
     quantity: number;
     status: ProductStatus;
+};
+
+type SummaryRow = {
+    totalProducts: Maybe<number>;
+    totalQuantity: Maybe<number>;
+    activeQuantity: Maybe<number>;
+    inactiveQuantity: Maybe<number>;
 };
 
 export class ProductExportSpreadsheetRepository implements ProductExportRepository {
@@ -24,6 +31,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         const sheets = [
             this.createProductsSheet("Active Products", activeProducts),
             this.createProductsSheet("Inactive Products", inactiveProducts),
+            this.createSummarySheet(activeProducts, inactiveProducts),
         ];
 
         const wb = new ExcelJS.Workbook();
@@ -34,8 +42,6 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
             sh.addRow(sheet.columns);
             sh.addRows(sheet.rows);
         });
-
-        this.createSummarySheet(wb, activeProducts, inactiveProducts);
 
         this.saveWorkBook(wb, name);
     }
@@ -54,7 +60,7 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
         return { activeProducts, inactiveProducts, productsSortedByTitle };
     }
 
-    private createProductsSheet(sheetName: string, products: Product[]): Sheet {
+    private createProductsSheet(sheetName: string, products: Product[]): Sheet<ProductRow> {
         return {
             name: sheetName,
             columns: ["Id", "Title", "Quantity", "Status"],
@@ -68,20 +74,21 @@ export class ProductExportSpreadsheetRepository implements ProductExportReposito
     }
 
     private createSummarySheet(
-        wb: ExcelJS.Workbook,
         activeProducts: Product[],
         inactiveProducts: Product[]
-    ) {
+    ): Sheet<SummaryRow> {
         const products = [...activeProducts, ...inactiveProducts];
-        const sh3 = wb.addWorksheet("Summary");
 
         const totalProducts = products.length;
         const totalQuantity = sumQuantities(products);
         const activeQuantity = sumQuantities(activeProducts);
         const inactiveQuantity = sumQuantities(inactiveProducts);
 
-        sh3.addRow(["# Products", "# Items total", "# Items active", "# Items inactive"]);
-        sh3.addRow({ totalProducts, totalQuantity, activeQuantity, inactiveQuantity });
+        return {
+            name: "Summary",
+            columns: ["# Products", "# Items total", "# Items active", "# Items inactive"],
+            rows: [{ totalProducts, totalQuantity, activeQuantity, inactiveQuantity }],
+        };
     }
 
     protected async saveWorkBook(wb: ExcelJS.Workbook, name: string): Promise<void> {
