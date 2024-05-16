@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import { DialogButton } from "@eyeseetea/d2-ui-components";
 import React, { PropsWithChildren } from "react";
 import styled from "styled-components";
-import i18n from "../../../utils/i18n";
+import i18n from "$/utils/i18n";
 
 export const PageHeader: React.FC<PageHeaderProps> = React.memo(props => {
     const { variant = "h5", title, onBackClick, helpText, children } = props;

@@ -10,7 +10,7 @@ import AddIcon from "@material-ui/icons/Add";
 import ViewListIcon from "@material-ui/icons/ViewList";
 import React from "react";
 import styled from "styled-components";
-import i18n from "../../../utils/i18n";
+import i18n from "$/utils/i18n";
 
 export const MenuCard: React.FC<MenuCardProps> = React.memo(
     ({ name, description, addAction, listAction = () => {} }) => {

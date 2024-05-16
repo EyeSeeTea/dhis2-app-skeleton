@@ -1,4 +1,4 @@
-import { getTestCompositionRoot } from "../../../CompositionRoot";
+import { getTestCompositionRoot } from "$/CompositionRoot";
 
 describe("GetCurrentUserUseCase", () => {
     it("returns user", async () => {

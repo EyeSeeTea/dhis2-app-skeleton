@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { PageHeader } from "../page-header/PageHeader";
+import { PageHeader } from "$/webapp/components/page-header/PageHeader";
 import { MenuCard, MenuCardProps } from "./MenuCard";
 
 export const CardGrid: React.FC<CardGridProps> = React.memo(({ title, cards, onBackClick }) => {

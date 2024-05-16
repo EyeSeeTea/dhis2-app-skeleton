@@ -1,6 +1,6 @@
 import { command, run, string, option } from "cmd-ts";
 import path from "path";
-import { D2Api } from "../types/d2-api";
+import { D2Api } from "$/types/d2-api";
 
 function main() {
     const cmd = command({
