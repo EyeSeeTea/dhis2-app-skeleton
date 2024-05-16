@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"$@link:./src":
+  version "0.0.0"
+  uid ""
+
 "@aashutoshrathi/word-wrap@^1.2.3":
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz#bd9154aec9983f77b3a034ecaa015c2e4201f6cf"
@@ -6295,6 +6299,11 @@ eslint-plugin-jsx-a11y@^6.5.1:
     object.entries "^1.1.6"
     object.fromentries "^2.0.6"
     semver "^6.3.0"
+
+eslint-plugin-no-relative-import-paths@^1.5.3:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-no-relative-import-paths/-/eslint-plugin-no-relative-import-paths-1.5.4.tgz#dd83666b13d43dd22156e4cc660f73700843791a"
+  integrity sha512-2smViH7R3682NR6dwgYr8Vm7emqNP1gEjBku6DbvUy3Ef/2Fz+mhwsFjZGSixzWzazMCj4MAgIWTsHELCCDJKA==
 
 eslint-plugin-react-hooks@^4.3.0:
   version "4.6.0"
