@@ -1,8 +1,8 @@
 import { Typography } from "@material-ui/core";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { Card, CardGrid } from "../../components/card-grid/CardGrid";
-import { useAppContext } from "../../contexts/app-context";
+import { Card, CardGrid } from "$/webapp/components/card-grid/CardGrid";
+import { useAppContext } from "$/webapp/contexts/app-context";
 
 export const LandingPage: React.FC = React.memo(() => {
     const history = useHistory();

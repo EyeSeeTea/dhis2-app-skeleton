@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { Struct } from "../Struct";
+import { Struct } from "$/domain/entities/generic/Struct";
 
 class Person extends Struct<{ name: string; age: number }>() {
     description() {

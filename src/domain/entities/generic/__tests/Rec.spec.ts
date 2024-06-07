@@ -1,4 +1,4 @@
-import { Rec } from "../Rec";
+import { Rec } from "$/domain/entities/generic/Rec";
 import { expectTypeOf } from "expect-type";
 
 const rec1 = Rec.from({ x: 1, s: "hello", n: null });

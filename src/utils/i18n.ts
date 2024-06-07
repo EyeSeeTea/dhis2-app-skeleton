@@ -1,5 +1,5 @@
 // @ts-ignore
-import i18n from "../locales";
+import i18n from "$/locales";
 
 function t<Str extends string>(s: Str, namespace?: GetNamespace<Str>): string {
     return i18n.t(s, namespace);

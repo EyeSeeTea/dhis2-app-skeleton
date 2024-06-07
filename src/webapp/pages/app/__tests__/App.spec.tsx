@@ -1,7 +1,7 @@
 import { fireEvent, render } from "@testing-library/react";
 
-import App from "../App";
-import { getTestContext } from "../../../../utils/tests";
+import App from "$/webapp/pages/app/App";
+import { getTestContext } from "$/utils/tests";
 import { Provider } from "@dhis2/app-runtime";
 
 describe("App", () => {

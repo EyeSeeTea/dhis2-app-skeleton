@@ -57,9 +57,13 @@
         "testing-library/no-await-sync-query": "error",
         "testing-library/prefer-screen-queries": "off",
         "testing-library/no-debugging-utils": "off",
-        "testing-library/no-dom-import": "off"
+        "testing-library/no-dom-import": "off",
+        "no-relative-import-paths/no-relative-import-paths": [
+            "error",
+            { "allowSameFolder": true, "rootDir": "src", "prefix": "$" }
+        ]
     },
-    "plugins": ["@typescript-eslint", "react-hooks", "unused-imports"],
+    "plugins": ["@typescript-eslint", "react-hooks", "no-relative-import-paths", "unused-imports"],
     "env": {},
     "parserOptions": {
         "project": "./tsconfig.json"

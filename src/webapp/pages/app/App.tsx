@@ -5,11 +5,11 @@ import { MuiThemeProvider } from "@material-ui/core/styles";
 //@ts-ignore
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
-import { appConfig } from "../../../app-config";
-import { CompositionRoot } from "../../../CompositionRoot";
-import Share from "../../components/share/Share";
-import { AppContext, AppContextState } from "../../contexts/app-context";
-import { Router } from "../Router";
+import { appConfig } from "$/app-config";
+import { CompositionRoot } from "$/CompositionRoot";
+import Share from "$/webapp/components/share/Share";
+import { AppContext, AppContextState } from "$/webapp/contexts/app-context";
+import { Router } from "$/webapp/pages/Router";
 import "./App.css";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
