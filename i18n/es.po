@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2023-09-18T10:19:02.458Z\n"
+"POT-Creation-Date: 2024-06-26T10:58:19.149Z\n"
 "PO-Revision-Date: 2018-10-25T09:02:35.143Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -25,3 +25,6 @@ msgstr "Hola {{name}}"
 
 msgid "Detail page"
 msgstr ""
+
+msgid "Section"
+msgstr "Sección"
