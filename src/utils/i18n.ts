@@ -1,8 +1,9 @@
 // @ts-ignore
 import i18n from "$/locales";
+import { appConfig } from "$/app-config";
 
 function t<Str extends string>(s: Str, namespace?: GetNamespace<Str>): string {
-    return i18n.t(s, namespace);
+    return i18n.t(s, { ...namespace, ns: appConfig.appKey });
 }
 
 interface Options {
