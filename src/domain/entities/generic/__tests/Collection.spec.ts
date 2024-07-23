@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import _, { Collection } from "../Collection";
+import _, { Collection } from "$/domain/entities/generic/Collection";
 import { expectTypeOf } from "expect-type";
 
 describe("Collection", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { HashMap } from "../HashMap";
+import { HashMap } from "$/domain/entities/generic/HashMap";
 
 const mapAbc123 = HashMap.fromPairs([
     ["a", 1],

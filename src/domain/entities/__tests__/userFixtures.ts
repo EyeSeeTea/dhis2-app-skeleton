@@ -1,5 +1,5 @@
-import { User, UserRole } from "../User";
-import { NamedRef } from "../Ref";
+import { User, UserRole } from "$/domain/entities/User";
+import { NamedRef } from "$/domain/entities/Ref";
 
 export function createAdminUser(): User {
     const adminRoles = [{ id: "Hg7n0MwzUQn", name: "Super user", authorities: ["ALL"] }];

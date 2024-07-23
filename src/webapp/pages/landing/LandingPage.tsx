@@ -1,8 +1,9 @@
 import { Typography } from "@material-ui/core";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { Card, CardGrid } from "../../components/card-grid/CardGrid";
-import { useAppContext } from "../../contexts/app-context";
+import { Card, CardGrid } from "$/webapp/components/card-grid/CardGrid";
+import { useAppContext } from "$/webapp/contexts/app-context";
+import i18n from "$/utils/i18n";
 
 export const LandingPage: React.FC = React.memo(() => {
     const history = useHistory();
@@ -10,7 +11,7 @@ export const LandingPage: React.FC = React.memo(() => {
 
     const cards: Card[] = [
         {
-            title: "Section",
+            title: i18n.t("Section"),
             key: "main",
             children: [
                 {

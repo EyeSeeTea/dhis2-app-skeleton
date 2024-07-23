@@ -1,5 +1,5 @@
-import { Future } from "../domain/entities/generic/Future";
-import { CancelableResponse } from "../types/d2-api";
+import { Future } from "$/domain/entities/generic/Future";
+import { CancelableResponse } from "$/types/d2-api";
 
 export type FutureData<D> = Future<Error, D>;
 
