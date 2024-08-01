@@ -16,8 +16,14 @@ export default ({ mode }) => {
             nodePolyfills(),
             react(),
             checker({
+                overlay: false,
                 typescript: true,
-                // eslint: { lintCommand: 'eslint "./src/**/*.{ts,tsx}"', dev: { logLevel: ["error"] } },
+                eslint: {
+                    lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+                    dev: {
+                        logLevel: ["warning"],
+                    },
+                },
             }),
         ],
         test: {

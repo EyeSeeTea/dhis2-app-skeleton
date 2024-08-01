@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import { HeaderBar } from "@dhis2/ui";
 import { SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { Feedback } from "@eyeseetea/feedback-component";
@@ -43,7 +44,7 @@ function App(props: AppProps) {
         <MuiThemeProvider theme={muiTheme}>
             <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                 <SnackbarProvider>
-                    <HeaderBar appName="Skeleton App" />
+                    <StyledHeaderBar appName="Skeleton App" />
 
                     {appConfig.feedback && appContext && (
                         <Feedback
@@ -64,5 +65,11 @@ function App(props: AppProps) {
         </MuiThemeProvider>
     );
 }
+
+const StyledHeaderBar = styled(HeaderBar)`
+    div:first-of-type {
+        box-sizing: border-box;
+    }
+`;
 
 export default React.memo(App);

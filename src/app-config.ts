@@ -1,7 +1,7 @@
 import { FeedbackOptions } from "@eyeseetea/feedback-component";
 
 export const appConfig: AppConfig = {
-    appKey: "dhis2-app-skeleton",
+    id: "dhis2-app-skeleton",
     appearance: {
         showShareButton: true,
     },
@@ -22,7 +22,7 @@ export const appConfig: AppConfig = {
 };
 
 export interface AppConfig {
-    appKey: string;
+    id: string;
     appearance: {
         showShareButton: boolean;
     };
