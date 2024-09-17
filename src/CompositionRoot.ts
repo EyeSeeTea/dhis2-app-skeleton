@@ -13,7 +13,7 @@ type Repositories = {
 function getCompositionRoot(repositories: Repositories) {
     return {
         users: {
-            getCurrent: new GetCurrentUserUseCase(repositories.usersRepository),
+            getCurrent: new GetCurrentUserUseCase(repositories),
         },
     };
 }
