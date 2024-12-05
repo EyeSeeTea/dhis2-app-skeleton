@@ -29,12 +29,12 @@ export function Dhis2App(_props: {}) {
             );
         }
         case "loaded": {
-            const { baseUrl, compositionRoot } = compositionRootRes.data;
+            const { api, baseUrl, compositionRoot } = compositionRootRes.data;
             const config = { baseUrl, apiVersion: 30 };
 
             return (
                 <Provider config={config}>
-                    <App compositionRoot={compositionRoot} />
+                    <App api={api} compositionRoot={compositionRoot} />
                 </Provider>
             );
         }
@@ -44,6 +44,7 @@ export function Dhis2App(_props: {}) {
 type Data = {
     compositionRoot: CompositionRoot;
     baseUrl: string;
+    api: D2Api;
 };
 
 async function getData(): Promise<CompositionRootResult> {
@@ -60,7 +61,7 @@ async function getData(): Promise<CompositionRootResult> {
     configI18n(userSettings);
 
     try {
-        return { type: "loaded", data: { baseUrl, compositionRoot } };
+        return { type: "loaded", data: { api, baseUrl, compositionRoot } };
     } catch (err) {
         return { type: "error", error: { baseUrl, error: err as Error } };
     }

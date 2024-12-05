@@ -32,12 +32,13 @@
         "purify-ts-extra-codec": "0.6.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "react-router-dom": "5.2.0",
+        "react-router-dom": "5.3.4",
         "real-cancellable-promise": "^1.1.2",
         "styled-components": "6.1.11",
         "styled-jsx": "^5.1.6",
         "typed-immutable-map": "^0.1.1",
-        "zustand": "^4.3.7"
+        "zustand": "^4.3.7",
+        "training-component": "1.5.4"
     },
     "devDependencies": {
         "@babel/core": "^7.0.0-0",

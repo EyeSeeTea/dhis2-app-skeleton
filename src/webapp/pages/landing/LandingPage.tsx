@@ -1,32 +1,12 @@
 import { Typography } from "@material-ui/core";
 import React from "react";
-import { useHistory } from "react-router-dom";
-import { Card, CardGrid } from "$/webapp/components/card-grid/CardGrid";
 import { useAppContext } from "$/webapp/contexts/app-context";
-import i18n from "$/utils/i18n";
+
+import { TutorialModule } from "training-component";
+import { Button, Dialog } from "@material-ui/core";
 
 export const LandingPage: React.FC = React.memo(() => {
-    const history = useHistory();
     const { currentUser } = useAppContext();
-
-    const cards: Card[] = [
-        {
-            title: i18n.t("Section"),
-            key: "main",
-            children: [
-                {
-                    name: "John",
-                    description: "Entry point 1",
-                    listAction: () => history.push("/for/John"),
-                },
-                {
-                    name: "Mary",
-                    description: "Entry point 2",
-                    listAction: () => history.push("/for/Mary"),
-                },
-            ],
-        },
-    ];
 
     return (
         <>
@@ -34,7 +14,33 @@ export const LandingPage: React.FC = React.memo(() => {
                 Current user: {currentUser.name} [{currentUser.id}]
             </Typography>
 
-            <CardGrid cards={cards} />
+            <MyComponent />
         </>
     );
 });
+
+function MyComponent() {
+    const { api } = useAppContext();
+    const [showTutorial, setShowTutorial] = React.useState(false);
+
+    const openTutorial = React.useCallback(() => {
+        setShowTutorial(true);
+    }, []);
+
+    return (
+        <>
+            <Button variant="contained" onClick={openTutorial}>
+                OPEN TUTORIAL
+            </Button>
+            <Dialog open={showTutorial} fullScreen>
+                <TutorialModule
+                    moduleId="data-entry"
+                    onExit={() => setShowTutorial(false)}
+                    onHome={() => setShowTutorial(false)}
+                    locale="en"
+                    baseUrl={api.baseUrl}
+                />
+            </Dialog>
+        </>
+    );
+}
