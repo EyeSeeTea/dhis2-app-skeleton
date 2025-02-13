@@ -1,5 +1,5 @@
 import { describe, expect, test, it, vi, expectTypeOf } from "vitest";
-import { Future } from "$/domain/entities/generic/Future";
+import { Future, SequentialAccumulatedData } from "$/domain/entities/generic/Future";
 
 describe("Basic builders", () => {
     test("Future.success", async () => {
@@ -82,6 +82,24 @@ describe("Transformations", () => {
         expectTypeOf(value2$).toEqualTypeOf<Future<string, unknown>>();
 
         await expectAsync(value2$, { toThrow: "1" });
+    });
+
+    describe("flatMapError", () => {
+        it("maps an error to a successful Future", async () => {
+            const value1$ = Future.error(1);
+            const value2$ = value1$.flatMapError(x => Future.success(x.toString()));
+            expectTypeOf(value2$).toEqualTypeOf<Future<unknown, unknown>>();
+
+            await expectAsync(value2$, { toEqual: "1" });
+        });
+
+        it("maps an error to another error Future", async () => {
+            const value3$ = Future.error(1);
+            const value4$ = value3$.flatMapError(x => Future.error(x.toString()));
+            expectTypeOf(value4$).toEqualTypeOf<Future<string, unknown>>();
+
+            await expectAsync(value4$, { toThrow: "1" });
+        });
     });
 
     describe("flatMap/chain", () => {
@@ -252,6 +270,50 @@ describe("parallel", async () => {
         const asyncs = [Future.sleep(3), Future.sleep(1), Future.sleep(2)];
         const values$ = Future.parallel(asyncs, { concurrency: 4 });
         await expectAsync(values$, { toEqual: [3, 1, 2] });
+    });
+});
+
+describe("sequentialWithAccumulation", () => {
+    it("if there is no error, it returns an async containing all the accumulated values as an array", async () => {
+        const $futuresArray = [Future.success(1), Future.success(2), Future.success(3)];
+
+        const values$ = Future.sequentialWithAccumulation($futuresArray);
+        const expected: SequentialAccumulatedData<unknown, number> = {
+            type: "success",
+            data: [1, 2, 3],
+        };
+
+        await expectAsync(values$, { toEqual: expected });
+    });
+
+    it("if there is an error in any Future, it continues and returns an async containing all the other accumulated values as an array", async () => {
+        const $futuresArray = [Future.success(1), Future.error("error"), Future.success(3)];
+
+        const values$ = Future.sequentialWithAccumulation($futuresArray);
+        const expected: SequentialAccumulatedData<string, number> = {
+            type: "success",
+            data: [1, 3],
+        };
+
+        await expectAsync(values$, { toEqual: expected });
+    });
+
+    it("if there is an error in some Future and the option stopOnError is enabled, it returns the error and an async containing all accumulated values as an array until the error ocurrs", async () => {
+        const $futuresArray = [
+            Future.success(1),
+            Future.success(2),
+            Future.error("error"),
+            Future.success(4),
+        ];
+
+        const values$ = Future.sequentialWithAccumulation($futuresArray, { stopOnError: true });
+        const expected: SequentialAccumulatedData<string, number> = {
+            type: "error",
+            data: [1, 2],
+            error: "error",
+        };
+
+        await expectAsync(values$, { toEqual: expected });
     });
 });
 

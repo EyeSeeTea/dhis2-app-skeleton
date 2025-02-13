@@ -61,6 +61,21 @@ export class Future<E, D> {
         return new Future(() => this._promise().then(data => fn(data)._promise()));
     }
 
+    flatMapError<E2>(fn: (error: E) => Future<E2, D>): Future<E2, D> {
+        return new Future(() =>
+            this._promise().catch((error: E) => {
+                return fn(error)
+                    ._promise()
+                    .then(
+                        result => result,
+                        err => {
+                            throw err;
+                        }
+                    );
+            })
+        );
+    }
+
     chain<U, E>(fn: (data: D) => Future<U, E>): Future<U, E> {
         return this.flatMap(fn);
     }
@@ -155,7 +170,51 @@ export class Future<E, D> {
             return Future.block<E, U>(blockFn);
         };
     }
+
+    static sequentialWithAccumulation<E, D>(
+        futures: Array<Future<E, D>>,
+        options: { stopOnError?: boolean } = {}
+    ): Future<E, SequentialAccumulatedData<E, D>> {
+        const { stopOnError = false } = options;
+        const processSequentially = (
+            futures: Array<Future<E, D>>,
+            accumulatedData: D[] = []
+        ): Future<E, SequentialAccumulatedData<E, D>> => {
+            if (futures.length === 0) {
+                return Future.success({ type: "success", data: accumulatedData });
+            }
+
+            const [firstFuture, ...remainingFutures] = futures;
+
+            if (!firstFuture) {
+                return Future.success({ type: "success", data: accumulatedData });
+            }
+
+            return firstFuture
+                .flatMap(resultData => {
+                    return processSequentially(remainingFutures, [...accumulatedData, resultData]);
+                })
+                .flatMapError((error: E) => {
+                    if (stopOnError) {
+                        const accumulatedDataWithError: SequentialAccumulatedData<E, D> = {
+                            type: "error",
+                            error: error,
+                            data: accumulatedData,
+                        };
+                        return Future.success(accumulatedDataWithError);
+                    } else {
+                        return processSequentially(remainingFutures, accumulatedData);
+                    }
+                });
+        };
+
+        return processSequentially(futures);
+    }
 }
+
+export type SequentialAccumulatedData<E, D> =
+    | { type: "success"; data: D[] }
+    | { type: "error"; error: E; data: D[] };
 
 export type Cancel = (() => void) | undefined;
 
