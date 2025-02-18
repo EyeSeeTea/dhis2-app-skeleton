@@ -174,16 +174,12 @@ export class Future<E, D> {
     static sequentialWithAccumulation<E, D>(
         futures: Array<Future<E, D>>,
         options: { stopOnError?: boolean } = {}
-    ): Future<E, SequentialAccumulatedData<E, D>> {
+    ): Future<never, SequentialAccumulatedData<E, D>> {
         const { stopOnError = false } = options;
         const processSequentially = (
             futures: Array<Future<E, D>>,
             accumulatedData: D[] = []
-        ): Future<E, SequentialAccumulatedData<E, D>> => {
-            if (futures.length === 0) {
-                return Future.success({ type: "success", data: accumulatedData });
-            }
-
+        ): Future<never, SequentialAccumulatedData<E, D>> => {
             const [firstFuture, ...remainingFutures] = futures;
 
             if (!firstFuture) {
