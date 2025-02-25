@@ -1,0 +1,35 @@
+name: "PR Build Diff"
+
+on:
+  push:
+    branches: ["master", "development"]
+  pull_request:
+    branches: [ "master", "development" ]
+  workflow_dispatch:
+
+jobs:
+  build-size-check:
+    runs-on: self-hosted
+
+    steps:
+      # Check out base (target) branch at the commit where the PR branched off
+      - name: Check out base branch
+        uses: actions/checkout@v4
+      
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          # Use the Node.js version specified in the .nvmrc file
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      # Install and build
+      - name: Install and build
+        run: |
+          yarn install
+          yarn build
+
+      - name: BundleMon
+        uses: lironer/bundlemon-action@v1
+
