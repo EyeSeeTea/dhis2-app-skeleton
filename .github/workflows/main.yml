@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  call-master-workflow:
+  master-workflow:
     uses: gqcorneby/workflows/.github/workflows/master.yml@main
     with:
       languages: "javascript-typescript"
