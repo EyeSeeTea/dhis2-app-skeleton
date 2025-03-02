@@ -10,7 +10,3 @@ on:
 jobs:
   master-workflow:
     uses: gqcorneby/workflows/.github/workflows/master.yml@main
-    with:
-      languages: "javascript-typescript"
-      build_mode: "none"
-    secrets: inherit
