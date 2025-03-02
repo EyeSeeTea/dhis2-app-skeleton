@@ -9,7 +9,7 @@ on:
 
 jobs:
   call-master-workflow:
-    uses: geonina/workflows/.github/workflows/master.yml@main
+    uses: gqcorneby/workflows/.github/workflows/master.yml@main
     with:
       languages: "javascript-typescript"
       build_mode: "none"
