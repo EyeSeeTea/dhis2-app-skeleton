@@ -1,4 +1,4 @@
-name: "Use Shared Master Workflow"
+name: "Shared Master Workflow"
 
 on:
   push:
