@@ -9,4 +9,4 @@ on:
 
 jobs:
   master-workflow:
-    uses: gqcorneby/workflows/.github/workflows/master.yml@main
+    uses: EyeSeeTea/github-workflows/.github/workflows/master.yml@master
