@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { HeaderBar } from "@dhis2/ui";
 import { SnackbarProvider } from "@eyeseetea/d2-ui-components";
-import { Feedback } from "@eyeseetea/feedback-component";
+import { Feedback } from "feedback-component-test";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 //@ts-ignore
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";

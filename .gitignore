@@ -40,3 +40,6 @@ cypress/fixtures/
 .idea/*
 
 docs/
+
+# bundle analyzer generates the build in this folder
+dist

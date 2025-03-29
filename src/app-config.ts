@@ -1,4 +1,4 @@
-import { FeedbackOptions } from "@eyeseetea/feedback-component";
+import { FeedbackOptions } from "feedback-component-test";
 
 export const appConfig: AppConfig = {
     id: "dhis2-app-skeleton",
