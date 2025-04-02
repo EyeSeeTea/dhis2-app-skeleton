@@ -1,7 +1,7 @@
 import { ButtonProps, Icon, IconButton as MUIIConButton, Tooltip } from "@material-ui/core";
 import { Variant } from "@material-ui/core/styles/createTypography";
 import Typography from "@material-ui/core/Typography";
-import { DialogButton } from "@eyeseetea/d2-ui-components";
+import { DialogButton } from "d2-ui-components-test";
 import React, { PropsWithChildren } from "react";
 import styled from "styled-components";
 import i18n from "$/utils/i18n";

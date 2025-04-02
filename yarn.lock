@@ -3311,26 +3311,6 @@
     qs "6.9.7"
     react "^16.12.0"
 
-"@eyeseetea/d2-ui-components@2.9.0-beta.3":
-  version "2.9.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@eyeseetea/d2-ui-components/-/d2-ui-components-2.9.0-beta.3.tgz#86e79bdb4b469580b79eb54e13a839eafab62654"
-  integrity sha512-y6LQXvYHUG2eX/ttJcHBRIBfjOsMway6RV8b/bThwmVlc3UuAPUUT8ANExc24gnwcM57u1iPg2Q5/RyOCK2ryA==
-  dependencies:
-    "@date-io/core" "1.3.6"
-    "@date-io/moment" "1.0.2"
-    "@dhis2/d2-i18n" "1.0.6"
-    "@dhis2/d2-ui-core" "7.4.3"
-    "@dhis2/ui" "6.15.2"
-    "@material-ui/pickers" "3.2.10"
-    classnames "2.2.6"
-    downshift "5.4.2"
-    lodash "4.17.21"
-    moment "2.29.4"
-    nano-memoize "1.2.1"
-    react-linkify "1.0.0-alpha"
-    rxjs-compat "6.6.3"
-    throttle-debounce "2.1.0"
-
 "@eyeseetea/feedback-component@0.1.3-beta.1":
   version "0.1.3-beta.1"
   resolved "https://registry.yarnpkg.com/@eyeseetea/feedback-component/-/feedback-component-0.1.3-beta.1.tgz#f4788b6bb81141e42003868f77325f6a3df3fbaf"
@@ -5428,6 +5408,25 @@ d2-manifest@1.0.0:
     loglevel "^1.4.0"
     minimist "^1.1.0"
     readline-sync "^1.4.1"
+
+d2-ui-components-test@2.10.1-beta.20:
+  version "2.10.1-beta.20"
+  resolved "https://registry.yarnpkg.com/d2-ui-components-test/-/d2-ui-components-test-2.10.1-beta.20.tgz#72dac91b63c6bd6f0c34648ae0542456e98f9e01"
+  integrity sha512-S0Y0cSFFTHLuAZXSaONhmjxgw8m2xrZnR/kX6XguE+UWvQ7B3nCGmoejwwJ1SRR7FyRhumol1tejjDqxrt/1jQ==
+  dependencies:
+    "@date-io/core" "1.3.6"
+    "@date-io/moment" "1.0.2"
+    "@dhis2/d2-i18n" "1.0.6"
+    "@dhis2/d2-ui-core" "7.4.3"
+    "@dhis2/ui" "6.15.2"
+    "@material-ui/pickers" "3.2.10"
+    classnames "2.2.6"
+    downshift "5.4.2"
+    lodash "4.17.21"
+    moment "2.29.4"
+    nano-memoize "1.2.1"
+    react-linkify "1.0.0-alpha"
+    throttle-debounce "2.1.0"
 
 d2@31.10.2:
   version "31.10.2"
@@ -9266,11 +9265,6 @@ run-parallel@^1.1.9:
   integrity sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==
   dependencies:
     queue-microtask "^1.2.2"
-
-rxjs-compat@6.6.3:
-  version "6.6.3"
-  resolved "https://registry.yarnpkg.com/rxjs-compat/-/rxjs-compat-6.6.3.tgz#141405fcee11f48718d428b99c8f01826f594e5c"
-  integrity sha512-y+wUqq7bS2dG+7rH2fNMoxsDiJ32RQzFxZQE/JdtpnmEZmwLQrb1tCiItyHxdXJHXjmHnnzFscn3b6PEmORGKw==
 
 rxjs-compat@6.6.7:
   version "6.6.7"

@@ -40,3 +40,5 @@ cypress/fixtures/
 .idea/*
 
 docs/
+dist
+stats_*.html

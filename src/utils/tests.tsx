@@ -1,5 +1,5 @@
 import { render, RenderResult } from "@testing-library/react";
-import { SnackbarProvider } from "@eyeseetea/d2-ui-components";
+import { SnackbarProvider } from "d2-ui-components-test";
 import { ReactNode } from "react";
 import { AppContext, AppContextState } from "$/webapp/contexts/app-context";
 import { getTestCompositionRoot } from "$/CompositionRoot";
