@@ -8,7 +8,6 @@ export function getModuleForNamespace(namespace: string) {
             return i18n.t(s, { ...options, ns: namespace });
         },
         changeLanguage: i18n.changeLanguage.bind(i18n),
-        setDefaultNamespace: i18n.setDefaultNamespace.bind(i18n),
     };
 }
 
