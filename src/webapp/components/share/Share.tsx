@@ -10,7 +10,7 @@ interface ShareState {
     hover: boolean;
 }
 
-class Share extends React.PureComponent<ShareProps, ShareState> {
+export class Share extends React.PureComponent<ShareProps, ShareState> {
     state: ShareState = { expanded: false, hover: false };
 
     toggleExpanded = () => {
@@ -136,5 +136,3 @@ const styles = {
         border: "2px solid #ff9800",
     },
 };
-
-export default Share;

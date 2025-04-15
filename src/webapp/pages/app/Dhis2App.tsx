@@ -2,7 +2,7 @@ import React, { ComponentProps } from "react";
 import i18n from "@dhis2/d2-i18n";
 import { Provider } from "@dhis2/app-runtime";
 import { D2Api } from "$/types/d2-api";
-import App from "./App";
+import { App } from "./App";
 import { CompositionRoot, getWebappCompositionRoot } from "$/CompositionRoot";
 
 export function Dhis2App(_props: {}) {
