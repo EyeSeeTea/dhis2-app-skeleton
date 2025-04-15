@@ -21,9 +21,7 @@ export default ({ mode }) => {
                 typescript: true,
                 eslint: {
                     lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
-                    dev: {
-                        logLevel: ["warning"],
-                    },
+                    dev: { logLevel: ["warning"] },
                 },
             }),
         ],
