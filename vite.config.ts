@@ -1,9 +1,10 @@
 /// <reference types="vitest" />
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import checker from "vite-plugin-checker";
 import nodePolyfills from "vite-plugin-node-stdlib-browser";
 import * as path from "path";
+import { loadEnv } from "vite";
 
 export default ({ mode }) => {
     const env = { ...process.env, ...loadEnv(mode, process.cwd()) };
