@@ -3,8 +3,12 @@
 exports[`App > navigates to page 1`] = `
 <DocumentFragment>
   <header
-    class="jsx-2837859311 sc-dhKdPU klBWsW"
-  />
+    class="jsx-1463586917 sc-dhKdPU klBWsW"
+  >
+    <div
+      class="jsx-1463586917 main"
+    />
+  </header>
   <div
     class="Component-root-4 Component-root-5"
   >
