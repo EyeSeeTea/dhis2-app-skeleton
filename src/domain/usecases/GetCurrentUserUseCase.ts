@@ -3,9 +3,9 @@ import { User } from "$/domain/entities/User";
 import { UserRepository } from "$/domain/repositories/UserRepository";
 
 export class GetCurrentUserUseCase {
-    constructor(private options: { usersRepository: UserRepository }) {}
+    constructor(private options: { userRepository: UserRepository }) {}
 
     public execute(): FutureData<User> {
-        return this.options.usersRepository.getCurrent();
+        return this.options.userRepository.getCurrent();
     }
 }
