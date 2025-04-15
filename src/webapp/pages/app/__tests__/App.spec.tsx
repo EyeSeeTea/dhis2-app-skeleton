@@ -24,7 +24,12 @@ describe("App", () => {
 function getView() {
     const { compositionRoot } = getTestContext();
     return render(
-        <Provider config={{ baseUrl: "http://localhost:8080", apiVersion: 30 }}>
+        <Provider
+            config={{ baseUrl: "http://localhost:8080", apiVersion: 30 }}
+            plugin={false}
+            parentAlertsAdd={() => {}}
+            showAlertsInPlugin={false}
+        >
             <App compositionRoot={compositionRoot} />
         </Provider>
     );
