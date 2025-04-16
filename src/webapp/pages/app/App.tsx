@@ -15,9 +15,9 @@ import "./App.css";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
 
-export interface AppProps {
+type AppProps = {
     compositionRoot: CompositionRoot;
-}
+};
 
 function App_(props: AppProps) {
     const { compositionRoot } = props;

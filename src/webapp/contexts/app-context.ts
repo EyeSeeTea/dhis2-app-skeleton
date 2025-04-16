@@ -2,10 +2,10 @@ import React, { useContext } from "react";
 import { CompositionRoot } from "$/CompositionRoot";
 import { User } from "$/domain/entities/User";
 
-export interface AppContextState {
+export type AppContextState = {
     currentUser: User;
     compositionRoot: CompositionRoot;
-}
+};
 
 export const AppContext = React.createContext<AppContextState | null>(null);
 

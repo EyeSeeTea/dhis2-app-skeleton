@@ -1,5 +1,4 @@
 import * as rcpromise from "real-cancellable-promise";
-import { Cancellation } from "real-cancellable-promise";
 
 /**
  * Futures are async values similar to promises, with some differences:
@@ -158,6 +157,10 @@ export class Future<E, D> {
         });
     }
 
+    static cancel() {
+        throw new rcpromise.Cancellation();
+    }
+
     static block_<E>() {
         return function <U>(blockFn: (capture: CaptureAsync<E>) => Promise<U>): Future<E, U> {
             return Future.block<E, U>(blockFn);
@@ -214,6 +217,7 @@ interface CaptureAsync<E> {
 
 type ParallelOptions = { concurrency: number };
 
+/* Example of how use Future.fromComputation */
 export function getJSON<U>(url: string): Future<TypeError | SyntaxError, U> {
     const abortController = new AbortController();
 
@@ -224,7 +228,7 @@ export function getJSON<U>(url: string): Future<TypeError | SyntaxError, U> {
             .then(data => resolve(data))
             .catch((error: unknown) => {
                 if (isNamedError(error) && error.name === "AbortError") {
-                    throw new Cancellation();
+                    throw Future.cancel();
                 } else if (error instanceof TypeError || error instanceof SyntaxError) {
                     reject(error);
                 } else {

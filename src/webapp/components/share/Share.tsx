@@ -1,14 +1,14 @@
 import React from "react";
 import logo from "./logo-eyeseetea.png";
 
-interface ShareProps {
+type ShareProps = {
     visible: boolean;
-}
+};
 
-interface ShareState {
+type ShareState = {
     expanded: boolean;
     hover: boolean;
-}
+};
 
 export class Share extends React.PureComponent<ShareProps, ShareState> {
     state: ShareState = { expanded: false, hover: false };
