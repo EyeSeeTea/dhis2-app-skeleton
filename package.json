@@ -61,8 +61,8 @@
         "node-stdlib-browser": "^1",
         "prettier": "^2",
         "source-map-explorer": "^2",
-        "ts-node": "^10",
         "ts-prune": "^0",
+        "tsx": "^4.19.3",
         "typedoc": "^0",
         "typescript": "5.7.3",
         "vite": "^4.2.0",
@@ -78,12 +78,10 @@
         "lint": "eslint src",
         "lint-unused": "ts-prune --ignore 'ts-utils.ts'",
         "lint-all": "yarn lint && yarn lint-unused",
-        "run-script": "ts-node -P src/scripts",
+        "run-script": "tsx",
         "source-map-explorer": "yarn build --sourcemap=true && source-map-explorer --no-border-checks --only-mapped build/assets/*js",
         "start": "vite --strictPort",
         "test": "yarn test-unit",
-        "test-fixtures-generate": "yarn run-script src/tests/manage.ts generate-fixtures",
-        "test-snapshots-delete": "yarn run-script src/tests/manage.ts delete",
         "test-unit": "vitest run --reporter=basic",
         "test-unit-watch": "vitest watch",
         "postinstall": "yarn localize",
@@ -95,7 +93,7 @@
         "localize": "yarn update-po && d2-i18n-generate -l -n dhis2-skeleton-app -p ./i18n/ -o ./src/locales/",
         "update-po": "yarn extract-pot && find i18n/ -name '*.po' -exec msgmerge --backup=off -U {} i18n/en.pot \\;",
         "prepare": "husky install",
-        "script-example": "npx ts-node src/scripts/example.ts"
+        "script-example": "yarn run-script src/scripts/example.ts"
     },
     "manifest.webapp": {
         "name": "DHIS2 Skeleton App",
