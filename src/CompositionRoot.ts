@@ -7,20 +7,20 @@ import { D2Api } from "./types/d2-api";
 export type CompositionRoot = ReturnType<typeof getCompositionRoot>;
 
 type Repositories = {
-    usersRepository: UserRepository;
+    userRepository: UserRepository;
 };
 
 function getCompositionRoot(repositories: Repositories) {
     return {
         users: {
-            getCurrent: new GetCurrentUserUseCase(repositories.usersRepository),
+            getCurrent: new GetCurrentUserUseCase(repositories),
         },
     };
 }
 
 export function getWebappCompositionRoot(api: D2Api) {
     const repositories: Repositories = {
-        usersRepository: new UserD2Repository(api),
+        userRepository: new UserD2Repository(api),
     };
 
     return getCompositionRoot(repositories);
@@ -28,7 +28,7 @@ export function getWebappCompositionRoot(api: D2Api) {
 
 export function getTestCompositionRoot() {
     const repositories: Repositories = {
-        usersRepository: new UserTestRepository(),
+        userRepository: new UserTestRepository(),
     };
 
     return getCompositionRoot(repositories);
