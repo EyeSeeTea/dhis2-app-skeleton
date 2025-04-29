@@ -10,3 +10,5 @@ on:
 jobs:
     master-workflow:
       uses: EyeSeeTea/github-workflows/.github/workflows/master.yml@master
+      with:
+        runner: "self-hosted"
