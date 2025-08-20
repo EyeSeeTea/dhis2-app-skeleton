@@ -5,7 +5,7 @@ exports[`ExamplePage > renders the feedback component 1`] = `
   <div>
     <button
       aria-label="Back"
-      class="MuiButtonBase-root MuiIconButton-root sc-gEvDqW sc-eqUzNf hwoczq haqPoX MuiIconButton-colorSecondary"
+      class="MuiButtonBase-root MuiIconButton-root sc-fYsHOw sc-dKREkF gcAmfe imnExT MuiIconButton-colorSecondary"
       data-test="page-header-back"
       tabindex="0"
       type="button"
@@ -25,14 +25,14 @@ exports[`ExamplePage > renders the feedback component 1`] = `
       />
     </button>
     <h5
-      class="MuiTypography-root sc-aYaIB hZQTlr MuiTypography-h5 MuiTypography-gutterBottom"
+      class="MuiTypography-root sc-Qotzb dbnvgZ MuiTypography-h5 MuiTypography-gutterBottom"
       data-test="page-header-title"
     >
       Detail page
     </h5>
   </div>
   <h2
-    class="sc-fqkwJk lcQFEV"
+    class="sc-fWnslK hJwqJu"
   >
     Hello Mary
   </h2>

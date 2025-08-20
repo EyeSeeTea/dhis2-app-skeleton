@@ -23,17 +23,17 @@ export const CardGrid: React.FC<CardGridProps> = React.memo(({ title, cards, onB
     );
 });
 
-export interface CardGridProps {
+export type CardGridProps = {
     cards: Card[];
     title?: string;
     onBackClick?: () => void;
-}
+};
 
-export interface Card {
+export type Card = {
     title?: string;
     key: string;
     children: MenuCardProps[];
-}
+};
 
 const Container = styled.div`
     margin-left: 30px;

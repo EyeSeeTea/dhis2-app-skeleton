@@ -2,7 +2,7 @@ import React from "react";
 import i18n from "@dhis2/d2-i18n";
 import { Provider } from "@dhis2/app-runtime";
 import { D2Api } from "$/types/d2-api";
-import App from "./App";
+import { App } from "./App";
 import { CompositionRoot, getWebappCompositionRoot } from "$/CompositionRoot";
 
 export function Dhis2App(_props: {}) {
@@ -30,10 +30,16 @@ export function Dhis2App(_props: {}) {
         }
         case "loaded": {
             const { baseUrl, compositionRoot } = compositionRootRes.data;
-            const config = { baseUrl, apiVersion: 30 };
+            type ProviderProps = React.ComponentProps<typeof Provider>;
+            const config: ProviderProps["config"] = { baseUrl, apiVersion: 30 };
 
             return (
-                <Provider config={config}>
+                <Provider
+                    config={config}
+                    plugin={false}
+                    parentAlertsAdd={() => {}}
+                    showAlertsInPlugin={false}
+                >
                     <App compositionRoot={compositionRoot} />
                 </Provider>
             );
