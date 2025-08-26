@@ -21,10 +21,10 @@ export const appConfig: AppConfig = {
     },
 };
 
-export interface AppConfig {
+export type AppConfig = {
     id: string;
     appearance: {
         showShareButton: boolean;
     };
     feedback?: FeedbackOptions;
-}
+};

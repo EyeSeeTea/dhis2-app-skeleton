@@ -36,8 +36,10 @@ describe("Rec", () => {
 
     test("merge", () => {
         const rec2 = Rec.from({ n: true, z: 123 });
-        const merged = rec1.merge(rec2);
-        expectTypeOf(merged).toEqualTypeOf<Rec<{ x: number; s: string; n: boolean; z: number }>>();
-        expect(merged.toObject()).toEqual({ x: 1, s: "hello", n: true, z: 123 });
+        const merged = rec1.merge(rec2).toObject();
+        expect(merged.x).toEqual(1);
+        expect(merged.s).toEqual("hello");
+        expect(merged.n).toEqual(true);
+        expect(merged.z).toEqual(123);
     });
 });

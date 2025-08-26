@@ -20,9 +20,7 @@ export default ({ mode }): UserConfig => {
                 typescript: true,
                 eslint: {
                     lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
-                    dev: {
-                        logLevel: ["warning"],
-                    },
+                    dev: { logLevel: ["warning"] },
                 },
             }),
         ],

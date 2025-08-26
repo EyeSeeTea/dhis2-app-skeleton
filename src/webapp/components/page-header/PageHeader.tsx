@@ -8,6 +8,7 @@ import i18n from "$/utils/i18n";
 
 export const PageHeader: React.FC<PageHeaderProps> = React.memo(props => {
     const { variant = "h5", title, onBackClick, helpText, children } = props;
+
     return (
         <div>
             {!!onBackClick && (
@@ -32,12 +33,12 @@ export const PageHeader: React.FC<PageHeaderProps> = React.memo(props => {
     );
 });
 
-export interface PageHeaderProps extends PropsWithChildren {
+export type PageHeaderProps = PropsWithChildren & {
     variant?: Variant;
     title: string;
     onBackClick?: () => void;
     helpText?: string;
-}
+};
 
 const Title = styled(Typography)`
     display: inline-block;
