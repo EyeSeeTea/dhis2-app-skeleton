@@ -12,42 +12,42 @@ import React from "react";
 import styled from "styled-components";
 import i18n from "$/utils/i18n";
 
-export const MenuCard: React.FC<MenuCardProps> = React.memo(
-    ({ name, description, addAction, listAction = () => {} }) => {
-        return (
-            <Card>
-                <Header onClick={listAction} title={name} />
+export const MenuCard: React.FC<MenuCardProps> = React.memo(props => {
+    const { name, description, addAction, listAction = noop } = props;
 
-                <Content>{description}</Content>
+    return (
+        <Card>
+            <Header onClick={listAction} title={name} />
 
-                <Actions disableSpacing>
-                    {addAction && (
-                        <Tooltip title={i18n.t("Add")} placement="top">
-                            <IconButton key="add" onClick={addAction}>
-                                <AddIcon />
-                            </IconButton>
-                        </Tooltip>
-                    )}
+            <Content>{description}</Content>
 
-                    {listAction && (
-                        <Tooltip title={i18n.t("List")} placement="top">
-                            <IconButton key="list" onClick={listAction}>
-                                <ViewListIcon />
-                            </IconButton>
-                        </Tooltip>
-                    )}
-                </Actions>
-            </Card>
-        );
-    }
-);
+            <Actions disableSpacing>
+                {addAction && (
+                    <Tooltip title={i18n.t("Add")} placement="top">
+                        <IconButton key="add" onClick={addAction}>
+                            <AddIcon />
+                        </IconButton>
+                    </Tooltip>
+                )}
 
-export interface MenuCardProps {
+                {listAction && (
+                    <Tooltip title={i18n.t("List")} placement="top">
+                        <IconButton key="list" onClick={listAction}>
+                            <ViewListIcon />
+                        </IconButton>
+                    </Tooltip>
+                )}
+            </Actions>
+        </Card>
+    );
+});
+
+export type MenuCardProps = {
     name: string;
     description?: string;
     addAction?: () => void;
     listAction?: () => void;
-}
+};
 
 const Card = styled(MUICard)`
     padding: 0;
@@ -74,3 +74,5 @@ const Header = styled(MUICardHeader)`
     font-size: 15px;
     font-weight: 500;
 `;
+
+const noop = () => {};
