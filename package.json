@@ -15,7 +15,7 @@
         "@dhis2/d2-i18n": "^1",
         "@dhis2/d2-i18n-extract": "^1",
         "@dhis2/d2-i18n-generate": "^1",
-        "@dhis2/ui": "^6",
+        "@dhis2/ui": "10",
         "@eyeseetea/d2-api": "^1",
         "@eyeseetea/d2-ui-components": "^2",
         "@eyeseetea/feedback-component": "^0",
