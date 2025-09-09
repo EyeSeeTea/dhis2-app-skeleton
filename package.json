@@ -29,6 +29,7 @@
         "react-dom": "^18.2.0",
         "react-router-dom": "5.2.0",
         "real-cancellable-promise": ">=1",
+        "styled-jsx": "^5",
         "typed-immutable-map": ">=0"
     },
     "devDependencies": {
