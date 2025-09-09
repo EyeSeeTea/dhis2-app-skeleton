@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import { HeaderBar } from "@dhis2/ui";
 import { SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { Feedback } from "@eyeseetea/feedback-component";
@@ -37,7 +36,7 @@ function App_(props: AppProps) {
 
     return (
         <SnackbarProvider>
-            <StyledHeaderBar appName="Skeleton App" />
+            <HeaderBar appName="Skeleton App" />
 
             {appConfig.feedback && appContext && (
                 <Feedback options={appConfig.feedback} username={appContext.currentUser.username} />
@@ -53,11 +52,5 @@ function App_(props: AppProps) {
         </SnackbarProvider>
     );
 }
-
-const StyledHeaderBar = styled(HeaderBar)`
-    div:first-of-type {
-        box-sizing: border-box;
-    }
-`;
 
 export const App = React.memo(App_);

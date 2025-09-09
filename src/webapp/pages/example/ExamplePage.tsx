@@ -1,6 +1,5 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import styled from "styled-components";
 import i18n from "$/utils/i18n";
 import { PageHeader } from "$/webapp/components/page-header/PageHeader";
 
@@ -20,14 +19,10 @@ export const ExamplePage: React.FC<ExamplePageProps> = React.memo(props => {
                 onBackClick={goBack}
                 helpText={i18n.t("Some help")}
             />
-            <Title>{title}</Title>
+            <h2>{title}</h2>
         </React.Fragment>
     );
 });
-
-const Title = styled.h2`
-    color: blue;
-`;
 
 type ExamplePageProps = {
     name: string;

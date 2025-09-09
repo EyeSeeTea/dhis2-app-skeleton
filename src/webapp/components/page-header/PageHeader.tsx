@@ -1,8 +1,8 @@
 import React from "react";
-import styled from "styled-components";
 import i18n from "$/utils/i18n";
 import { Button, Tooltip, Modal, ModalTitle, ModalContent, ModalActions } from "@dhis2/ui";
 import { IconChevronLeft24 } from "@dhis2/ui-icons";
+import css from "./PageHeader.module.css";
 
 export type PageHeaderProps = React.PropsWithChildren<{
     title: string;
@@ -26,21 +26,21 @@ export const PageHeader: React.FC<PageHeaderProps> = React.memo(props => {
     const [helpOpen, setHelpOpen] = React.useState(false);
 
     return (
-        <Wrapper>
-            <Row>
+        <div className={css.wrapper}>
+            <div className={css.row}>
                 {!!onBackClick && (
-                    <BackWrap>
+                    <div className={css.backWrap}>
                         <TooltipIconButton
                             title={i18n.t("Back")}
                             onClick={onBackClick}
                             icon={<IconChevronLeft24 />}
                             data-test="page-header-back"
                         />
-                    </BackWrap>
+                    </div>
                 )}
 
                 <h2 data-test="page-header-title">{title}</h2>
-            </Row>
+            </div>
 
             {helpText && <Button onClick={() => setHelpOpen(true)}>{i18n.t("Help")}</Button>}
 
@@ -57,24 +57,6 @@ export const PageHeader: React.FC<PageHeaderProps> = React.memo(props => {
                     </ModalActions>
                 </Modal>
             )}
-        </Wrapper>
+        </div>
     );
 });
-
-/* ---- styles ---- */
-
-const Wrapper = styled.div`
-    display: block;
-`;
-
-const Row = styled.div`
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    column-gap: 0.5rem;
-`;
-
-const BackWrap = styled.div`
-    padding-top: 10px;
-    margin-bottom: 5px;
-`;

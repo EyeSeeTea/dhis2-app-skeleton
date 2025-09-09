@@ -30,7 +30,6 @@
         "react-dom": "^18.2.0",
         "react-router-dom": "5.2.0",
         "real-cancellable-promise": ">=1",
-        "styled-components": "^6",
         "styled-jsx": "^5",
         "typed-immutable-map": ">=0"
     },
@@ -42,7 +41,6 @@
         "@types/react": "18.2.22",
         "@types/react-dom": "^18.2.7",
         "@types/react-router-dom": "5.3.3",
-        "@types/styled-components": "5.1.24",
         "@typescript-eslint/eslint-plugin": "5.62.0",
         "@typescript-eslint/parser": "5.62.0",
         "@vitejs/plugin-react": "^3.1.0",
