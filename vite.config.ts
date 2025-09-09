@@ -15,14 +15,15 @@ export default ({ mode }): UserConfig => {
         plugins: [
             nodePolyfills(),
             react(),
-            checker({
-                overlay: false,
-                typescript: true,
-                eslint: {
-                    lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
-                    dev: { logLevel: ["warning"] },
-                },
-            }),
+            !isTest &&
+                checker({
+                    overlay: false,
+                    typescript: true,
+                    eslint: {
+                        lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+                        dev: { logLevel: ["warning"] },
+                    },
+                }),
         ],
         test: {
             environment: "jsdom",
@@ -69,3 +70,5 @@ function getProxy(env: Record<string, string>) {
         };
     }
 }
+
+const isTest = process.env.VITEST;
