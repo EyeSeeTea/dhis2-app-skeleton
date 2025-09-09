@@ -15,7 +15,11 @@ export const ExamplePage: React.FC<ExamplePageProps> = React.memo(props => {
 
     return (
         <React.Fragment>
-            <PageHeader title={i18n.t("Detail page")} onBackClick={goBack} />
+            <PageHeader
+                title={i18n.t("Detail page")}
+                onBackClick={goBack}
+                helpText={i18n.t("Some help")}
+            />
             <Title>{title}</Title>
         </React.Fragment>
     );

@@ -1,73 +1,80 @@
-import { ButtonProps, Icon, IconButton as MUIIConButton, Tooltip } from "@material-ui/core";
-import { Variant } from "@material-ui/core/styles/createTypography";
-import Typography from "@material-ui/core/Typography";
-import { DialogButton } from "@eyeseetea/d2-ui-components";
-import React, { PropsWithChildren } from "react";
+import React from "react";
 import styled from "styled-components";
 import i18n from "$/utils/i18n";
+import { Button, Tooltip, Modal, ModalTitle, ModalContent, ModalActions } from "@dhis2/ui";
+import { IconChevronLeft24 } from "@dhis2/ui-icons";
 
-export const PageHeader: React.FC<PageHeaderProps> = React.memo(props => {
-    const { variant = "h5", title, onBackClick, helpText, children } = props;
-
-    return (
-        <div>
-            {!!onBackClick && (
-                <BackButton
-                    onClick={onBackClick}
-                    color="secondary"
-                    aria-label={i18n.t("Back")}
-                    data-test={"page-header-back"}
-                >
-                    <Icon color="primary">arrow_back</Icon>
-                </BackButton>
-            )}
-
-            <Title variant={variant} gutterBottom data-test={"page-header-title"}>
-                {title}
-            </Title>
-
-            {helpText && <HelpButton text={helpText} />}
-
-            {children}
-        </div>
-    );
-});
-
-export type PageHeaderProps = PropsWithChildren & {
-    variant?: Variant;
+export type PageHeaderProps = React.PropsWithChildren<{
     title: string;
     onBackClick?: () => void;
     helpText?: string;
-};
+}>;
 
-const Title = styled(Typography)`
-    display: inline-block;
-    font-weight: 300;
-`;
-
-const Button: React.FC<ButtonProps> = ({ onClick }) => (
-    <Tooltip title={i18n.t("Help")}>
-        <IconButton onClick={onClick}>
-            <Icon color="primary">help</Icon>
-        </IconButton>
+const TooltipIconButton: React.FC<{
+    title: string;
+    onClick: () => void;
+    icon: React.ReactElement;
+    "data-test"?: string;
+}> = ({ title, onClick, icon, ...rest }) => (
+    <Tooltip content={title} placement="top">
+        <Button small icon={icon} onClick={onClick} {...rest} />
     </Tooltip>
 );
 
-const HelpButton: React.FC<{ text: string }> = ({ text }) => (
-    <DialogButton
-        buttonComponent={Button}
-        title={i18n.t("Help")}
-        maxWidth={"sm"}
-        fullWidth={true}
-        contents={text}
-    />
-);
+export const PageHeader: React.FC<PageHeaderProps> = React.memo(props => {
+    const { title, onBackClick, helpText, children } = props;
+    const [helpOpen, setHelpOpen] = React.useState(false);
 
-const IconButton = styled(MUIIConButton)`
-    margin-bottom: 8px;
+    return (
+        <Wrapper>
+            <Row>
+                {!!onBackClick && (
+                    <BackWrap>
+                        <TooltipIconButton
+                            title={i18n.t("Back")}
+                            onClick={onBackClick}
+                            icon={<IconChevronLeft24 />}
+                            data-test="page-header-back"
+                        />
+                    </BackWrap>
+                )}
+
+                <h2 data-test="page-header-title">{title}</h2>
+            </Row>
+
+            {helpText && <Button onClick={() => setHelpOpen(true)}>{i18n.t("Help")}</Button>}
+
+            {children}
+
+            {helpText && (
+                <Modal position="middle" onClose={() => setHelpOpen(false)} hide={!helpOpen} large>
+                    <ModalTitle>{i18n.t("Help")}</ModalTitle>
+                    <ModalContent>
+                        <p>{helpText}</p>
+                    </ModalContent>
+                    <ModalActions>
+                        <Button onClick={() => setHelpOpen(false)}>{i18n.t("Close")}</Button>
+                    </ModalActions>
+                </Modal>
+            )}
+        </Wrapper>
+    );
+});
+
+/* ---- styles ---- */
+
+const Wrapper = styled.div`
+    display: block;
 `;
 
-const BackButton = styled(IconButton)`
+const Row = styled.div`
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    column-gap: 0.5rem;
+`;
+
+const BackWrap = styled.div`
     padding-top: 10px;
     margin-bottom: 5px;
 `;
