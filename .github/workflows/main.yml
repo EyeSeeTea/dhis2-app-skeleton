@@ -9,6 +9,6 @@ on:
 
 jobs:
     master-workflow:
-      uses: EyeSeeTea/github-workflows/.github/workflows/master.yml@fix/error-429
+      uses: EyeSeeTea/github-workflows/.github/workflows/master.yml@fix/429-error
       with:
         runner: "self-hosted"
