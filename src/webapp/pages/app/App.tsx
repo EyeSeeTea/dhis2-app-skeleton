@@ -12,7 +12,7 @@ import { Router } from "$/webapp/pages/Router";
 import "./App.css";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
-import {HeaderBar} from "$/webapp/pages/app/header-bar/HeaderBar";
+import { HeaderBar } from "$/webapp/pages/app/header-bar/HeaderBar";
 
 type AppProps = {
     compositionRoot: CompositionRoot;
