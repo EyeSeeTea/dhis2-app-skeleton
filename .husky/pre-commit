@@ -1,0 +1,27 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+scan_files() {
+  local files_to_scan="$1"
+  local temp_dir=$(mktemp -d)
+  for file in $files_to_scan; do
+    if [ -f "$file" ]; then
+      cp "$file" "$temp_dir"
+    fi
+  done
+
+  local leaks_found
+  set +e
+  trivy fs "$temp_dir" --scanners secret --quiet --exit-code 1
+  leaks_found=$?
+  set -e
+
+  rm -rf "$temp_dir"
+
+  return $leaks_found
+}
+
+COMMITED_FILES=$(git diff --name-only --cached)
+scan_files "$COMMITED_FILES"
+
+exit $?
