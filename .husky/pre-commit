@@ -1,18 +1,27 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+check_trivy_installed() {
+  if ! command -v trivy >/dev/null 2>&1; then
+    echo "Warning: Trivy is not installed. Pre-commit scanning will be skipped."
+    echo "See: https://trivy.dev/latest/getting-started/installation/"
+    exit 0
+  fi
+}
+
 scan_files() {
   local files_to_scan="$1"
   local temp_dir=$(mktemp -d)
   for file in $files_to_scan; do
     if [ -f "$file" ]; then
-      cp "$file" "$temp_dir"
+      mkdir -p "$temp_dir/$(dirname "$file")"
+      cp "$file" "$temp_dir/$file"
     fi
   done
 
   local leaks_found
   set +e
-  trivy fs "$temp_dir" --scanners secret --quiet --exit-code 1
+  trivy fs "$temp_dir" --scanners secret --quiet --secret-config trivy-secret.yaml --exit-code 1
   leaks_found=$?
   set -e
 
@@ -21,7 +30,13 @@ scan_files() {
   return $leaks_found
 }
 
+check_trivy_installed
+
 COMMITED_FILES=$(git diff --name-only --cached)
+if [ -z "$COMMITED_FILES" ]; then
+  exit 0
+fi
+
 scan_files "$COMMITED_FILES"
 
 exit $?

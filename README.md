@@ -70,6 +70,16 @@ $ yarn localize
 
 Check the example script, entry `"script-example"`in `package.json`->scripts and `src/scripts/example.ts`.
 
+### Secrets scan
+
+The hook `.husky/pre-commit` will scan the staged files with [Trivy](https://trivy.dev/latest/getting-started/) before committing them.
+
+The scan rules are defined at `trivy-secret.yaml`, there you can add rules to match or ignore strings. The default rule is to check that `VITE_DHIS2_AUTH` is not leaked. This means that a value that is not `"admin:district"` or `'admin:district'` will trigger the leak scan.
+
+Please note that markdown files are not scanned as they may contain examples of how to use the `.env` files.
+
+If Trivy is not installed the scan will be skipped with a warning.
+
 ### Misc Notes
 
 -   Requests to DHIS2 will be transparently proxied (see `vite.config.ts` -> `server.proxy`) from `http://localhost:8081/dhis2/xyz` to `${VITE_DHIS2_BASE_URL}/xyz`. This prevents CORS and cross-domain problems.
