@@ -13,10 +13,10 @@ scan_files() {
   local files_to_scan="$1"
   local temp_dir=$(mktemp -d)
   for file in $files_to_scan; do
-    if [ -f "$file" ]; then
-      mkdir -p "$temp_dir/$(dirname "$file")"
-      cp "$file" "$temp_dir/$file"
-    fi
+    mkdir -p "$temp_dir/$(dirname "$file")"
+    git show ":$file" >"$temp_dir/$file" 2>/dev/null || {
+      continue
+    }
   done
 
   local leaks_found
