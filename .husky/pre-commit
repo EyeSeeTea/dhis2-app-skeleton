@@ -12,7 +12,7 @@ check_trivy_installed() {
 scan_files() {
   local files_to_scan="$1"
   local temp_dir=$(mktemp -d)
-  for file in $files_to_scan; do
+  echo "$files_to_scan" | while IFS= read -r file; do
     mkdir -p "$temp_dir/$(dirname "$file")"
     git show ":$file" >"$temp_dir/$file" 2>/dev/null || {
       continue
@@ -32,11 +32,11 @@ scan_files() {
 
 check_trivy_installed
 
-COMMITED_FILES=$(git diff --name-only --cached)
-if [ -z "$COMMITED_FILES" ]; then
+COMMITTED_FILES=$(git diff --name-only --cached)
+if [ -z "$COMMITTED_FILES" ]; then
   exit 0
 fi
 
-scan_files "$COMMITED_FILES"
+scan_files "$COMMITTED_FILES"
 
 exit $?
