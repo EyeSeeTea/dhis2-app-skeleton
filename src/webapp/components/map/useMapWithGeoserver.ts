@@ -56,17 +56,11 @@ export const useMapWithGeoserver = () => {
         );
 
         map.on("load", () => {
-            console.log("Map loaded, adding layers...");
-
-            // Add points source first
             map.addSource("points", {
                 type: "geojson",
                 data: geoJsonPoints,
             });
 
-            console.log("Points source added:", geoJsonPoints);
-
-            // Add points layers on top
             map.addLayer({
                 id: "points-circle",
                 type: "circle",
@@ -78,8 +72,6 @@ export const useMapWithGeoserver = () => {
                     "circle-stroke-color": "#ffffff",
                 },
             });
-
-            console.log("Points circle layer added");
 
             map.addLayer({
                 id: "points-label",
@@ -98,9 +90,6 @@ export const useMapWithGeoserver = () => {
                 },
             });
 
-            console.log("Points label layer added");
-
-            // Add geoserver WMS layer
             map.addSource("geoserver-wms", {
                 type: "raster",
                 tiles: [buildWmsTileUrl()],
@@ -116,12 +105,9 @@ export const useMapWithGeoserver = () => {
                         "raster-opacity": 0.5,
                     },
                 },
-                "points-circle" // Add before points so points render on top
+                "points-circle"
             );
 
-            console.log("Geoserver layer added");
-
-            // Fit map to show all points
             const coordinates = geoJsonPoints.features.map(
                 (feature: any) => feature.geometry.coordinates
             );
@@ -136,8 +122,6 @@ export const useMapWithGeoserver = () => {
                     padding: 100,
                     maxZoom: 5,
                 });
-
-                console.log("Map fitted to bounds:", bounds);
             }
         });
 
