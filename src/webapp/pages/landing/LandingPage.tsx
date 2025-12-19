@@ -4,6 +4,8 @@ import { useHistory } from "react-router-dom";
 import { Card, CardGrid } from "$/webapp/components/card-grid/CardGrid";
 import { useAppContext } from "$/webapp/contexts/app-context";
 import i18n from "$/utils/i18n";
+import Map from "$/webapp/components/map/Map";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 export const LandingPage: React.FC = React.memo(() => {
     const history = useHistory();
@@ -35,6 +37,8 @@ export const LandingPage: React.FC = React.memo(() => {
             </Typography>
 
             <CardGrid cards={cards} />
+
+            <Map />
         </>
     );
 });

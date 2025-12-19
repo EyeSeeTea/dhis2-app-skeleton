@@ -66,6 +66,11 @@ function getProxy(env: Record<string, string>) {
                 auth: auth,
                 rewrite: path => path.replace(/^\/dhis2/, ""),
             },
+            "/geoserver": {
+                target: "http://localhost:8080",
+                changeOrigin: true,
+                secure: false,
+            },
         };
     }
 }

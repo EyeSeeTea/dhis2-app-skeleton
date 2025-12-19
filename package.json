@@ -23,6 +23,7 @@
         "@material-ui/icons": "^4",
         "@material-ui/styles": "^4",
         "d2-manifest": "^1",
+        "maplibre-gl": "^5.13.0",
         "material-ui": "0.20.2",
         "md5.js": ">=1",
         "purify-ts": "^1",
