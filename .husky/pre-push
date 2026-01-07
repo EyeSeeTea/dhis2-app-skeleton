@@ -1,4 +1,7 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+# trivy secret scan
+"$(dirname "$0")/trivy-leaks-scan.sh" commit
+
 yarn prettify && yarn lint && yarn update-po && yarn test
