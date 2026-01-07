@@ -1,0 +1,9 @@
+scan:
+  scanners:
+    - secret
+
+secret:
+  config: trivy-secret.yaml
+
+skip-dirs:
+  - node_modules
