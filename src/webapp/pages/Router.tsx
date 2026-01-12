@@ -2,7 +2,7 @@ import React from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
 import { ExamplePage } from "./example/ExamplePage";
 import { LandingPage } from "./landing/LandingPage";
-import { AuditsTable } from "@eyeseetea/d2-audit-report";
+import { Audits } from "@eyeseetea/d2-audit-report";
 import { useAppContext } from "$/webapp/contexts/app-context";
 
 export function Router() {
@@ -19,7 +19,14 @@ export function Router() {
                     path="/audits"
                     render={() => (
                         <div style={{ padding: "20px" }}>
-                            <AuditsTable baseUrl={compositionRoot.config.baseurl || ""} />
+                            <Audits
+                                title="Audits"
+                                baseUrl={compositionRoot.config.baseurl || ""}
+                                d2LoggerAuditsConfig={{
+                                    orgUnitId: "RsyOE3vLiP6",
+                                    programId: "rtHdFQBi7gG",
+                                }}
+                            />
                         </div>
                     )}
                 />
