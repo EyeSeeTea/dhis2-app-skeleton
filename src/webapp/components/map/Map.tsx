@@ -3,15 +3,13 @@ import styled from "styled-components";
 import { useMapWithGeoserver } from "$/webapp/components/map/useMapWithGeoserver";
 import i18n from "$/utils/i18n";
 
-type MapProps = {};
-
-const Map: React.FC<MapProps> = () => {
-    const { containerId } = useMapWithGeoserver();
+const Map: React.FC = () => {
+    const { mapContainerRef } = useMapWithGeoserver();
 
     return (
         <MapBox>
             <MapTitle>{i18n.t("Map")}</MapTitle>
-            <MapContainer id={containerId}></MapContainer>
+            <MapContainer ref={mapContainerRef}></MapContainer>
         </MapBox>
     );
 };

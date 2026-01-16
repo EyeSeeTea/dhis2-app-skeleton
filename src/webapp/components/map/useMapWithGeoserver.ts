@@ -9,37 +9,34 @@ import maplibregl, {
 import { buildWmsTileUrl } from "./geoserverConfig";
 import { geoJsonPoints } from "$/webapp/components/map/points";
 
-const MAP_CONTAINER_ID = "map-container";
+export type InitialCoordinates = {
+    center: [number, number];
+    maxZoom: number;
+    minZoom: number;
+    zoom: number;
+};
+
+const initialData: InitialCoordinates = {
+    center: [13.675063, 51.751569],
+    maxZoom: 8,
+    minZoom: 2.5,
+    zoom: 2.5,
+};
 
 export const useMapWithGeoserver = () => {
     const mapRef = useRef<MapLibreMap | null>(null);
+    const mapContainer = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        const container = document.getElementById(MAP_CONTAINER_ID);
-        if (!container) return;
+        if (!mapContainer.current) return;
 
         const map = new maplibregl.Map({
-            container,
-            style: {
-                version: 8,
-                sources: {
-                    osm: {
-                        type: "raster",
-                        tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-                        tileSize: 256,
-                        attribution: "© OpenStreetMap contributors",
-                    },
-                },
-                layers: [
-                    {
-                        id: "osm-base",
-                        type: "raster",
-                        source: "osm",
-                    },
-                ],
-            },
-            center: [0, 0],
-            zoom: 2,
+            container: mapContainer.current,
+            style: mapStyle,
+            center: initialData.center,
+            zoom: initialData.zoom,
+            maxZoom: initialData.maxZoom,
+            minZoom: initialData.minZoom,
         });
 
         mapRef.current = map;
@@ -56,65 +53,37 @@ export const useMapWithGeoserver = () => {
         );
 
         map.on("load", () => {
-            map.addSource("points", {
-                type: "geojson",
-                data: geoJsonPoints,
-            });
-
-            map.addLayer({
-                id: "points-circle",
-                type: "circle",
-                source: "points",
-                paint: {
-                    "circle-radius": 10,
-                    "circle-color": "#ff5722",
-                    "circle-stroke-width": 3,
-                    "circle-stroke-color": "#ffffff",
-                },
-            });
-
-            map.addLayer({
-                id: "points-label",
-                type: "symbol",
-                source: "points",
-                layout: {
-                    "text-field": ["get", "name"],
-                    "text-offset": [0, 1.5],
-                    "text-anchor": "top",
-                    "text-size": 14,
-                },
-                paint: {
-                    "text-color": "#111111",
-                    "text-halo-color": "#ffffff",
-                    "text-halo-width": 2,
-                },
-            });
-
             map.addSource("geoserver-wms", {
                 type: "raster",
                 tiles: [buildWmsTileUrl()],
                 tileSize: 256,
             });
 
-            map.addLayer(
-                {
-                    id: "geoserver-wms-layer",
-                    type: "raster",
-                    source: "geoserver-wms",
-                    paint: {
-                        "raster-opacity": 0.5,
-                    },
+            map.addLayer({
+                id: "geoserver-wms-layer",
+                type: "raster",
+                source: "geoserver-wms",
+                paint: {
+                    "raster-opacity": 0.5,
                 },
-                "points-circle"
-            );
+            });
+
+            geoJsonPoints.features.forEach(feature => {
+                const popup = new maplibregl.Popup({ offset: 25 }).setText(feature.properties.name);
+
+                new maplibregl.Marker({ color: "#ff5722" })
+                    .setLngLat(feature.geometry.coordinates as [number, number])
+                    .setPopup(popup)
+                    .addTo(map);
+            });
 
             const coordinates = geoJsonPoints.features.map(
-                (feature: any) => feature.geometry.coordinates
+                feature => feature.geometry.coordinates as [number, number]
             );
 
             if (coordinates.length > 0) {
                 const bounds = coordinates.reduce(
-                    (bounds: any, coord: any) => bounds.extend(coord),
+                    (bounds, coord) => bounds.extend(coord),
                     new maplibregl.LngLatBounds(coordinates[0], coordinates[0])
                 );
 
@@ -131,5 +100,24 @@ export const useMapWithGeoserver = () => {
         };
     }, []);
 
-    return { mapRef: mapRef, containerId: MAP_CONTAINER_ID };
+    return { mapRef: mapRef, mapContainerRef: mapContainer };
+};
+
+const mapStyle: maplibregl.StyleSpecification = {
+    version: 8,
+    sources: {
+        osm: {
+            type: "raster",
+            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+            tileSize: 256,
+            attribution: "© OpenStreetMap contributors",
+        },
+    },
+    layers: [
+        {
+            id: "osm-base",
+            type: "raster",
+            source: "osm",
+        },
+    ],
 };
