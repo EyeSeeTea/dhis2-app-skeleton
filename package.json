@@ -9,6 +9,7 @@
         "type": "git",
         "url": "git+https://github.com/eyeseetea/dhis2-app-skeleton.git"
     },
+    "packageManager": "yarn@4.12.0",
     "dependencies": {
         "$": "link:./src",
         "@dhis2/app-runtime": "^3",
@@ -106,7 +107,7 @@
         "extract-pot": "yarn d2-i18n-extract -p src/ -o i18n/",
         "localize": "yarn update-po && d2-i18n-generate -l -n dhis2-skeleton-app -p ./i18n/ -o ./src/locales/",
         "update-po": "yarn extract-pot && find i18n/ -name '*.po' -exec msgmerge --backup=off -U {} i18n/en.pot \\;",
-        "prepare": "husky install",
+        "prepare": "corepack enable 2>/dev/null || true && husky install",
         "script-example": "yarn run-script src/scripts/example.ts"
     },
     "manifest.webapp": {
