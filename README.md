@@ -11,6 +11,37 @@ This project uses **Yarn 4** managed by **Corepack** and declares:
 "packageManager": "yarn@4.12.0"
 ```
 
+### Recommended: disable Corepack auto-pin globally (macOS, zsh)
+
+To avoid Corepack modifying the `package.json` of **other** projects when you run `corepack enable` or `yarn` in repositories that do **not** define `packageManager`, it is recommended to disable the global auto‑pin:
+
+1. Open your shell configuration (`zsh`):
+
+   ```bash
+   nano ~/.zshrc   # or use code/vim, etc.
+   ```
+
+2. Add this line at the end of the file:
+
+   ```bash
+   export COREPACK_ENABLE_AUTO_PIN=0
+   ```
+
+3. Reload the configuration in the current session:
+
+   ```bash
+   source ~/.zshrc
+   ```
+
+4. Verify that it is active:
+
+   ```bash
+   echo $COREPACK_ENABLE_AUTO_PIN
+   # should print: 0
+   ```
+
+From that point on, with `corepack enable` active, when you run `yarn` in projects **without** `packageManager`, Corepack will no longer add the `packageManager` field automatically to their `package.json`.
+
 ### If you have Yarn 1 globally and see a packageManager error
 
 If running `yarn` shows an error like:
@@ -37,7 +68,7 @@ nvm use                 # use the version from .nvmrc
 yarn install
 ```
 
-If for some reason `yarn --version` still shows `1.x` inside this repo (for example due to old Corepack state), you can force Yarn 4 explicitly:
+If for some reason `yarn --version` still shows `1.x` inside this repo (for example due to old Corepack state), you can force Yarn 4 explicitly (note: this will update the `packageManager` field with a pinned hash):
 
 ```bash
 corepack use yarn@4.12.0
