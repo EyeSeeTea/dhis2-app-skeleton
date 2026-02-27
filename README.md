@@ -68,10 +68,10 @@ nvm use                 # use the version from .nvmrc
 yarn install
 ```
 
-If for some reason `yarn --version` still shows `1.x` inside this repo (for example due to old Corepack state), you can force Yarn 4 explicitly (note: this will update the `packageManager` field with a pinned hash):
+If for some reason `yarn --version` still shows `1.x` inside this repo (for example due to old Corepack state), prepare the Yarn 4 binary without changing the global default or `package.json`:
 
 ```bash
-corepack use yarn@4.12.0
+COREPACK_ENABLE_AUTO_PIN=0 corepack prepare yarn@4.12.0
 yarn --version          # should now print 4.12.0
 yarn install
 ```
