@@ -1,12 +1,60 @@
-name: "Shared Master Workflow"
-
+name: "Application testing"
 on:
+    workflow_call:
+        inputs:
+            runner:
+                description: "Specify runner. Defaults to checking visibility"
+                required: false
+                default: "ubuntu-latest"
+                type: string
     push:
-      branches: ["master", "development"]
+        branches: [master, devlopment]
     pull_request:
-      branches: [ "master", "development" ]
-    workflow_dispatch:
+        branches: [master, development]
 
 jobs:
-    master-workflow:
-      uses: EyeSeeTea/github-workflows/.github/workflows/master.yml@feature/support_yarn_4_projects
+    unit-tests:
+        name: Unit tests
+        runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Install apt libraries
+              run: sudo apt install gettext -y
+
+            - name: Setup Node.js version from .nvmrc
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: ".nvmrc"
+
+            - name: Enable Corepack
+              run: corepack enable
+
+            - name: Get yarn cache directory path
+              id: yarn-cache-dir-path
+              run: |
+                  CACHE_DIR=$(yarn cache dir 2>&1 | sed 's/^[[:space:]]*//' | grep -E '^/' | head -n1)
+                  if [ -z "$CACHE_DIR" ]; then CACHE_DIR="$RUNNER_TEMP/yarn-cache"; fi
+                  echo "ACTIONS_YARN_CACHE_PATH=$CACHE_DIR" >> $GITHUB_ENV
+
+            - name: Cache yarn dependencies
+              uses: actions/cache@v3
+              id: yarn-cache
+              with:
+                  path: ${{ env.ACTIONS_YARN_CACHE_PATH }}
+                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-yarn-
+
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile --silent
+
+            - name: Install translations
+              run: yarn localize
+
+            - name: Run jest tests
+              run: yarn test
+
+            - name: Run typescript tests
+              run: npx tsc
