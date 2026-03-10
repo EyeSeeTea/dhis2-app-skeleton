@@ -39,6 +39,7 @@ export function Dhis2App(_props: {}) {
                     plugin={false}
                     parentAlertsAdd={() => {}}
                     showAlertsInPlugin={false}
+                    userInfo={undefined}
                 >
                     <App compositionRoot={compositionRoot} />
                 </Provider>
