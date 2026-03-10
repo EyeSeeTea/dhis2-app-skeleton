@@ -17,28 +17,28 @@ To avoid Corepack modifying the `package.json` of **other** projects when you ru
 
 1. Open your shell configuration (`zsh`):
 
-   ```bash
-   nano ~/.zshrc   # or use code/vim, etc.
-   ```
+    ```bash
+    nano ~/.zshrc   # or use code/vim, etc.
+    ```
 
 2. Add this line at the end of the file:
 
-   ```bash
-   export COREPACK_ENABLE_AUTO_PIN=0
-   ```
+    ```bash
+    export COREPACK_ENABLE_AUTO_PIN=0
+    ```
 
 3. Reload the configuration in the current session:
 
-   ```bash
-   source ~/.zshrc
-   ```
+    ```bash
+    source ~/.zshrc
+    ```
 
 4. Verify that it is active:
 
-   ```bash
-   echo $COREPACK_ENABLE_AUTO_PIN
-   # should print: 0
-   ```
+    ```bash
+    echo $COREPACK_ENABLE_AUTO_PIN
+    # should print: 0
+    ```
 
 From that point on, with `corepack enable` active, when you run `yarn` in projects **without** `packageManager`, Corepack will no longer add the `packageManager` field automatically to their `package.json`.
 
@@ -78,8 +78,12 @@ yarn install
 
 After this:
 
-- This repo will use **Yarn 4.12.0**.
-- Other repos without `packageManager` will keep using **Yarn 1.22.22** (or whatever you activated with `corepack prepare`).
+-   This repo will use **Yarn 4.12.0**.
+-   Other repos without `packageManager` will keep using **Yarn 1.22.22** (or whatever you activated with `corepack prepare`).
+
+### Select d2-api version
+
+`src/types/d2-api.ts` imports all the types and runtime objects needed by the app. Update it so it targets your desired DHIS2 version. This way, if we need to target another version in the future, only this file will need to be updated.
 
 ## Build
 
