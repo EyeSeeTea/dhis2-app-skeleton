@@ -1,40 +1,35 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ExamplePage > renders the feedback component 1`] = `
-<DocumentFragment>
-  <div>
-    <button
-      aria-label="Back"
-      class="MuiButtonBase-root MuiIconButton-root sc-fYsHOw sc-dKREkF gcAmfe imnExT MuiIconButton-colorSecondary"
-      data-test="page-header-back"
-      tabindex="0"
-      type="button"
-    >
-      <span
-        class="MuiIconButton-label"
-      >
-        <span
-          aria-hidden="true"
-          class="material-icons MuiIcon-root MuiIcon-colorPrimary"
-        >
-          arrow_back
-        </span>
-      </span>
-      <span
-        class="MuiTouchRipple-root"
-      />
-    </button>
-    <h5
-      class="MuiTypography-root sc-Qotzb dbnvgZ MuiTypography-h5 MuiTypography-gutterBottom"
-      data-test="page-header-title"
-    >
-      Detail page
-    </h5>
-  </div>
-  <h2
-    class="sc-fWnslK hJwqJu"
+exports[`ExamplePage > renders the component 1`] = `
+"<div>
+  <button
+    tabindex=\\"0\\"
+    type=\\"button\\"
+    aria-label=\\"Back\\"
+    data-test=\\"page-header-back\\"
   >
-    Hello Mary
-  </h2>
-</DocumentFragment>
+    <span><span aria-hidden=\\"true\\">arrow_back</span></span
+    ><span></span>
+  </button>
+  <h5 data-test=\\"page-header-title\\">Detail page</h5>
+</div>
+<h2>Hello Mary</h2>
+"
+`;
+
+exports[`ExamplePage > renders the feedback component 1`] = `
+"<div>
+  <button
+    tabindex=\\"0\\"
+    type=\\"button\\"
+    aria-label=\\"Back\\"
+    data-test=\\"page-header-back\\"
+  >
+    <span><span aria-hidden=\\"true\\">arrow_back</span></span
+    ><span></span>
+  </button>
+  <h5 data-test=\\"page-header-title\\">Detail page</h5>
+</div>
+<h2>Hello Mary</h2>
+"
 `;

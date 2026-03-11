@@ -36,6 +36,7 @@
         "typed-immutable-map": ">=0"
     },
     "devDependencies": {
+        "@prettier/sync": "^0.6.1",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^14.0.0",
         "@types/material-ui": "^0.21.12",
@@ -58,7 +59,7 @@
         "husky": "^7",
         "jsdom": "^21",
         "node-stdlib-browser": "^1",
-        "prettier": "^2",
+        "prettier": "^3.8.1",
         "source-map-explorer": "^2",
         "ts-prune": "^0",
         "tsx": "^4.19.3",
