@@ -2,7 +2,7 @@ import React from "react";
 import i18n from "@dhis2/d2-i18n";
 import { Provider } from "@dhis2/app-runtime";
 import { D2Api } from "$/types/d2-api";
-import App from "./App";
+import { App } from "./App";
 import { CompositionRoot, getWebappCompositionRoot } from "$/CompositionRoot";
 
 export function Dhis2App(_props: {}) {
@@ -30,10 +30,16 @@ export function Dhis2App(_props: {}) {
         }
         case "loaded": {
             const { baseUrl, compositionRoot } = compositionRootRes.data;
-            const config = { baseUrl, apiVersion: 30 };
+            type ProviderProps = React.ComponentProps<typeof Provider>;
+            const config: ProviderProps["config"] = { baseUrl, apiVersion: 30 };
 
             return (
-                <Provider config={config}>
+                <Provider
+                    config={config}
+                    plugin={false}
+                    parentAlertsAdd={() => {}}
+                    showAlertsInPlugin={false}
+                >
                     <App compositionRoot={compositionRoot} />
                 </Provider>
             );
@@ -71,10 +77,33 @@ const isDev = env.DEV;
 
 async function getBaseUrl() {
     if (isDev) {
-        return "/dhis2"; // See src/setupProxy.js
+        return "/dhis2"; // See vite.config.ts: defineConfig -> server.proxy
     } else {
-        const manifest = await fetch("manifest.webapp").then(res => res.json());
-        return manifest.activities.dhis.href;
+        return getInjectedBaseUrl() || getBaseUrlFromManifest();
+    }
+}
+
+// Get from manifest.webapp: activities.dhis.href
+async function getBaseUrlFromManifest(): Promise<string> {
+    const response = await fetch("manifest.webapp");
+    const manifest = await response.json();
+    const { href } = manifest.activities.dhis;
+
+    if (!href || href === "*") {
+        throw new Error("Base URL not found in manifest.webapp (see DHIS2-19708)");
+    } else {
+        return href;
+    }
+}
+
+// Injected by backend (DHIS2 +41) in public.html meta tag "dhis2-base-url"
+function getInjectedBaseUrl() {
+    const baseUrl = document.querySelector('meta[name="dhis2-base-url"]')?.getAttribute("content");
+
+    if (baseUrl && baseUrl !== "__DHIS2_BASE_URL__") {
+        return baseUrl;
+    } else {
+        return null;
     }
 }
 

@@ -1,25 +1,24 @@
-import styled from "styled-components";
-import { HeaderBar } from "@dhis2/ui";
+import React, { useEffect, useState } from "react";
 import { SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { Feedback } from "@eyeseetea/feedback-component";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 //@ts-ignore
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-import React, { useEffect, useState } from "react";
 import { appConfig } from "$/app-config";
 import { CompositionRoot } from "$/CompositionRoot";
-import Share from "$/webapp/components/share/Share";
+import { Share } from "$/webapp/components/share/Share";
 import { AppContext, AppContextState } from "$/webapp/contexts/app-context";
 import { Router } from "$/webapp/pages/Router";
 import "./App.css";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
+import { HeaderBar } from "$/webapp/pages/app/header-bar/HeaderBar";
 
-export interface AppProps {
+type AppProps = {
     compositionRoot: CompositionRoot;
-}
+};
 
-function App(props: AppProps) {
+function App_(props: AppProps) {
     const { compositionRoot } = props;
     const [showShareButton, setShowShareButton] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -44,7 +43,7 @@ function App(props: AppProps) {
         <MuiThemeProvider theme={muiTheme}>
             <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
                 <SnackbarProvider>
-                    <StyledHeaderBar appName="Skeleton App" />
+                    <HeaderBar appName="Skeleton App" />
 
                     {appConfig.feedback && appContext && (
                         <Feedback
@@ -66,10 +65,4 @@ function App(props: AppProps) {
     );
 }
 
-const StyledHeaderBar = styled(HeaderBar)`
-    div:first-of-type {
-        box-sizing: border-box;
-    }
-`;
-
-export default React.memo(App);
+export const App = React.memo(App_);

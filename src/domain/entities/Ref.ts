@@ -1,9 +1,5 @@
 export type Id = string;
 
-export interface Ref {
-    id: Id;
-}
+export type Ref = { id: Id };
 
-export interface NamedRef extends Ref {
-    name: string;
-}
+export type NamedRef = Ref & { name: string };

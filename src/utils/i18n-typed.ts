@@ -15,11 +15,11 @@ type I18nTArgs<Str extends string> = Interpolations<Str> extends Record<string, 
     ? [Str] | [Str, Partial<Options>]
     : [Str, Interpolations<Str> & Partial<Options>];
 
-interface Options {
+type Options = {
     ns: string; // namespace
     nsSeparator: string | boolean; // By default, ":", which breaks strings containing that char
     lng: string; // language
-}
+};
 
 type Interpolations<Str extends string> = Record<ExtractVars<Str>, string | number>;
 

@@ -25,6 +25,6 @@ const Title = styled.h2`
     color: blue;
 `;
 
-interface ExamplePageProps {
+type ExamplePageProps = {
     name: string;
-}
+};
