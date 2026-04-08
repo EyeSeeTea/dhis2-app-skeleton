@@ -11,3 +11,8 @@ body {
 li {
     line-height: 1.75;
 }
+
+a {
+    color: initial;
+    text-decoration: none;
+}

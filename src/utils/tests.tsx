@@ -5,13 +5,11 @@ import { getTestCompositionRoot } from "$/CompositionRoot";
 import { createAdminUser } from "$/domain/entities/__tests__/userFixtures";
 import { AppContext, AppContextState } from "$/webapp/contexts/app-context";
 
-export function getTestContext() {
-    const context: AppContextState = {
+export function getTestContext(): AppContextState {
+    return {
         currentUser: createAdminUser(),
         compositionRoot: getTestCompositionRoot(),
     };
-
-    return context;
 }
 
 export function getReactComponent(children: ReactNode): RenderResult {

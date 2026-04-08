@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { Feedback } from "@eyeseetea/feedback-component";
-import { MuiThemeProvider } from "@material-ui/core/styles";
-//@ts-ignore
-import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { appConfig } from "$/app-config";
 import { CompositionRoot } from "$/CompositionRoot";
 import { Share } from "$/webapp/components/share/Share";
 import { AppContext, AppContextState } from "$/webapp/contexts/app-context";
 import { Router } from "$/webapp/pages/Router";
 import "./App.css";
-import muiThemeLegacy from "./themes/dhis2-legacy.theme";
-import { muiTheme } from "./themes/dhis2.theme";
 import { HeaderBar } from "$/webapp/pages/app/header-bar/HeaderBar";
 
 type AppProps = {
@@ -40,28 +35,21 @@ function App_(props: AppProps) {
     if (loading) return null;
 
     return (
-        <MuiThemeProvider theme={muiTheme}>
-            <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
-                <SnackbarProvider>
-                    <HeaderBar appName="Skeleton App" />
+        <SnackbarProvider>
+            <HeaderBar appName="Skeleton App" />
 
-                    {appConfig.feedback && appContext && (
-                        <Feedback
-                            options={appConfig.feedback}
-                            username={appContext.currentUser.username}
-                        />
-                    )}
+            {appConfig.feedback && appContext && (
+                <Feedback options={appConfig.feedback} username={appContext.currentUser.username} />
+            )}
 
-                    <div id="app" className="content">
-                        <AppContext.Provider value={appContext}>
-                            <Router />
-                        </AppContext.Provider>
-                    </div>
+            <div id="app" className="content">
+                <AppContext.Provider value={appContext}>
+                    <Router />
+                </AppContext.Provider>
+            </div>
 
-                    <Share visible={showShareButton} />
-                </SnackbarProvider>
-            </OldMuiThemeProvider>
-        </MuiThemeProvider>
+            <Share visible={showShareButton} />
+        </SnackbarProvider>
     );
 }
 

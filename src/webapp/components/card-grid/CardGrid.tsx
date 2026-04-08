@@ -1,24 +1,26 @@
 import React from "react";
-import styled from "styled-components";
 import { PageHeader } from "$/webapp/components/page-header/PageHeader";
-import { MenuCard, MenuCardProps } from "./MenuCard";
+import { SummaryCard, SummaryCardGroup } from "$/webapp/components/card-grid/SummaryCard";
+
+const section = { title: "title2", name: "name2" };
 
 export const CardGrid: React.FC<CardGridProps> = React.memo(({ title, cards, onBackClick }) => {
     return (
         <React.Fragment>
             {!!title && <PageHeader title={title} onBackClick={onBackClick} />}
 
-            <Container>
-                {cards.map(({ key, title, children }) => (
-                    <div key={key}>
-                        {!!title && <Title>{title}</Title>}
-
-                        {children.map(props => (
-                            <MenuCard key={props.name} {...props} />
-                        ))}
-                    </div>
-                ))}
-            </Container>
+            {cards.map(card => (
+                <SummaryCardGroup key={card.key} title={card.title} section={section}>
+                    {card.items.map(child => (
+                        <SummaryCard
+                            key={child.name}
+                            section={{ title: child.name, route: child.route }}
+                        >
+                            {child.description}
+                        </SummaryCard>
+                    ))}
+                </SummaryCardGroup>
+            ))}
         </React.Fragment>
     );
 });
@@ -30,21 +32,13 @@ export type CardGridProps = {
 };
 
 export type Card = {
-    title?: string;
+    title: string;
     key: string;
-    children: MenuCardProps[];
+    items: CardItem[];
 };
 
-const Container = styled.div`
-    margin-left: 30px;
-    display: flex;
-    flex-direction: column;
-`;
-
-const Title = styled.h1`
-    font-size: 24px;
-    font-weight: 300;
-    color: rgba(0, 0, 0, 0.87);
-    padding: 15px 0px 15px;
-    margin: 0;
-`;
+export type CardItem = {
+    name: string;
+    description: string;
+    route: string;
+};
