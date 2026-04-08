@@ -1,4 +1,3 @@
-import { styled } from "@material-ui/styles";
 import { HeaderBar as D2HeaderBar } from "@dhis2/ui";
 
 type HeaderBarProps = {
@@ -10,11 +9,16 @@ type HeaderBarProps = {
 export const HeaderBar: React.FC<HeaderBarProps> = props => {
     const { appName } = props;
     const shouldRenderHeaderBar = window.self === window.top;
-    return shouldRenderHeaderBar && <StyledHeaderBar appName={appName} />;
-};
+    if (!shouldRenderHeaderBar) return null;
 
-const StyledHeaderBar = styled(D2HeaderBar)({
-    "& div:first-of-type": {
-        boxSizing: "border-box",
-    },
-});
+    return (
+        <div className="header-bar-wrapper">
+            <D2HeaderBar appName={appName} />
+            <style jsx>{`
+                .header-bar-wrapper :global(div:first-of-type) {
+                    box-sizing: border-box;
+                }
+            `}</style>
+        </div>
+    );
+};
