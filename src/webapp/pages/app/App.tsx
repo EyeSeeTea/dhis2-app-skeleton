@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { HeaderBar } from "@dhis2/ui";
 import { SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { Feedback } from "@eyeseetea/feedback-component";
 import { appConfig } from "$/app-config";
@@ -8,6 +7,7 @@ import { Share } from "$/webapp/components/share/Share";
 import { AppContext, AppContextState } from "$/webapp/contexts/app-context";
 import { Router } from "$/webapp/pages/Router";
 import "./App.css";
+import { HeaderBar } from "$/webapp/pages/app/header-bar/HeaderBar";
 
 type AppProps = {
     compositionRoot: CompositionRoot;
