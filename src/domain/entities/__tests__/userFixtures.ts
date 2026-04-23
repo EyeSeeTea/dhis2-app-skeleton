@@ -1,31 +1,32 @@
-import { User, UserRole } from "$/domain/entities/User";
-import { NamedRef } from "$/domain/entities/Ref";
+import { Id } from "$/domain/entities/Ref";
+import { User } from "$/domain/entities/User";
 
 export function createAdminUser(): User {
-    const adminRoles = [{ id: "Hg7n0MwzUQn", name: "Super user", authorities: ["ALL"] }];
-
-    return createUser(adminRoles, []);
+    return createUser({ isAdmin: true, userRoleIds: ["Hg7n0MwzUQn"] });
 }
+
 export function createNonAdminUser(): User {
-    const nonAdminRoles = [{ id: "Hg7n0MwzUQn", name: "Malaria", authorities: ["F_EXPORT_DATA"] }];
-
-    return createUser(nonAdminRoles, []);
+    return createUser({ isAdmin: false, userRoleIds: ["Hg7n0MwzUQn"] });
 }
-export function createUserWithGroups(userGroups: NamedRef[] = []): User {
+
+export function createUserWithGroups(userGroupIds: Id[] = []): User {
     return new User({
         id: "YjJdEO6d38H",
         name: "John Traore",
         username: "user",
-        userRoles: [],
-        userGroups,
+        userRoleIds: [],
+        userGroupIds: userGroupIds,
+        isAdmin: false,
     });
 }
-function createUser(userRoles: UserRole[], userGroups: NamedRef[] = []): User {
+
+function createUser(options: { isAdmin: boolean; userRoleIds: Id[] }): User {
     return new User({
         id: "kQiwoyMYHBS",
         name: "John Traore",
         username: "user",
-        userRoles,
-        userGroups,
+        userRoleIds: options.userRoleIds,
+        userGroupIds: [],
+        isAdmin: options.isAdmin,
     });
 }

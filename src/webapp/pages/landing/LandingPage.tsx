@@ -24,17 +24,24 @@ export const LandingPage: React.FC = React.memo(() => {
                     description: "Entry point 2",
                     listAction: () => history.push("/for/Mary"),
                 },
+                {
+                    name: i18n.t("Users"),
+                    description: i18n.t("Browse users with filters and actions"),
+                    listAction: () => history.push("/users"),
+                },
             ],
         },
     ];
 
     return (
         <>
-            <Typography variant="h6">
-                Current user: {currentUser.name} [{currentUser.id}]
-            </Typography>
-
             <CardGrid cards={cards} />
+
+            <footer>
+                <Typography variant="h6">
+                    Current user: {currentUser.name} [{currentUser.id}]
+                </Typography>
+            </footer>
         </>
     );
 });
