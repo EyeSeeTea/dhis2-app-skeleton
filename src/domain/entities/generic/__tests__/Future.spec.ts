@@ -1,5 +1,9 @@
 import { describe, expect, test, it, vi, expectTypeOf } from "vitest";
-import { Future, SequentialAccumulatedData } from "$/domain/entities/generic/Future";
+import {
+    Future,
+    ParallelAccumulatedData,
+    SequentialAccumulatedData,
+} from "$/domain/entities/generic/Future";
 
 describe("Basic builders", () => {
     test("Future.success", async () => {
@@ -311,6 +315,54 @@ describe("sequentialWithAccumulation", () => {
             type: "error",
             data: [1, 2],
             error: "error",
+        };
+
+        await expectAsync(values$, { toEqual: expected });
+    });
+});
+
+describe("parallelWithAccumulation", () => {
+    it("if there is no error, it returns an async containing all the accumulated values as an array", async () => {
+        const $futuresArray = [Future.success(1), Future.success(2), Future.success(3)];
+
+        const values$ = Future.parallelWithAccumulation($futuresArray);
+        const expected: ParallelAccumulatedData<unknown, number> = {
+            type: "success",
+            data: [1, 2, 3],
+        };
+
+        await expectAsync(values$, { toEqual: expected });
+    });
+
+    it("if there is an error in any Future, it continues and returns an async containing all the other accumulated values as an array", async () => {
+        const $futuresArray = [Future.success(1), Future.error("error"), Future.success(3)];
+
+        const values$ = Future.parallelWithAccumulation($futuresArray);
+        const expected: ParallelAccumulatedData<string, number> = {
+            type: "error",
+            data: [1, 3],
+            errors: ["error"],
+        };
+
+        await expectAsync(values$, { toEqual: expected });
+    });
+
+    it("if an error occurs, it completes the current batch, accumulates all successful results from it, and terminates before starting the next batch", async () => {
+        const $futuresArray = [
+            Future.error("error"),
+            Future.success(2),
+            Future.success(3),
+            Future.success(4),
+        ];
+
+        const values$ = Future.parallelWithAccumulation($futuresArray, {
+            stopOnError: true,
+            concurrency: 2,
+        });
+        const expected: ParallelAccumulatedData<string, number> = {
+            type: "error",
+            data: [2],
+            errors: ["error"],
         };
 
         await expectAsync(values$, { toEqual: expected });
