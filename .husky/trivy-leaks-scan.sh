@@ -11,7 +11,7 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 
 check_trivy_installed() {
   if ! command -v trivy >/dev/null 2>&1; then
-    echo "Warning: Trivy is not installed. See: https://trivy.dev/latest/getting-started/installation/"
+    echo "Warning: Trivy is not installed. See: https://trivy.dev/docs/latest/getting-started/installation/"
     echo "If you're sure no secrets were added, you can push with:"
     echo "SKIP_SECRET_SCAN=1 git push"
     echo ""
