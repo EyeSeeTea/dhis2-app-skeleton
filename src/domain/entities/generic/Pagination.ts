@@ -5,7 +5,7 @@ export type Pager = {
     pageSize: number;
 };
 
-export type PaginatedResponse<T> = {
+export type Paginated<T> = {
     pager: Pager;
     objects: T[];
 };

@@ -37,12 +37,20 @@ export const UsersTableFilters: React.FC<UsersTableFiltersProps> = React.memo(pr
     const { info, selection, onChange } = props;
 
     const groupItems = React.useMemo(
-        () => (info?.userGroups || []).map(g => ({ value: g.id, text: g.name })),
+        () =>
+            (info?.userGroups || []).map(userGroup => ({
+                value: userGroup.id,
+                text: userGroup.name,
+            })),
         [info?.userGroups]
     );
 
     const roleItems = React.useMemo(
-        () => (info?.userRoles || []).map(r => ({ value: r.id, text: r.name })),
+        () =>
+            (info?.userRoles || []).map(userRole => ({
+                value: userRole.id,
+                text: userRole.name,
+            })),
         [info?.userRoles]
     );
 
@@ -55,12 +63,20 @@ export const UsersTableFilters: React.FC<UsersTableFiltersProps> = React.memo(pr
     );
 
     const updateGroups = React.useCallback(
-        (values: string[]) => onChange(prev => ({ ...prev, userGroupIds: values })),
+        (values: string[]) =>
+            onChange(prev => ({
+                ...prev,
+                userGroupIds: values,
+            })),
         [onChange]
     );
 
     const updateRoles = React.useCallback(
-        (values: string[]) => onChange(prev => ({ ...prev, userRoleIds: values })),
+        (values: string[]) =>
+            onChange(prev => ({
+                ...prev,
+                userRoleIds: values,
+            })),
         [onChange]
     );
 

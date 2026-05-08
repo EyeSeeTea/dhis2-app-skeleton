@@ -1,6 +1,6 @@
 import { User } from "$/domain/entities/User";
 import { GetUsersOptions, UserRepository } from "$/domain/repositories/UserRepository";
-import { PaginatedResponse } from "$/domain/entities/generic/Pagination";
+import { Paginated } from "$/domain/entities/generic/Pagination";
 import { D2Api, MetadataPick } from "$/types/d2-api";
 import { apiToFuture, FutureData } from "$/data/api-futures";
 import { getId } from "$/domain/entities/Ref";
@@ -16,7 +16,7 @@ export class UserD2Repository implements UserRepository {
         ).map(d2User => this.buildUser(d2User));
     }
 
-    public get(options: GetUsersOptions): FutureData<PaginatedResponse<User>> {
+    public get(options: GetUsersOptions): FutureData<Paginated<User>> {
         const { search, page, pageSize, filters } = options;
 
         return apiToFuture(

@@ -21,6 +21,7 @@ import {
     toUsersFilters,
     UsersTableFilters,
 } from "./UsersTableFilters";
+import { useRefresh } from "$/webapp/utils/refresh";
 
 export const UsersTable: React.FC = React.memo(() => {
     const filterInfo = useFilterInfo();
@@ -39,15 +40,14 @@ export const UsersTable: React.FC = React.memo(() => {
 const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(props => {
     const { filterInfo } = props;
     const [filtersState, setFiltersState] = React.useState<FiltersState>(initialFiltersState);
-    const [refreshKey, setRefreshKey] = React.useState(0);
     const [confirm, setConfirm] = React.useState<Maybe<ConfirmState>>(undefined);
     const rowsRef = React.useRef<UserRow[]>([]);
 
-    const reload = React.useCallback(() => setRefreshKey(k => k + 1), []);
+    const [refreshKey, refresh] = useRefresh();
     const filters = React.useMemo(() => toUsersFilters(filtersState), [filtersState]);
 
     const { getRows, loading } = useGetUsersRows({ filters, refreshKey, rowsRef });
-    const config = useUsersTableConfig({ info: filterInfo, rowsRef, reload, setConfirm });
+    const config = useUsersTableConfig({ info: filterInfo, rowsRef, reload: refresh, setConfirm });
     const tableProps = useObjectsTable<UserRow>(config, getRows);
 
     const globalActions = React.useMemo<TableGlobalAction[]>(
@@ -56,7 +56,7 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
                 name: "refresh",
                 text: i18n.t("Refresh"),
                 icon: <RefreshIcon />,
-                onClick: () => reload(),
+                onClick: () => refresh(),
             },
             {
                 name: "export-csv",
@@ -65,7 +65,7 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
                 onClick: () => exportRowsToCsv(rowsRef.current, filterInfo),
             },
         ],
-        [reload, filterInfo]
+        [refresh, filterInfo]
     );
 
     const filterComponents = (

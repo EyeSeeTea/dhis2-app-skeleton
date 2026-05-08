@@ -5,7 +5,7 @@ import {
     createUserWithGroups,
 } from "$/domain/entities/__tests__/userFixtures";
 import { Future } from "$/domain/entities/generic/Future";
-import { PaginatedResponse } from "$/domain/entities/generic/Pagination";
+import { Paginated } from "$/domain/entities/generic/Pagination";
 import { GetUsersOptions, UserRepository } from "$/domain/repositories/UserRepository";
 import { FutureData } from "$/data/api-futures";
 
@@ -14,7 +14,7 @@ export class UserTestRepository implements UserRepository {
         return Future.success(createAdminUser());
     }
 
-    public get(options: GetUsersOptions): FutureData<PaginatedResponse<User>> {
+    public get(options: GetUsersOptions): FutureData<Paginated<User>> {
         const { page, pageSize } = options;
         const all = [createAdminUser(), createNonAdminUser(), createUserWithGroups()];
         const paged = all.slice((page - 1) * pageSize, page * pageSize);
