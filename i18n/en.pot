@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2024-06-26T10:58:19.149Z\n"
-"PO-Revision-Date: 2024-06-26T10:58:19.149Z\n"
+"POT-Creation-Date: 2026-05-21T09:17:13.639Z\n"
+"PO-Revision-Date: 2026-05-21T09:17:13.639Z\n"
 
 msgid "Add"
 msgstr ""
@@ -20,6 +20,76 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
+msgid "Refresh"
+msgstr ""
+
+msgid "Export CSV"
+msgstr ""
+
+msgid "OK"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Copy username"
+msgstr ""
+
+msgid "Copied {{username}}"
+msgstr ""
+
+msgid "Show roles"
+msgstr ""
+
+msgid "(none)"
+msgstr ""
+
+msgid "Roles for {{name}}"
+msgstr ""
+
+msgid "Disable user"
+msgstr ""
+
+msgid "Disable users"
+msgstr ""
+
+msgid "You are about to disable {{count}} user(s)"
+msgid_plural "You are about to disable {{count}} user(s)"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Disabled {{count}} users (stub)"
+msgid_plural "Disabled {{count}} users (stub)"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "User groups"
+msgstr ""
+
+msgid "User roles"
+msgstr ""
+
+msgid "Id"
+msgstr ""
+
+msgid "Search by name or username"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
 msgid "Hello {{name}}"
 msgstr ""
 
@@ -27,4 +97,10 @@ msgid "Detail page"
 msgstr ""
 
 msgid "Section"
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
+msgid "Browse users with filters and actions"
 msgstr ""

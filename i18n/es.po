@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2024-06-26T10:58:19.149Z\n"
+"POT-Creation-Date: 2026-05-21T09:17:13.639Z\n"
 "PO-Revision-Date: 2018-10-25T09:02:35.143Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,6 +20,78 @@ msgstr "Volver"
 msgid "Help"
 msgstr "Ayuda"
 
+msgid "Refresh"
+msgstr ""
+
+msgid "Export CSV"
+msgstr ""
+
+msgid "OK"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Copy username"
+msgstr ""
+
+#, fuzzy
+msgid "Copied {{username}}"
+msgstr "Hola {{name}}"
+
+msgid "Show roles"
+msgstr ""
+
+msgid "(none)"
+msgstr ""
+
+#, fuzzy
+msgid "Roles for {{name}}"
+msgstr "Hola {{name}}"
+
+msgid "Disable user"
+msgstr ""
+
+msgid "Disable users"
+msgstr ""
+
+msgid "You are about to disable {{count}} user(s)"
+msgid_plural "You are about to disable {{count}} user(s)"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Disabled {{count}} users (stub)"
+msgid_plural "Disabled {{count}} users (stub)"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "User groups"
+msgstr ""
+
+msgid "User roles"
+msgstr ""
+
+msgid "Id"
+msgstr ""
+
+msgid "Search by name or username"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
 msgid "Hello {{name}}"
 msgstr "Hola {{name}}"
 
@@ -28,3 +100,9 @@ msgstr ""
 
 msgid "Section"
 msgstr "Sección"
+
+msgid "Users"
+msgstr ""
+
+msgid "Browse users with filters and actions"
+msgstr ""
