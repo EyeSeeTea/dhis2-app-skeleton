@@ -72,6 +72,8 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
         <UsersTableFilters info={filterInfo} selection={filtersState} onChange={setFiltersState} />
     );
 
+    const closeConfirm = React.useCallback(() => setConfirm(undefined), []);
+
     return (
         <Wrapper>
             <ObjectsTable<UserRow>
@@ -88,8 +90,8 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
                     saveText={i18n.t("OK")}
                     onSave={confirm.onConfirm}
                     cancelText={i18n.t("Cancel")}
-                    onCancel={() => setConfirm(undefined)}
-                    onClose={() => setConfirm(undefined)}
+                    onCancel={closeConfirm}
+                    onClose={closeConfirm}
                     maxWidth="sm"
                     fullWidth
                 >
