@@ -7,13 +7,17 @@ import { HashMap } from "./HashMap";
  * import _ from "./Collection";
  *
  * const values = _(["1", "2", "3", "3", "4"])
- *     .map(x => parseInt(x))
- *     .filter(x => x > 1)
- *     .uniq()
- *     .reverse()
+ *     .map(x => parseInt(x)) // Collection[1, 2, 3, 3, 4]
+ *     .filter(x => x > 1) // Collection[2, 3, 3, 4]
+ *     .uniq() // Collection[2, 3, 4]
+ *     .reverse() // Collection[4, 3, 2]
  *     .value(); // [4, 3, 2]
  * ```
  */
+
+export default function _c<T>(xs: T[]): Collection<T> {
+    return Collection.from(xs);
+}
 
 export class Collection<T> {
     protected xs: T[];
@@ -322,7 +326,3 @@ function compareArray<T>(a: T, b: T, items: OrderItem<T>[]): CompareRes {
 }
 
 type OrderItem<T> = [(obj: T) => unknown, "asc" | "desc"];
-
-export default function _c<T>(xs: T[]): Collection<T> {
-    return Collection.from(xs);
-}
