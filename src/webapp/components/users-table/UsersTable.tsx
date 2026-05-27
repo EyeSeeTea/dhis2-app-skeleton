@@ -131,11 +131,20 @@ function exportRowsToCsv(rows: UserRow[], info: UsersFilterInfo): void {
             ].join(",")
         )
         .join("\n");
-    const blob = new Blob([`${header}\n${body}`], { type: "text/csv" });
+
+    saveFile({
+        filename: "users.csv",
+        content: `${header}\n${body}`,
+        contentType: "text/csv",
+    });
+}
+
+function saveFile(options: { filename: string; content: string; contentType: string }): void {
+    const blob = new Blob([options.content], { type: options.contentType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "users.csv";
+    a.download = options.filename;
     a.click();
     URL.revokeObjectURL(url);
 }
