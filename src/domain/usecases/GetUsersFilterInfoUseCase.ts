@@ -12,7 +12,7 @@ export type UsersFilterInfo = {
 
 export class GetUsersFilterInfoUseCase {
     constructor(
-        private options: {
+        private repositories: {
             userGroupRepository: UserGroupRepository;
             userRoleRepository: UserRoleRepository;
         }
@@ -20,8 +20,8 @@ export class GetUsersFilterInfoUseCase {
 
     public execute(): FutureData<UsersFilterInfo> {
         return Future.joinObj({
-            userGroups: this.options.userGroupRepository.getAll(),
-            userRoles: this.options.userRoleRepository.getAll(),
+            userGroups: this.repositories.userGroupRepository.getAll(),
+            userRoles: this.repositories.userRoleRepository.getAll(),
         });
     }
 }

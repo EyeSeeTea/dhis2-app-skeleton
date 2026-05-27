@@ -5,7 +5,7 @@ import { D2Api } from "$/types/d2-api";
 import { App } from "./App";
 import { CompositionRoot, getWebappCompositionRoot } from "$/CompositionRoot";
 
-export function Dhis2App(_props: {}) {
+export function Dhis2App() {
     const [compositionRootRes, setCompositionRootRes] = React.useState<CompositionRootResult>({
         type: "loading",
     });
