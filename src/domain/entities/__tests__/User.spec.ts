@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createAdminUser, createNonAdminUser, createUserWithGroups } from "./userFixtures";
+import { createAdminUser, createNonAdminUser, createUser } from "./userFixtures";
 
 describe("User", () => {
     it("should be admin if isAdmin is true", () => {
@@ -17,7 +17,7 @@ describe("User", () => {
     it("should return belong to user group equal to true when the id exists", () => {
         const userGroupId = "BwyMfDBLih9";
 
-        const user = createUserWithGroups([userGroupId]);
+        const user = createUser({ isAdmin: false, userGroupIds: [userGroupId], userRoleIds: [] });
 
         expect(user.belongToUserGroup(userGroupId)).toBe(true);
     });
@@ -26,7 +26,11 @@ describe("User", () => {
         const existedUserGroupId = "BwyMfDBLih9";
         const nonExistedUserGroupId = "f31IM13BgwJ";
 
-        const user = createUserWithGroups([existedUserGroupId]);
+        const user = createUser({
+            isAdmin: false,
+            userGroupIds: [existedUserGroupId],
+            userRoleIds: [],
+        });
 
         expect(user.belongToUserGroup(nonExistedUserGroupId)).toBe(false);
     });
@@ -34,7 +38,7 @@ describe("User", () => {
     it("should return belong to user group equal to false if user groups is empty", () => {
         const nonExistedUserGroupId = "f31IM13BgwJ";
 
-        const user = createUserWithGroups();
+        const user = createUser({ isAdmin: false, userGroupIds: [], userRoleIds: [] });
 
         expect(user.belongToUserGroup(nonExistedUserGroupId)).toBe(false);
     });
