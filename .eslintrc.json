@@ -1,6 +1,5 @@
 {
     "extends": [
-        "react-app",
         "eslint:recommended",
         "plugin:react/recommended",
         "plugin:@typescript-eslint/recommended",
@@ -68,6 +67,17 @@
     "parserOptions": {
         "project": "./tsconfig.json"
     },
+    "overrides": [
+        {
+            "files": ["**/*.js"],
+            "parserOptions": {
+                "project": null
+            },
+            "rules": {
+                "@typescript-eslint/no-misused-promises": "off"
+            }
+        }
+    ],
     "settings": {
         "react": {
             "pragma": "React",

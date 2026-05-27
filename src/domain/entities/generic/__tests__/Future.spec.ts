@@ -240,9 +240,9 @@ describe("joinObj", () => {
     it("returns an error if some of the inputs is an error", async () => {
         const join$ = Future.joinObj({
             n: Future.success(123) as Future<string, number>,
-            s: Future.error("Some error") as Future<string, {}>,
+            s: Future.error("Some error") as Future<string, unknown>,
         });
-        expectTypeOf(join$).toEqualTypeOf<Future<string, { n: number; s: {} }>>();
+        expectTypeOf(join$).toEqualTypeOf<Future<string, { n: number; s: unknown }>>();
 
         await expectAsync(join$, { toThrow: "Some error" });
     });
