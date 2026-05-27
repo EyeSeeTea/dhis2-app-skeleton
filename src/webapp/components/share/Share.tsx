@@ -10,8 +10,14 @@ export const Share: React.FC<ShareProps> = ({ visible }) => {
     const [hover, setHover] = React.useState(false);
 
     const toggleExpanded = React.useCallback(() => setExpanded(prev => !prev), []);
-    const openMainPage = React.useCallback(() => window.open("http://www.eyeseetea.com/", "_blank"), []);
-    const openTwitter = React.useCallback(() => window.open("https://twitter.com/eyeseetealtd", "_blank"), []);
+    const openMainPage = React.useCallback(
+        () => window.open("http://www.eyeseetea.com/", "_blank"),
+        []
+    );
+    const openTwitter = React.useCallback(
+        () => window.open("https://twitter.com/eyeseetealtd", "_blank"),
+        []
+    );
     const onMouseEnter = React.useCallback(() => setHover(true), []);
     const onMouseLeave = React.useCallback(() => setHover(false), []);
 

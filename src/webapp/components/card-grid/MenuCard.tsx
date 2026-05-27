@@ -74,4 +74,3 @@ const Header = styled(MUICardHeader)`
     font-size: 15px;
     font-weight: 500;
 `;
-

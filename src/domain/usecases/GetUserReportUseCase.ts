@@ -7,7 +7,11 @@ import { UserRoleRepository } from "$/domain/repositories/UserRoleRepository";
 
 const MAX_USERS = 1000;
 
-const emptyFilters: UsersFilters = { userGroupIds: undefined, userRoleIds: undefined, canLogin: undefined };
+const emptyFilters: UsersFilters = {
+    userGroupIds: undefined,
+    userRoleIds: undefined,
+    canLogin: undefined,
+};
 
 export class GetUserReportUseCase {
     constructor(
@@ -41,7 +45,9 @@ export class GetUserReportUseCase {
             const adminCount = users.filter(user => user.isAdmin).size;
             const nonAdminCount = users.reject(user => user.isAdmin).size;
 
-            const usersWithMultipleRoles = users.filter(user => user.userRoleIds.length > 1).value();
+            const usersWithMultipleRoles = users
+                .filter(user => user.userRoleIds.length > 1)
+                .value();
 
             const rolesSortedByUsage = rolesCollection
                 .map(role => ({

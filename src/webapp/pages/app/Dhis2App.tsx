@@ -11,9 +11,14 @@ export function Dhis2App() {
     });
 
     React.useEffect(() => {
-        getData().then(setCompositionRootRes).catch(err => {
-            setCompositionRootRes({ type: "error", error: { baseUrl: "", error: err as Error } });
-        });
+        getData()
+            .then(setCompositionRootRes)
+            .catch(err => {
+                setCompositionRootRes({
+                    type: "error",
+                    error: { baseUrl: "", error: err as Error },
+                });
+            });
     }, []);
 
     switch (compositionRootRes.type) {

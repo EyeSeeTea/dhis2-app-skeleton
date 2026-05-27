@@ -16,11 +16,7 @@ export class UserTestRepository implements UserRepository {
 
     get(options: GetUsersOptions): FutureData<Paginated<User>> {
         const { page, pageSize } = options;
-        const all = [
-            createAdminUser(),
-            createNonAdminUser(),
-            createUser({ isAdmin: false }),
-        ];
+        const all = [createAdminUser(), createNonAdminUser(), createUser({ isAdmin: false })];
         const paged = all.slice((page - 1) * pageSize, page * pageSize);
 
         return Future.success({

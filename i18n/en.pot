@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-21T09:17:13.639Z\n"
-"PO-Revision-Date: 2026-05-21T09:17:13.639Z\n"
+"POT-Creation-Date: 2026-05-27T11:26:42.425Z\n"
+"PO-Revision-Date: 2026-05-27T11:26:42.425Z\n"
 
 msgid "Add"
 msgstr ""
@@ -36,6 +36,9 @@ msgid "Copy username"
 msgstr ""
 
 msgid "Copied {{username}}"
+msgstr ""
+
+msgid "Failed to copy to clipboard"
 msgstr ""
 
 msgid "Show roles"
