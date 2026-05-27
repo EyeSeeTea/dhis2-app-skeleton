@@ -7,7 +7,7 @@ import { useAppContext } from "$/webapp/contexts/app-context";
 import { GetRows } from "$/webapp/utils/objects-table";
 import { UsersFilters } from "$/domain/repositories/UserRepository";
 import { UsersFilterInfo } from "$/domain/usecases/GetUsersFilterInfoUseCase";
-import { Maybe } from "$/utils/ts-utils";
+import { isValueInUnionType, Maybe } from "$/utils/ts-utils";
 
 export type UserRow = User;
 
@@ -52,7 +52,10 @@ export function useUsersTableConfig(options: {
                     const row = rowsRef.current.find(r => r.id === selectedIds[0]);
                     if (!row) return;
                     void navigator.clipboard.writeText(row.username).then(
-                        () => snackbar.success(i18n.t("Copied {{username}}", { username: row.username })),
+                        () =>
+                            snackbar.success(
+                                i18n.t("Copied {{username}}", { username: row.username })
+                            ),
                         () => snackbar.error(i18n.t("Failed to copy to clipboard"))
                     );
                 },
@@ -101,8 +104,16 @@ export function useUsersTableConfig(options: {
     return React.useMemo(
         () => ({
             columns: [
-                { name: "name", text: i18n.t("Name"), sortable: false },
-                { name: "username", text: i18n.t("Username"), sortable: false },
+                {
+                    name: "name",
+                    text: i18n.t("Name"),
+                    sortable: sortableFields.includes("name"),
+                },
+                {
+                    name: "username",
+                    text: i18n.t("Username"),
+                    sortable: sortableFields.includes("username"),
+                },
                 {
                     name: "userGroupIds",
                     text: i18n.t("User groups"),
@@ -131,7 +142,7 @@ export function useUsersTableConfig(options: {
                     getValue: row => renderIds(row.userRoleIds, roleNameById),
                 },
             ],
-            actions,
+            actions: actions,
             paginationOptions: {
                 pageSizeOptions: [10, 25, 50],
                 pageSizeInitialValue: 25,
@@ -142,6 +153,8 @@ export function useUsersTableConfig(options: {
         [actions, renderIds, groupNameById, roleNameById]
     );
 }
+
+const sortableFields = ["name", "username"] as const;
 
 export function useGetUsersRows(options: {
     filters: UsersFilters;
@@ -157,17 +170,22 @@ export function useGetUsersRows(options: {
     const [loading, setLoading] = React.useState(false);
 
     const getRows = React.useCallback<GetRows<UserRow>>(
-        (search, paging) =>
+        (search, paging, sorting) =>
             new Promise((resolve, reject) => {
-                // refreshKey forces a new callback reference so the table reloads.
-                void refreshKey;
+                void refreshKey; // to trigger refresh when refreshKey changes
                 setLoading(true);
+
+                const sortingField = isValueInUnionType(sorting.field, sortableFields)
+                    ? sorting.field
+                    : "name";
+
                 return compositionRoot.users.get
                     .execute({
-                        search,
+                        search: search,
                         page: paging.page,
                         pageSize: paging.pageSize,
-                        filters,
+                        filters: filters,
+                        order: { field: sortingField, order: sorting.order },
                     })
                     .run(
                         response => {
@@ -182,7 +200,7 @@ export function useGetUsersRows(options: {
                         }
                     );
             }),
-        [compositionRoot, snackbar, filters, refreshKey, rowsRef]
+        [compositionRoot, snackbar, refreshKey, filters, rowsRef]
     );
 
     return { getRows, loading };

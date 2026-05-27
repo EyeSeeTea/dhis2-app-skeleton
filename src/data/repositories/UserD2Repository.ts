@@ -25,7 +25,7 @@ export class UserD2Repository implements UserRepository {
                 page: page,
                 pageSize: pageSize,
                 filter: buildFilter(filters, search),
-                order: "displayName:asc",
+                order: `${options.order.field}:${options.order.order}`,
             })
         ).map(({ pager, objects }) => ({
             pager: pager,
@@ -36,7 +36,7 @@ export class UserD2Repository implements UserRepository {
     private buildUser(d2User: D2User): User {
         return new User({
             id: d2User.id,
-            name: d2User.displayName,
+            name: d2User.name,
             username: d2User.username,
             userGroupIds: d2User.userGroups.map(getId),
             userRoleIds: d2User.userRoles.map(getId),
@@ -64,7 +64,7 @@ function buildFilter(filters: GetUsersOptions["filters"], search: string) {
 
 const userFields = {
     id: true,
-    displayName: true,
+    name: true,
     username: true,
     userGroups: { id: true },
     userRoles: { id: true, authorities: true },

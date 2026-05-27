@@ -14,6 +14,7 @@ export type GetUsersOptions = {
     page: number;
     pageSize: number;
     filters: UsersFilters;
+    order: { field: "name" | "username"; order: "asc" | "desc" };
 };
 
 export type UsersFilters = {
