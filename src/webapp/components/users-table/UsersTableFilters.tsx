@@ -38,7 +38,7 @@ export const UsersTableFilters: React.FC<UsersTableFiltersProps> = React.memo(pr
 
     const groupItems = React.useMemo(
         () =>
-            (info?.userGroups || []).map(userGroup => ({
+            (info?.userGroups ?? []).map(userGroup => ({
                 value: userGroup.id,
                 text: userGroup.name,
             })),
@@ -47,7 +47,7 @@ export const UsersTableFilters: React.FC<UsersTableFiltersProps> = React.memo(pr
 
     const roleItems = React.useMemo(
         () =>
-            (info?.userRoles || []).map(userRole => ({
+            (info?.userRoles ?? []).map(userRole => ({
                 value: userRole.id,
                 text: userRole.name,
             })),

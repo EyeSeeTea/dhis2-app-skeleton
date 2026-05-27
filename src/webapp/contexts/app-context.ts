@@ -11,9 +11,6 @@ export const AppContext = React.createContext<AppContextState | null>(null);
 
 export function useAppContext() {
     const context = useContext(AppContext);
-    if (context) {
-        return context;
-    } else {
-        throw new Error("App context uninitialized");
-    }
+    if (!context) throw new Error("App context uninitialized");
+    return context;
 }

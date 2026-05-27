@@ -13,7 +13,7 @@ import styled from "styled-components";
 import i18n from "$/utils/i18n";
 
 export const MenuCard: React.FC<MenuCardProps> = React.memo(props => {
-    const { name, description, addAction, listAction = noop } = props;
+    const { name, description, addAction, listAction } = props;
 
     return (
         <Card>
@@ -75,4 +75,3 @@ const Header = styled(MUICardHeader)`
     font-weight: 500;
 `;
 
-const noop = () => {};

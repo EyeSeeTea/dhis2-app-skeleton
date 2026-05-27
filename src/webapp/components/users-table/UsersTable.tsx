@@ -56,7 +56,7 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
                 name: "refresh",
                 text: i18n.t("Refresh"),
                 icon: <RefreshIcon />,
-                onClick: () => refresh(),
+                onClick: refresh,
             },
             {
                 name: "export-csv",

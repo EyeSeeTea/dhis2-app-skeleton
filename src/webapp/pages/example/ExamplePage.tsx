@@ -9,9 +9,7 @@ export const ExamplePage: React.FC<ExamplePageProps> = React.memo(props => {
     const title = i18n.t("Hello {{name}}", { name });
     const history = useHistory();
 
-    const goBack = React.useCallback(() => {
-        history.goBack();
-    }, [history]);
+    const goBack = React.useCallback(() => history.goBack(), [history]);
 
     return (
         <React.Fragment>
