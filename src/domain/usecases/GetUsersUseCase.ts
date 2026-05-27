@@ -6,7 +6,7 @@ import { GetUsersOptions, UserRepository } from "$/domain/repositories/UserRepos
 export class GetUsersUseCase {
     constructor(private repositories: { userRepository: UserRepository }) {}
 
-    public execute(options: GetUsersOptions): FutureData<Paginated<User>> {
+    execute(options: GetUsersOptions): FutureData<Paginated<User>> {
         return this.repositories.userRepository.get(options);
     }
 }

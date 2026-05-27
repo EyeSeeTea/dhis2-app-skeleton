@@ -6,21 +6,22 @@ import { D2Api } from "$/types/d2-api";
 export class UserRoleD2Repository implements UserRoleRepository {
     constructor(private api: D2Api) {}
 
-    public getAll(): FutureData<UserRole[]> {
+    getAll(): FutureData<UserRole[]> {
         return apiToFuture(
             this.api.models.userRoles.get({
                 fields: { id: true, displayName: true, authorities: true },
                 paging: false,
                 order: "displayName:asc",
             })
-        ).map(res => {
-            return res.objects.map(role => {
-                return new UserRole({
-                    id: role.id,
-                    name: role.displayName,
-                    authorities: role.authorities,
-                });
-            });
-        });
+        ).map(({ objects }) =>
+            objects.map(
+                role =>
+                    new UserRole({
+                        id: role.id,
+                        name: role.displayName,
+                        authorities: role.authorities,
+                    })
+            )
+        );
     }
 }

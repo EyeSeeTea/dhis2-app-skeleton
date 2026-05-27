@@ -5,7 +5,7 @@ import { UserRepository } from "$/domain/repositories/UserRepository";
 export class GetCurrentUserUseCase {
     constructor(private repositories: { userRepository: UserRepository }) {}
 
-    public execute(): FutureData<User> {
+    execute(): FutureData<User> {
         return this.repositories.userRepository.getCurrent();
     }
 }

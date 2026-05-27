@@ -18,7 +18,7 @@ export class GetUsersFilterInfoUseCase {
         }
     ) {}
 
-    public execute(): FutureData<UsersFilterInfo> {
+    execute(): FutureData<UsersFilterInfo> {
         return Future.joinObj({
             userGroups: this.repositories.userGroupRepository.getAll(),
             userRoles: this.repositories.userRoleRepository.getAll(),

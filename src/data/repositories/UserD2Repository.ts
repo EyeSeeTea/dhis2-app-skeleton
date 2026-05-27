@@ -8,7 +8,7 @@ import { getId } from "$/domain/entities/Ref";
 export class UserD2Repository implements UserRepository {
     constructor(private api: D2Api) {}
 
-    public getCurrent(): FutureData<User> {
+    getCurrent(): FutureData<User> {
         return apiToFuture(
             this.api.currentUser.get({
                 fields: userFields,
@@ -16,7 +16,7 @@ export class UserD2Repository implements UserRepository {
         ).map(d2User => this.buildUser(d2User));
     }
 
-    public get(options: GetUsersOptions): FutureData<Paginated<User>> {
+    get(options: GetUsersOptions): FutureData<Paginated<User>> {
         const { search, page, pageSize, filters } = options;
 
         return apiToFuture(

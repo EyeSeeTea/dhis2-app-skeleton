@@ -6,7 +6,7 @@ import { D2Api } from "$/types/d2-api";
 export class UserGroupD2Repository implements UserGroupRepository {
     constructor(private api: D2Api) {}
 
-    public getAll(): FutureData<UserGroup[]> {
+    getAll(): FutureData<UserGroup[]> {
         return apiToFuture(
             this.api.models.userGroups.get({
                 fields: { id: true, displayName: true },
