@@ -11,7 +11,7 @@ export function apiToFuture<Data>(res: CancelableResponse<Data>): FutureData<Dat
                 if (err instanceof Error) {
                     reject(err);
                 } else {
-                    console.error("apiToFuture:uncatched", err);
+                    console.error("apiToFuture:uncaught", err);
                     reject(new Error("Unknown error"));
                 }
             });
