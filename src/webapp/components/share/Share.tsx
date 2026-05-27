@@ -5,75 +5,46 @@ type ShareProps = {
     visible: boolean;
 };
 
-type ShareState = {
-    expanded: boolean;
-    hover: boolean;
-};
+export const Share: React.FC<ShareProps> = ({ visible }) => {
+    const [expanded, setExpanded] = React.useState(false);
+    const [hover, setHover] = React.useState(false);
 
-export class Share extends React.PureComponent<ShareProps, ShareState> {
-    state: ShareState = { expanded: false, hover: false };
+    const toggleExpanded = React.useCallback(() => setExpanded(prev => !prev), []);
+    const openMainPage = React.useCallback(() => window.open("http://www.eyeseetea.com/", "_blank"), []);
+    const openTwitter = React.useCallback(() => window.open("https://twitter.com/eyeseetealtd", "_blank"), []);
+    const onMouseEnter = React.useCallback(() => setHover(true), []);
+    const onMouseLeave = React.useCallback(() => setHover(false), []);
 
-    toggleExpanded = () => {
-        this.setState({ expanded: !this.state.expanded });
-    };
+    if (!visible) return null;
 
-    openMainPage = () => {
-        window.open("http://www.eyeseetea.com/", "_blank");
-    };
+    const shareStyles = hover ? { ...styles.share, ...styles.shareHover } : styles.share;
 
-    openTwitter = () => {
-        window.open("https://twitter.com/eyeseetealtd", "_blank");
-    };
-
-    setHover = () => {
-        this.setState({ hover: true });
-    };
-
-    unsetHover = () => {
-        this.setState({ hover: false });
-    };
-
-    render() {
-        const { visible } = this.props;
-        const { expanded, hover } = this.state;
-        const shareStyles = hover ? { ...styles.share, ...styles.shareHover } : styles.share;
-
-        if (!visible) return null;
-
-        return (
-            <div>
-                <div
-                    style={styles.shareTab}
-                    onMouseEnter={this.setHover}
-                    onMouseLeave={this.unsetHover}
-                >
-                    <button style={shareStyles} onClick={this.toggleExpanded}>
-                        <i className="fa fa-share icon-xlarge" />
-                    </button>
-                </div>
-
-                {expanded && (
-                    <div style={styles.eyeseeteaShare}>
-                        <p>
-                            <button
-                                style={styles.eyeseeteaShareButtons}
-                                onClick={this.openMainPage}
-                            >
-                                <img src={logo} alt="EyeSeeTea" style={styles.eyeseeteaIcon} />
-                            </button>
-                        </p>
-
-                        <p>
-                            <button style={styles.eyeseeteaShareButtons} onClick={this.openTwitter}>
-                                <i className="fa fa-twitter" style={styles.twitterIcon} />
-                            </button>
-                        </p>
-                    </div>
-                )}
+    return (
+        <div>
+            <div style={styles.shareTab} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+                <button style={shareStyles} onClick={toggleExpanded}>
+                    <i className="fa fa-share icon-xlarge" />
+                </button>
             </div>
-        );
-    }
-}
+
+            {expanded && (
+                <div style={styles.eyeseeteaShare}>
+                    <p>
+                        <button style={styles.eyeseeteaShareButtons} onClick={openMainPage}>
+                            <img src={logo} alt="EyeSeeTea" style={styles.eyeseeteaIcon} />
+                        </button>
+                    </p>
+
+                    <p>
+                        <button style={styles.eyeseeteaShareButtons} onClick={openTwitter}>
+                            <i className="fa fa-twitter" style={styles.twitterIcon} />
+                        </button>
+                    </p>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const styles = {
     eyeseeteaShare: {
@@ -94,7 +65,7 @@ const styles = {
         width: "35px",
         cursor: "pointer" as const,
         backgroundColor: "white",
-        borderradius: 0,
+        borderRadius: 0,
         opacity: 1,
         color: "white",
         boxShadow: "none",
