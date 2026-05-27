@@ -78,8 +78,8 @@ yarn install
 
 After this:
 
--   This repo will use **Yarn 4.12.0**.
--   Other repos without `packageManager` will keep using **Yarn 1.22.22** (or whatever you activated with `corepack prepare`).
+- This repo will use **Yarn 4.12.0**.
+- Other repos without `packageManager` will keep using **Yarn 1.22.22** (or whatever you activated with `corepack prepare`).
 
 ### Select d2-api version
 
@@ -113,22 +113,22 @@ $ yarn test
 
 ### Clean architecture folder structure
 
--   `src/domain`: Domain layer of the app (entities, use cases, repository definitions)
--   `src/data`: Data of the app (repository implementations)
--   `src/webapp/pages`: Main React components.
--   `src/webapp/components`: React components.
--   `src/utils`: Misc utilities.
--   `i18n/`: Contains literal translations (gettext format)
--   `public/`: General non-React webapp resources.
+- `src/domain`: Domain layer of the app (entities, use cases, repository definitions)
+- `src/data`: Data of the app (repository implementations)
+- `src/webapp/pages`: Main React components.
+- `src/webapp/components`: React components.
+- `src/utils`: Misc utilities.
+- `i18n/`: Contains literal translations (gettext format)
+- `public/`: General non-React webapp resources.
 
 ## Data structures
 
--   `Future.ts`: Async values, similar to promises, but cancellables and with type-safe errors.
--   `Collection.ts`: Similar to Lodash, provides a wrapper over JS arrays.
--   `Obj.ts`: Similar to Lodash, provides a wrapper over JS objects.
--   `HashMap.ts`: Similar to ES6 map, but immutable.
--   `Struct.ts`: Base class for typical classes with attributes. Features: create, update.
--   `Either.ts`: Either a success value or an error.
+- `Future.ts`: Async values, similar to promises, but cancellables and with type-safe errors.
+- `Collection.ts`: Similar to Lodash, provides a wrapper over JS arrays.
+- `Obj.ts`: Similar to Lodash, provides a wrapper over JS objects.
+- `HashMap.ts`: Similar to ES6 map, but immutable.
+- `Struct.ts`: Base class for typical classes with attributes. Features: create, update.
+- `Either.ts`: Either a success value or an error.
 
 ## Docs
 
@@ -150,6 +150,10 @@ $ yarn localize
 
 Check the example script, entry `"script-example"`in `package.json`->scripts and `src/scripts/example.ts`.
 
+### Users report
+
+yarn app:users-report
+
 ### Secrets scan
 
 The hook `.husky/pre-push` will scan the committed files with [Trivy](https://trivy.dev/latest/getting-started/) before pushing them.
@@ -167,6 +171,6 @@ In any case there is a GitHub action to perform a scan of the pushed content, **
 
 ### Misc Notes
 
--   Requests to DHIS2 will be transparently proxied (see `vite.config.ts` -> `server.proxy`) from `http://localhost:8081/dhis2/xyz` to `${VITE_DHIS2_BASE_URL}/xyz`. This prevents CORS and cross-domain problems.
+- Requests to DHIS2 will be transparently proxied (see `vite.config.ts` -> `server.proxy`) from `http://localhost:8081/dhis2/xyz` to `${VITE_DHIS2_BASE_URL}/xyz`. This prevents CORS and cross-domain problems.
 
--   You can use `.env` variables within the React app: `const value = import.meta.env.NAME;`
+- You can use `.env` variables within the React app: `const value = import.meta.env.NAME;`

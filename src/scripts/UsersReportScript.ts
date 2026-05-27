@@ -30,7 +30,7 @@ function main() {
             const api = new D2Api({ baseUrl: args.url, auth });
 
             const info = await api.system.info.getData();
-            console.log("System info:", info);
+            console.info("System info:", info);
 
             const useCase = new GetUserReportUseCase({
                 userRepository: new UserD2Repository(api),
@@ -45,27 +45,27 @@ function main() {
 }
 
 function printReport(report: UserReport): void {
-    console.log("\n=== User Report ===");
-    console.log(`Total users : ${report.totalUsers}`);
-    console.log(`Admins      : ${report.adminCount}`);
-    console.log(`Non-admins  : ${report.nonAdminCount}`);
+    console.info("\n=== User Report ===");
+    console.info(`Total users : ${report.totalUsers}`);
+    console.info(`Admins      : ${report.adminCount}`);
+    console.info(`Non-admins  : ${report.nonAdminCount}`);
 
-    console.log("\nRoles by usage (most used first):");
+    console.info("\nRoles by usage (most used first):");
     for (const { role, userCount } of report.rolesSortedByUsage) {
-        console.log(`  ${role.name} — ${userCount} user(s)`);
+        console.info(`  ${role.name} — ${userCount} user(s)`);
     }
 
-    console.log("\nUsers with multiple roles:");
+    console.info("\nUsers with multiple roles:");
     if (report.usersWithMultipleRoles.length === 0) {
-        console.log("  (none)");
+        console.info("  (none)");
     } else {
         for (const user of report.usersWithMultipleRoles) {
-            console.log(`  ${user.name} (${user.userRoleIds.length} roles)`);
+            console.info(`  ${user.name} (${user.userRoleIds.length} roles)`);
         }
     }
 
-    console.log("\nUnique authorities across all assigned roles:");
-    console.log(" ", report.uniqueAuthorities.join(", ") || "(none)");
+    console.info("\nUnique authorities across all assigned roles:");
+    console.info(" ", report.uniqueAuthorities.join(", ") || "(none)");
 }
 
 main();
