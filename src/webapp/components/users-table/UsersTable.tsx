@@ -6,7 +6,6 @@ import {
     ObjectsTable,
     TableGlobalAction,
     useObjectsTable,
-    useSnackbar,
 } from "@eyeseetea/d2-ui-components";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import RefreshIcon from "@material-ui/icons/Refresh";
