@@ -25,7 +25,7 @@ function main() {
             }),
         },
         handler: async args => {
-            const [username = "", password = ""] = (args.auth || "").split(":");
+            const [username = "", password = ""] = args.auth.split(":");
             const auth = { username, password };
             const api = new D2Api({ baseUrl: args.url, auth });
 
@@ -37,7 +37,8 @@ function main() {
                 userRoleRepository: new UserRoleD2Repository(api),
             });
 
-            useCase.execute().run(printReport, err => console.error("Error:", err.message));
+            const report = await useCase.execute().toPromise();
+            printReport(report);
         },
     });
 
