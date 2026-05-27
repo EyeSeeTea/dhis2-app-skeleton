@@ -18,15 +18,18 @@ export class GetUserReportUseCase {
     ) {}
 
     execute(): FutureData<UserReport> {
-        return Future.joinObj({
-            usersPage: this.repositories.userRepository.get({
-                search: "",
-                page: 1,
-                pageSize: MAX_USERS,
-                filters: emptyFilters,
-            }),
-            roles: this.repositories.userRoleRepository.getAll(),
-        }).map(({ usersPage, roles }): UserReport => {
+        return Future.joinObj(
+            {
+                usersPage: this.repositories.userRepository.get({
+                    search: "",
+                    page: 1,
+                    pageSize: MAX_USERS,
+                    filters: emptyFilters,
+                }),
+                roles: this.repositories.userRoleRepository.getAll(),
+            },
+            { concurrency: 2 }
+        ).map(({ usersPage, roles }): UserReport => {
             // Using an explicit return type here allows TypeScript to validate the object literal
             // against the 'UserReport' interface immediately. This provides instant type-checking,
             // superior autocompletion, and safer refactoring support within the block.

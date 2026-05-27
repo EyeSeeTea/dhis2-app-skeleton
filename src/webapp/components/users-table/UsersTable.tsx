@@ -24,9 +24,17 @@ import {
 import { useRefresh } from "$/webapp/utils/refresh";
 
 export const UsersTable: React.FC = React.memo(() => {
-    const filterInfo = useFilterInfo();
+    const { info, error } = useFilterInfo();
 
-    if (!filterInfo) {
+    if (error) {
+        return (
+            <LoadingWrapper>
+                <Typography color="error">{error}</Typography>
+            </LoadingWrapper>
+        );
+    }
+
+    if (!info) {
         return (
             <LoadingWrapper>
                 <CircularProgress />
@@ -34,7 +42,7 @@ export const UsersTable: React.FC = React.memo(() => {
         );
     }
 
-    return <UsersTableLoaded filterInfo={filterInfo} />;
+    return <UsersTableLoaded filterInfo={info} />;
 });
 
 const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(props => {
@@ -102,18 +110,18 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
     );
 });
 
-function useFilterInfo(): Maybe<UsersFilterInfo> {
+function useFilterInfo(): { info: Maybe<UsersFilterInfo>; error: Maybe<string> } {
     const { compositionRoot } = useAppContext();
-    const snackbar = useSnackbar();
     const [info, setInfo] = React.useState<UsersFilterInfo>();
+    const [error, setError] = React.useState<string>();
 
     React.useEffect(() => {
         return compositionRoot.users.getFiltersInfo
             .execute()
-            .run(setInfo, err => snackbar.error(err.message));
-    }, [compositionRoot, snackbar]);
+            .run(setInfo, err => setError(err.message));
+    }, [compositionRoot]);
 
-    return info;
+    return { info, error };
 }
 
 function exportRowsToCsv(rows: UserRow[], info: UsersFilterInfo): void {

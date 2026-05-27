@@ -19,9 +19,12 @@ export class GetUsersFilterInfoUseCase {
     ) {}
 
     execute(): FutureData<UsersFilterInfo> {
-        return Future.joinObj({
-            userGroups: this.repositories.userGroupRepository.getAll(),
-            userRoles: this.repositories.userRoleRepository.getAll(),
-        });
+        return Future.joinObj(
+            {
+                userGroups: this.repositories.userGroupRepository.getAll(),
+                userRoles: this.repositories.userRoleRepository.getAll(),
+            },
+            { concurrency: 2 }
+        );
     }
 }

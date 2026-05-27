@@ -51,9 +51,10 @@ export function useUsersTableConfig(options: {
                 onClick: selectedIds => {
                     const row = rowsRef.current.find(r => r.id === selectedIds[0]);
                     if (!row) return;
-                    void navigator.clipboard.writeText(row.username).then(() => {
-                        snackbar.success(i18n.t("Copied {{username}}", { username: row.username }));
-                    });
+                    void navigator.clipboard.writeText(row.username).then(
+                        () => snackbar.success(i18n.t("Copied {{username}}", { username: row.username })),
+                        () => snackbar.error(i18n.t("Failed to copy to clipboard"))
+                    );
                 },
             },
             {
@@ -100,8 +101,8 @@ export function useUsersTableConfig(options: {
     return React.useMemo(
         () => ({
             columns: [
-                { name: "name", text: i18n.t("Name"), sortable: true },
-                { name: "username", text: i18n.t("Username"), sortable: true },
+                { name: "name", text: i18n.t("Name"), sortable: false },
+                { name: "username", text: i18n.t("Username"), sortable: false },
                 {
                     name: "userGroupIds",
                     text: i18n.t("User groups"),
