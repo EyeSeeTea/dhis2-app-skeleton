@@ -60,8 +60,8 @@ export class Collection<T> {
         return _c(this.xs.flat()) as any;
     }
 
-    flatMap<U>(fn: (x: T) => Collection<U>): Collection<U> {
-        return _c(this.xs.flatMap(x => fn(x).toArray()));
+    flatMap<U>(fn: (x: T) => Array<U>): Collection<U> {
+        return _c(this.xs.flatMap(x => fn(x)));
     }
 
     select(pred: (x: T) => boolean): Collection<T> {
@@ -200,7 +200,7 @@ export class Collection<T> {
     }
 
     intersperse(value: T): Collection<T> {
-        return this.flatMap(x => _c([x, value])).thru(cs => cs.take(cs.size - 1));
+        return this.flatMap(x => [x, value]).thru(cs => cs.take(cs.size - 1));
     }
 
     uniq(): Collection<T> {
@@ -242,6 +242,7 @@ export class Collection<T> {
                 _c(zss)
                     .cartesian()
                     .map(zs => [x, ...zs])
+                    .toArray()
             ) as any;
         }
     }
