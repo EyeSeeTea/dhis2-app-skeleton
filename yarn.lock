@@ -3103,6 +3103,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dhis2/data-engine@npm:3.17.0":
+  version: 3.17.0
+  resolution: "@dhis2/data-engine@npm:3.17.0"
+  checksum: 10c0/e336b50b00a6f92ef8d443000724a591b9205ae9c3562f47471696ae04fee061b1736cbf1b31980324565130dac878c4836e7bd3315499ac21da6fb7b46d0a04
+  languageName: node
+  linkType: hard
+
 "@dhis2/prop-types@npm:^1.6.4":
   version: 1.6.4
   resolution: "@dhis2/prop-types@npm:1.6.4"
@@ -6855,6 +6862,7 @@ __metadata:
     "@dhis2/d2-i18n": "npm:^1"
     "@dhis2/d2-i18n-extract": "npm:^1"
     "@dhis2/d2-i18n-generate": "npm:^1"
+    "@dhis2/data-engine": "npm:3.17.0"
     "@dhis2/ui": "npm:^6"
     "@eyeseetea/d2-api": "npm:^1"
     "@eyeseetea/d2-ui-components": "npm:^2"

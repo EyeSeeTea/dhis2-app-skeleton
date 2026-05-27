@@ -16,6 +16,7 @@
         "@dhis2/d2-i18n": "^1",
         "@dhis2/d2-i18n-extract": "^1",
         "@dhis2/d2-i18n-generate": "^1",
+        "@dhis2/data-engine": "3.17.0",
         "@dhis2/ui": "^6",
         "@eyeseetea/d2-api": "^1",
         "@eyeseetea/d2-ui-components": "^2",
