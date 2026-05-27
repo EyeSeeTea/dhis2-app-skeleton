@@ -10,16 +10,16 @@ import { GetUsersOptions, UserRepository } from "$/domain/repositories/UserRepos
 import { FutureData } from "$/data/api-futures";
 
 export class UserTestRepository implements UserRepository {
-    public getCurrent(): FutureData<User> {
+    getCurrent(): FutureData<User> {
         return Future.success(createAdminUser());
     }
 
-    public get(options: GetUsersOptions): FutureData<Paginated<User>> {
+    get(options: GetUsersOptions): FutureData<Paginated<User>> {
         const { page, pageSize } = options;
         const all = [
             createAdminUser(),
             createNonAdminUser(),
-            createUser({ isAdmin: false, userGroupIds: [], userRoleIds: [] }),
+            createUser({ isAdmin: false }),
         ];
         const paged = all.slice((page - 1) * pageSize, page * pageSize);
 

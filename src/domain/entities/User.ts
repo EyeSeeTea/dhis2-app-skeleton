@@ -11,7 +11,7 @@ export type UserAttrs = {
 };
 
 export class User extends Struct<UserAttrs>() {
-    belongToUserGroup(userGroupUid: Id): boolean {
+    belongsToUserGroup(userGroupUid: Id): boolean {
         return this.userGroupIds.includes(userGroupUid);
     }
 }

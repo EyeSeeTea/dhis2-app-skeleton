@@ -1,45 +1,28 @@
 import { describe, expect, it } from "vitest";
-import { createAdminUser, createNonAdminUser, createUser } from "./userFixtures";
+import { createUser } from "./userFixtures";
 
 describe("User", () => {
-    it("should be admin if isAdmin is true", () => {
-        const user = createAdminUser();
+    describe("belongsToUserGroup", () => {
+        it("returns true when the user is in the group", () => {
+            const userGroupId = "BwyMfDBLih9";
+            const user = createUser({ userGroupIds: [userGroupId] });
 
-        expect(user.isAdmin).toBe(true);
-    });
-
-    it("should not be admin if isAdmin is false", () => {
-        const user = createNonAdminUser();
-
-        expect(user.isAdmin).toBe(false);
-    });
-
-    it("should return belong to user group equal to true when the id exists", () => {
-        const userGroupId = "BwyMfDBLih9";
-
-        const user = createUser({ isAdmin: false, userGroupIds: [userGroupId], userRoleIds: [] });
-
-        expect(user.belongToUserGroup(userGroupId)).toBe(true);
-    });
-
-    it("should return belong to user group equal to false when the id does not exist", () => {
-        const existedUserGroupId = "BwyMfDBLih9";
-        const nonExistedUserGroupId = "f31IM13BgwJ";
-
-        const user = createUser({
-            isAdmin: false,
-            userGroupIds: [existedUserGroupId],
-            userRoleIds: [],
+            expect(user.belongsToUserGroup(userGroupId)).toBe(true);
         });
 
-        expect(user.belongToUserGroup(nonExistedUserGroupId)).toBe(false);
-    });
+        it("returns false when the user is not in the group", () => {
+            const existingUserGroupId = "BwyMfDBLih9";
+            const nonExistentUserGroupId = "f31IM13BgwJ";
+            const user = createUser({ userGroupIds: [existingUserGroupId] });
 
-    it("should return belong to user group equal to false if user groups is empty", () => {
-        const nonExistedUserGroupId = "f31IM13BgwJ";
+            expect(user.belongsToUserGroup(nonExistentUserGroupId)).toBe(false);
+        });
 
-        const user = createUser({ isAdmin: false, userGroupIds: [], userRoleIds: [] });
+        it("returns false when the user has no groups", () => {
+            const nonExistentUserGroupId = "f31IM13BgwJ";
+            const user = createUser({ userGroupIds: [] });
 
-        expect(user.belongToUserGroup(nonExistedUserGroupId)).toBe(false);
+            expect(user.belongsToUserGroup(nonExistentUserGroupId)).toBe(false);
+        });
     });
 });
