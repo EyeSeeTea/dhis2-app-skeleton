@@ -1,0 +1,5 @@
+[
+    { "name": "Home", "url": "#/" },
+    { "name": "John", "url": "#/for/John" },
+    { "name": "Mary", "url": "#/for/Mary" }
+]
