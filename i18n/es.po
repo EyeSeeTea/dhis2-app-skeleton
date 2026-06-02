@@ -28,3 +28,12 @@ msgstr ""
 
 msgid "Section"
 msgstr "Sección"
+
+msgid "__MANIFEST_SHORTCUT_Home"
+msgstr "Inicio"
+
+msgid "__MANIFEST_SHORTCUT_John"
+msgstr "Juan"
+
+msgid "__MANIFEST_SHORTCUT_Mary"
+msgstr "Maria"

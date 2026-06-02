@@ -146,6 +146,50 @@ Update i18n .po files from `i18n.t(...)` calls in the source code:
 $ yarn localize
 ```
 
+### Command Palette shortcuts (DHIS2 v42+)
+
+Apps can register deep links that appear as searchable entries in the DHIS2 Command Palette (`Cmd/Ctrl + K`).
+
+**Defining shortcuts**
+
+Edit `shortcuts.json` in the project root:
+
+```json
+[
+  { "name": "Import data",  "url": "#/import"   },
+  { "name": "Settings",     "url": "#/settings" }
+]
+```
+
+- `url` must be the hash portion of the route (e.g. `#/settings`). The skeleton uses `HashRouter`, so this is the correct format.
+- Shortcuts are injected into `manifest.webapp` and `manifest.webapp.translations.json` automatically at build time.
+
+**Build pipeline**
+
+The following scripts run as part of `yarn build`:
+
+| Script | What it does |
+|---|---|
+| `inject-shortcuts.ts` | Writes shortcuts into `build/manifest.webapp` |
+| `generate-manifest-translations.ts` | Generates `build/manifest.webapp.translations.json` from `.po` files |
+
+**Translating shortcut names**
+
+Shortcut names follow the same `.po` workflow as the rest of the app strings, with one difference: the keys are not extracted from source code but from `shortcuts.json` by the `update-shortcuts-pot.ts` script, which runs automatically as part of `yarn update-po` (called by the `pre-push` git hook).
+
+The workflow for adding a new shortcut with translations:
+
+1. Add the shortcut to `shortcuts.json` with its English name.
+2. Run `yarn update-po` (or push — the hook runs it automatically). This adds `__MANIFEST_SHORTCUT_<name>` keys to `i18n/en.pot` and propagates them to each `i18n/<locale>.po` via `msgmerge`.
+3. Translate the new keys in the relevant `.po` files:
+   ```
+   msgid "__MANIFEST_SHORTCUT_Import data"
+   msgstr "Importar datos"
+   ```
+4. Run `yarn build`. The script `generate-manifest-translations.ts` reads the `.po` files and includes the translations in `manifest.webapp.translations.json`.
+
+DHIS2 reads `manifest.webapp.translations.json` at install time and uses it to display shortcut names in the user's language in the Command Palette.
+
 ### Scripts
 
 Check the example script, entry `"script-example"`in `package.json`->scripts and `src/scripts/example.ts`.
