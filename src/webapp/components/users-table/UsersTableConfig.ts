@@ -20,10 +20,10 @@ export type ConfirmState = {
 export function useUsersTableConfig(options: {
     info: UsersFilterInfo;
     rowsRef: React.MutableRefObject<UserRow[]>;
-    reload: () => void;
+    reloadRef: React.MutableRefObject<() => void>;
     setConfirm: (state: Maybe<ConfirmState>) => void;
 }): TableConfig<UserRow> {
-    const { info, rowsRef, reload, setConfirm } = options;
+    const { info, rowsRef, reloadRef, setConfirm } = options;
     const snackbar = useSnackbar();
 
     const groupNameById = React.useMemo(
@@ -92,13 +92,13 @@ export function useUsersTableConfig(options: {
                                 })
                             );
                             setConfirm(undefined);
-                            reload();
+                            reloadRef.current();
                         },
                     });
                 },
             },
         ],
-        [rowsRef, snackbar, reload, setConfirm, renderIds, roleNameById]
+        [rowsRef, snackbar, reloadRef, setConfirm, renderIds, roleNameById]
     );
 
     return React.useMemo(
@@ -158,13 +158,12 @@ const sortableFields = ["name", "username"] as const;
 
 export function useGetUsersRows(options: {
     filters: UsersFilters;
-    refreshKey: number;
     rowsRef: React.MutableRefObject<UserRow[]>;
 }): {
     getRows: GetRows<UserRow>;
     loading: boolean;
 } {
-    const { filters, refreshKey, rowsRef } = options;
+    const { filters, rowsRef } = options;
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const [loading, setLoading] = React.useState(false);
@@ -172,7 +171,6 @@ export function useGetUsersRows(options: {
     const getRows = React.useCallback<GetRows<UserRow>>(
         (search, paging, sorting) =>
             new Promise((resolve, reject) => {
-                void refreshKey; // to trigger refresh when refreshKey changes
                 setLoading(true);
 
                 const sortingField = isValueInUnionType(sorting.field, sortableFields)
@@ -200,7 +198,7 @@ export function useGetUsersRows(options: {
                         }
                     );
             }),
-        [compositionRoot, snackbar, refreshKey, filters, rowsRef]
+        [compositionRoot, snackbar, filters, rowsRef]
     );
 
     return { getRows, loading };

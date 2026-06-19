@@ -20,8 +20,6 @@ import {
     toUsersFilters,
     UsersTableFilters,
 } from "./UsersTableFilters";
-import { useRefresh } from "$/webapp/utils/refresh";
-
 export const UsersTable: React.FC = React.memo(() => {
     const { info, error } = useFilterInfo();
 
@@ -49,13 +47,15 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
     const [filtersState, setFiltersState] = React.useState<FiltersState>(initialFiltersState);
     const [confirm, setConfirm] = React.useState<Maybe<ConfirmState>>(undefined);
     const rowsRef = React.useRef<UserRow[]>([]);
+    const reloadRef = React.useRef<() => void>(() => {});
 
-    const [refreshKey, refresh] = useRefresh();
     const filters = React.useMemo(() => toUsersFilters(filtersState), [filtersState]);
 
-    const { getRows, loading } = useGetUsersRows({ filters, refreshKey, rowsRef });
-    const config = useUsersTableConfig({ info: filterInfo, rowsRef, reload: refresh, setConfirm });
+    const { getRows, loading } = useGetUsersRows({ filters, rowsRef });
+    const config = useUsersTableConfig({ info: filterInfo, rowsRef, reloadRef, setConfirm });
     const tableProps = useObjectsTable<UserRow>(config, getRows);
+
+    reloadRef.current = tableProps.reload;
 
     const globalActions = React.useMemo<TableGlobalAction[]>(
         () => [
@@ -63,7 +63,7 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
                 name: "refresh",
                 text: i18n.t("Refresh"),
                 icon: <RefreshIcon />,
-                onClick: refresh,
+                onClick: () => reloadRef.current(),
             },
             {
                 name: "export-csv",
@@ -72,7 +72,7 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
                 onClick: () => exportRowsToCsv(rowsRef.current, filterInfo),
             },
         ],
-        [refresh, filterInfo]
+        [reloadRef, filterInfo]
     );
 
     const filterComponents = (
