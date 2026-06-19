@@ -1,9 +1,9 @@
 import { describe, expect, test, it, vi, expectTypeOf } from "vitest";
+import { Future } from "$/domain/entities/generic/Future";
 import {
-    Future,
     ParallelAccumulatedData,
     SequentialAccumulatedData,
-} from "$/domain/entities/generic/Future";
+} from "$/domain/entities/generic/FutureWithAccumulation";
 
 describe("Basic builders", () => {
     test("Future.success", async () => {
