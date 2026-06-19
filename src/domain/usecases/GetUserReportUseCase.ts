@@ -29,6 +29,7 @@ export class GetUserReportUseCase {
                     page: 1,
                     pageSize: MAX_USERS,
                     filters: emptyFilters,
+                    order: { field: "name", order: "asc" },
                 }),
                 roles: this.repositories.userRoleRepository.getAll(),
             },
