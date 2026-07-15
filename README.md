@@ -29,6 +29,17 @@ Now in your browser, go to `http://localhost:8081`.
 $ yarn test
 ```
 
+## Check
+
+Run all code-quality to validate changes:
+
+```
+$ yarn run check
+```
+
+This runs the TypeScript typecheck, Prettier check, lint, and tests.
+Individual checks can also be run with `yarn typecheck`, `yarn prettify:check`, `yarn lint`, and `yarn test`.
+
 ## Some development tips
 
 ### Clean architecture folder structure
