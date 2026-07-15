@@ -4,4 +4,4 @@
 # trivy secret scan
 "$(dirname "$0")/trivy-leaks-scan.sh"
 
-yarn prettify && yarn lint && yarn update-po && yarn test
+yarn update-po && yarn run check
