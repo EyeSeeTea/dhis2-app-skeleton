@@ -70,7 +70,6 @@ export class HashMap<K, V> {
     }
 
     pickBy(pred: (pair: readonly [K, V]) => boolean): HashMap<K, V> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return new HashMap(imap.filter((value, key) => pred([key!, value]), this._map));
     }
 
@@ -100,7 +99,6 @@ export class HashMap<K, V> {
     }
 
     mapValues<V2>(mapper: (pair: [K, V]) => V2): HashMap<K, V2> {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return new HashMap(imap.map((value, key) => mapper([key!, value]), this._map));
     }
 
@@ -116,7 +114,6 @@ export class HashMap<K, V> {
     }
 
     forEach(fn: (pair: readonly [K, V]) => void): void {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         imap.forEach((value, key) => fn([key!, value]), this._map);
     }
 
