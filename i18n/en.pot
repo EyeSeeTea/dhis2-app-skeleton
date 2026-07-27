@@ -5,13 +5,13 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2024-06-26T10:58:19.149Z\n"
-"PO-Revision-Date: 2024-06-26T10:58:19.149Z\n"
+"POT-Creation-Date: 2025-09-09T09:34:28.901Z\n"
+"PO-Revision-Date: 2025-09-09T09:34:28.901Z\n"
 
-msgid "Add"
+msgid "Add new"
 msgstr ""
 
-msgid "List"
+msgid "Manage"
 msgstr ""
 
 msgid "Back"
@@ -20,11 +20,20 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
+msgid "Close"
+msgstr ""
+
 msgid "Hello {{name}}"
 msgstr ""
 
 msgid "Detail page"
 msgstr ""
 
-msgid "Section"
+msgid "Some help"
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
+msgid "Current user"
 msgstr ""
