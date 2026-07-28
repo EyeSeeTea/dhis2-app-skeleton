@@ -1,61 +1,32 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ExamplePage > renders the feedback component 1`] = `
-<DocumentFragment>
-  <div
-    class="_wrapper_ffb59b"
-  >
-    <div
-      class="_row_ffb59b"
-    >
-      <div
-        class="_backWrap_ffb59b"
-      >
-        <span
-          aria-describedby=""
-          class="jsx-237564060"
-          data-test="dhis2-uicore-tooltip-reference"
-          tabindex="0"
-        >
-          <button
-            class="jsx-3146657073 small icon-only"
-            data-test="page-header-back"
-            type="button"
-          >
-            <span
-              class="jsx-3146657073 button-icon"
+exports[`ExamplePage > renders the component 1`] = `
+"<div>
+  <div>
+    <div>
+      <span
+        tabindex=\\"0\\"
+        aria-describedby=\\"\\"
+        data-test=\\"dhis2-uicore-tooltip-reference\\"
+        ><button data-test=\\"page-header-back\\" type=\\"button\\">
+          <span
+            ><svg
+              height=\\"24\\"
+              viewBox=\\"0 0 24 24\\"
+              width=\\"24\\"
+              xmlns=\\"http://www.w3.org/2000/svg\\"
             >
-              <svg
-                height="24"
-                viewBox="0 0 24 24"
-                width="24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M13.293 6.293a1 1 0 011.497 1.32l-.083.094L10.415 12l4.292 4.293a1 1 0 01.083 1.32l-.083.094a1 1 0 01-1.32.083l-.094-.083-5-5a1 1 0 01-.083-1.32l.083-.094z"
-                  fill="currentColor"
-                />
-              </svg>
-            </span>
-          </button>
-        </span>
-      </div>
-      <h2
-        data-test="page-header-title"
-      >
-        Detail page
-      </h2>
+              <path
+                d=\\"M13.293 6.293a1 1 0 011.497 1.32l-.083.094L10.415 12l4.292 4.293a1 1 0 01.083 1.32l-.083.094a1 1 0 01-1.32.083l-.094-.083-5-5a1 1 0 01-.083-1.32l.083-.094z\\"
+                fill=\\"currentColor\\"
+              ></path></svg
+          ></span></button
+      ></span>
     </div>
-    <button
-      class="jsx-3146657073 "
-      data-test="dhis2-uicore-button"
-      type="button"
-    >
-      Help
-    </button>
+    <h2 data-test=\\"page-header-title\\">Detail page</h2>
   </div>
-  <h2>
-    Hello Mary
-  </h2>
-</DocumentFragment>
+  <button data-test=\\"dhis2-uicore-button\\" type=\\"button\\">Help</button>
+</div>
+<h2>Hello Mary</h2>
+"
 `;
