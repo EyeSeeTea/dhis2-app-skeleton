@@ -63,7 +63,7 @@ export class Future<E, D> {
         );
     }
 
-    flatMap<U, E>(fn: (data: D) => Future<U, E>): Future<U, E> {
+    flatMap<D2>(fn: (data: D) => Future<E, D2>): Future<E, D2> {
         return new Future(() => this._promise().then(data => fn(data)._promise()));
     }
 
@@ -75,7 +75,7 @@ export class Future<E, D> {
         });
     }
 
-    chain<U, E>(fn: (data: D) => Future<U, E>): Future<U, E> {
+    chain<D2>(fn: (data: D) => Future<E, D2>): Future<E, D2> {
         return this.flatMap(fn);
     }
 
