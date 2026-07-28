@@ -11,9 +11,10 @@ export function getModuleForNamespace(namespace: string) {
     };
 }
 
-type I18nTArgs<Str extends string> = Interpolations<Str> extends Record<string, never>
-    ? [Str] | [Str, Partial<Options>]
-    : [Str, Interpolations<Str> & Partial<Options>];
+type I18nTArgs<Str extends string> =
+    Interpolations<Str> extends Record<string, never>
+        ? [Str] | [Str, Partial<Options>]
+        : [Str, Interpolations<Str> & Partial<Options>];
 
 type Options = {
     ns: string; // namespace
