@@ -5,105 +5,113 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-27T11:26:42.425Z\n"
-"PO-Revision-Date: 2026-05-27T11:26:42.425Z\n"
+"POT-Creation-Date: 2026-07-30T10:20:59.379Z\n"
+"PO-Revision-Date: 2026-07-30T10:20:59.379Z\n"
 
 msgid "Add"
-msgstr ""
+msgstr "Add"
 
 msgid "List"
-msgstr ""
+msgstr "List"
 
 msgid "Back"
-msgstr ""
+msgstr "Back"
 
 msgid "Help"
-msgstr ""
+msgstr "Help"
 
 msgid "Refresh"
-msgstr ""
+msgstr "Refresh"
 
 msgid "Export CSV"
-msgstr ""
+msgstr "Export CSV"
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Cancel"
 
 msgid "Copy username"
-msgstr ""
+msgstr "Copy username"
 
 msgid "Copied {{username}}"
-msgstr ""
+msgstr "Copied {{username}}"
 
 msgid "Failed to copy to clipboard"
-msgstr ""
+msgstr "Failed to copy to clipboard"
 
 msgid "Show roles"
-msgstr ""
+msgstr "Show roles"
 
 msgid "(none)"
-msgstr ""
+msgstr "(none)"
 
 msgid "Roles for {{name}}"
-msgstr ""
+msgstr "Roles for {{name}}"
 
 msgid "Disable user"
-msgstr ""
+msgstr "Disable user"
 
 msgid "Disable users"
-msgstr ""
+msgstr "Disable users"
 
 msgid "You are about to disable {{count}} user(s)"
 msgid_plural "You are about to disable {{count}} user(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "You are about to disable {{count}} user(s)"
+msgstr[1] "You are about to disable {{count}} user(s)"
 
 msgid "Disabled {{count}} users (stub)"
 msgid_plural "Disabled {{count}} users (stub)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Disabled {{count}} users (stub)"
+msgstr[1] "Disabled {{count}} users (stub)"
 
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgid "Username"
-msgstr ""
+msgstr "Username"
 
 msgid "User groups"
-msgstr ""
+msgstr "User groups"
 
 msgid "User roles"
-msgstr ""
+msgstr "User roles"
 
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 msgid "Search by name or username"
-msgstr ""
+msgstr "Search by name or username"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Enabled"
 
 msgid "Disabled"
-msgstr ""
+msgstr "Disabled"
 
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 msgid "Hello {{name}}"
-msgstr ""
+msgstr "Hello {{name}}"
 
 msgid "Detail page"
-msgstr ""
+msgstr "Detail page"
 
 msgid "Section"
-msgstr ""
+msgstr "Section"
 
 msgid "Users"
-msgstr ""
+msgstr "Users"
 
 msgid "Browse users with filters and actions"
-msgstr ""
+msgstr "Browse users with filters and actions"
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "dhis2-app-skeleton"
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr "DHIS2 Skeleton App"
