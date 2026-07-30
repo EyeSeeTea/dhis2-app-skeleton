@@ -3,15 +3,15 @@
 exports[`ExamplePage > renders the component 1`] = `
 "<div>
   <button
-    tabindex=\\"0\\"
-    type=\\"button\\"
-    aria-label=\\"Back\\"
-    data-test=\\"page-header-back\\"
+    tabindex="0"
+    type="button"
+    aria-label="Back"
+    data-test="page-header-back"
   >
-    <span><span aria-hidden=\\"true\\">arrow_back</span></span
+    <span><span aria-hidden="true">arrow_back</span></span
     ><span></span>
   </button>
-  <h5 data-test=\\"page-header-title\\">Detail page</h5>
+  <h5 data-test="page-header-title">Detail page</h5>
 </div>
 <h2>Hello Mary</h2>
 "
