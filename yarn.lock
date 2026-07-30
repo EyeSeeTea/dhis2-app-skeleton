@@ -14305,12 +14305,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gettext@npm:^2.0.0":
-  version: 2.1.0
-  resolution: "node-gettext@npm:2.1.0"
+"node-gettext@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "node-gettext@npm:3.0.1"
   dependencies:
     lodash.get: "npm:^4.4.2"
-  checksum: 10c0/6bc0144638ad5378b364688613f2a216a30eefc3915c6da9f824eab8fd11b90139664776021b168c14b01b95c80a5c180e9c75df816f504f158fccc7690105d7
+  checksum: 10c0/1ab4270da9db0c427b9be388d586bd050b3683b972ee3f39bd93a96e58977ea7d468fdbcca361662481f7dc2174307f6baf3c6c848db7a72ca5bef7326f7a247
   languageName: node
   linkType: hard
 

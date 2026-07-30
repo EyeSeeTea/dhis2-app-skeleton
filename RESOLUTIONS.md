@@ -42,7 +42,7 @@ All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vul
 
 #### `i18next: 19.8.5`
 
-- **Why:** Held at the version `@dhis2/d2-i18n` expects. ⚠️ **Do not change this blind.** This exact version is what broke app startup in [d2-autogen-forms#201](https://github.com/EyeSeeTea/d2-autogen-forms/pull/201) (`Uncaught TypeError: i18next.init is not a function`) — the correct version is repo-specific and must be validated by running the app, not copied from another repo.
+- **Why:** Held at the version `@dhis2/d2-i18n` expects. ⚠️ **Do not change this blind.** Moving off this line has been observed to break app startup with `Uncaught TypeError: i18next.init is not a function`, because `@dhis2/d2-i18n` binds to an older i18next API. The correct version is specific to which `@dhis2/d2-i18n` this app uses, so validate by running the app rather than copying a version from elsewhere.
 - **Fixes:** Historic prototype-pollution advisories in the older i18next lines.
 - **Drop when:** `@dhis2/d2-i18n` declares a compatible range and `yarn start` still works. ⚠️ i18next 19 is EOL, so holding here indefinitely is itself a risk; revisit on the next `d2-i18n` bump.
 
@@ -110,6 +110,12 @@ All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vul
 - **Fixes:** GHSA-76p3-8jx3-jpfq (critical) — prototype pollution; GHSA-3rfm-jhwj-7488, GHSA-hhq3-ff78-jv3g (high) — ReDoS.
 - **Drop when:** `styled-jsx@4.x` leaves the tree, or its consumer moves to `loader-utils` 2.x.
 
+#### `i18next-conv/node-gettext: ^3.0.1`
+
+- **Why:** `i18next-conv@9.2.1` requests `node-gettext@^2.0.0`, which resolves to the vulnerable `2.1.0`. ⚠️ **The advisory looks unfixable and is not.** GHSA-g974-hxvm-x689 declares no `first_patched_version`, so tooling reports it as having no fix — but its affected range is `<= 3.0.0`, and **3.0.1 is published and outside that range**. Always compare the affected range against the published version list before concluding a finding is a dead end. Scoped to the parent; dev/build-only, used during i18n generation.
+- **Fixes:** GHSA-g974-hxvm-x689 (high) — prototype pollution.
+- **Drop when:** `i18next-conv` requests `node-gettext@^3.0.1` or later natively, or drops it. Verify with `yarn why node-gettext`.
+
 #### `react-linkify/linkify-it: ^5.0.2`
 
 - **Why:** `react-linkify@1.0.0-alpha` requests `linkify-it@^2.0.3`, and the 2.x line has no fix. `@eyeseetea/d2-ui-components` requests react-linkify at an exact version, and `2.13.0-beta.6` still does, so upgrading that library does not help. react-linkify is unmaintained since 2022 and written against the linkify-it 2 API, so this pin was **checked rather than assumed**: linkify-it 5 still ships a callable CJS export, `.tlds()` and `.match()` behave the same, and rendering `<Linkify>` in jsdom produces the expected `<a href>`. Scoped to react-linkify so `markdown-it`'s own linkify-it, already on 5.0.2, is untouched.
@@ -141,11 +147,7 @@ Recorded here rather than in `resolutions` because **no version resolves them**.
 - **Severity note:** `medium` in the GitHub advisory database; Dependency-Track scores it above 7. It is the branch's only remaining high **and its only newly-introduced instance**, so the CI gate will flag the PR.
 - **Drop when:** `@dhis2/cli-helpers-engine` stops depending on `request`, which has been deprecated since 2020.
 
-#### `node-gettext@2.1.0`
-
-- **Chain:** `@dhis2/cli-app-scripts` → `i18next-conv@9.2.1` → `node-gettext@^2.0.0`.
-- **Why it cannot be pinned:** **no patched version exists in any line.** Dev/build-only, used during i18n generation.
-- **Drop when:** `i18next-conv` drops `node-gettext`, or upstream publishes a fix.
+_(`node-gettext` was in this section until it turned out to be fixable — see the pin below.)_
 
 ---
 
