@@ -18,13 +18,14 @@ export default ({ mode }): UserConfig => {
             // which only supports Vite <= 4.
             nodePolyfills(),
             react(),
-            // vite-plugin-checker 0.14 drives ESLint through the flat-config API
-            // (languageOptions), which ESLint 8 rejects — it throws on server
-            // start. Keep the typescript checker, and re-enable the eslint one
-            // when the project moves to ESLint 9. `yarn lint` covers it meanwhile.
             checker({
                 overlay: false,
                 typescript: true,
+                eslint: {
+                    lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+                    useFlatConfig: true,
+                    dev: { logLevel: ["warning"] },
+                },
             }),
         ],
         test: {

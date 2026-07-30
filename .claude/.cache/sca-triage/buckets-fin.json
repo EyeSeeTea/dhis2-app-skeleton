@@ -1,0 +1,139 @@
+{
+    "meta": {
+        "sarif": ".claude/.cache/sca-triage/sarif-fin.json",
+        "severityFilter": "high",
+        "lookupAdvisories": true,
+        "totalResults": 16,
+        "afterFilter": 7,
+        "resolutions": {
+            "@babel/runtime": "7.26.10",
+            "@dhis2/cli-app-scripts/vite": "^6.4.3",
+            "@dhis2/cli-helpers-engine/tar": "^7.5.19",
+            "@types/react": "18.2.22",
+            "@types/react-dom": "18.2.7",
+            "axios": "^1.18.0",
+            "execa@npm:0.7.0/cross-spawn": "^6.0.6",
+            "form-data": "^4.0.6",
+            "glob-parent": "5.1.2",
+            "i18next": "19.8.5",
+            "lodash": "^4.18.0",
+            "nanoid": "3.3.8",
+            "node-fetch": "2.6.7",
+            "path-to-regexp": "1.9.0",
+            "qs": "6.14.2",
+            "styled-jsx/loader-utils": "^1.4.2",
+            "tmp": "^0.2.7"
+        }
+    },
+    "summary": {
+        "direct-upgradeable": 0,
+        "direct-breaking": 0,
+        "transitive-with-parent-fix": 2,
+        "transitive-no-path": 5,
+        "unfixed-upstream": 0,
+        "unknown": 0
+    },
+    "buckets": {
+        "direct-upgradeable": [],
+        "direct-breaking": [],
+        "transitive-with-parent-fix": [
+            {
+                "ruleId": "yarn4::GHSA-gv7w-rqvm-qjhr",
+                "cves": [],
+                "ghsaIds": ["GHSA-gv7w-rqvm-qjhr"],
+                "package": "esbuild",
+                "version": "0.28.0",
+                "purl": "",
+                "fixedIn": "0.28.1",
+                "score": "8.1",
+                "band": "high",
+                "path": "bom.json",
+                "message": "[yarn4] GHSA-gv7w-rqvm-qjhr in esbuild@0.28.0: The esbuild Deno module (lib/deno/mod.ts) downloads native binary executables from an npm registry and writes them to disk with executable permissions (0o755) **without performing ...\nseverity: high\naffected_components: esbuild@0.28.0\naffected_component_paths: \naffected_names: esbuild\naffected_versions: 0.28.0\nid: GHSA-gv7w-rqvm-qjhr\ndescription:\nThe ",
+                "ancestors": ["tsx", "vite"]
+            },
+            {
+                "ruleId": "yarn4::GHSA-gv7w-rqvm-qjhr",
+                "cves": [],
+                "ghsaIds": ["GHSA-gv7w-rqvm-qjhr"],
+                "package": "esbuild",
+                "version": "0.25.12",
+                "purl": "",
+                "fixedIn": "0.28.1",
+                "score": "8.1",
+                "band": "high",
+                "path": "bom.json",
+                "message": "[yarn4] GHSA-gv7w-rqvm-qjhr in esbuild@0.25.12: The esbuild Deno module (lib/deno/mod.ts) downloads native binary executables from an npm registry and writes them to disk with executable permissions (0o755) **without performing ...\nseverity: high\naffected_components: esbuild@0.25.12\naffected_component_paths: \naffected_names: esbuild\naffected_versions: 0.25.12\nid: GHSA-gv7w-rqvm-qjhr\ndescription:\nT",
+                "ancestors": ["tsx", "vite"]
+            }
+        ],
+        "transitive-no-path": [
+            {
+                "ruleId": "yarn4::GHSA-22p9-wv53-3rq4",
+                "cves": [],
+                "ghsaIds": ["GHSA-22p9-wv53-3rq4"],
+                "package": "linkify-it",
+                "version": "2.2.0",
+                "purl": "",
+                "fixedIn": "5.0.1",
+                "score": "8",
+                "band": "high",
+                "path": "bom.json",
+                "message": "[yarn4] GHSA-22p9-wv53-3rq4 in linkify-it@2.2.0: LinkifyIt.prototype.match — the package's primary public API — has **O(N²) algorithmic complexity** for inputs containing many fuzzy links or emails. This is not a regex backtrack ...\nseverity: high\naffected_components: linkify-it@2.2.0\naffected_component_paths: \naffected_names: linkify-it\naffected_versions: 2.2.0\nid: GHSA-22p9-wv53-3rq4\ndescription"
+            },
+            {
+                "ruleId": "yarn4::GHSA-v245-v573-v5vm",
+                "cves": ["CVE-2026-2327"],
+                "ghsaIds": ["GHSA-v245-v573-v5vm"],
+                "package": "linkify-it",
+                "version": "2.2.0",
+                "purl": "",
+                "fixedIn": "5.0.2",
+                "score": "7.5",
+                "band": "high",
+                "path": "bom.json",
+                "message": "[yarn4] GHSA-v245-v573-v5vm in linkify-it@2.2.0: linkify-it's schema-scan loop (.test() / .match(), the documented public API) invokes the mailto:\nseverity: high\naffected_components: linkify-it@2.2.0\naffected_component_paths: \naffected_names: linkify-it\naffected_versions: 2.2.0\nid: GHSA-v245-v573-v5vm\ndescription:\nlinkify-it's schema-scan loop (.test() / .match(), the documented public API) invoke"
+            },
+            {
+                "ruleId": "yarn4::GHSA-w5hq-g745-h8pq",
+                "cves": [],
+                "ghsaIds": ["GHSA-w5hq-g745-h8pq"],
+                "package": "uuid",
+                "version": "3.4.0",
+                "purl": "",
+                "fixedIn": "11.1.1",
+                "score": "7.5",
+                "band": "high",
+                "path": "bom.json",
+                "message": "[yarn4] GHSA-w5hq-g745-h8pq in uuid@3.4.0: The v3(), v5(), and v6() API methods (https://github.com/uuidjs/uuid#api-summary) (not uuid release versions) accept external output buffers but do not reject out-of-range writes (...\nseverity: medium\naffected_components: uuid@3.4.0\naffected_component_paths: \naffected_names: uuid\naffected_versions: 3.4.0\nid: GHSA-w5hq-g745-h8pq\ndescription:\nThe v3(), v5()"
+            },
+            {
+                "ruleId": "yarn4::GHSA-mh99-v99m-4gvg",
+                "cves": [],
+                "ghsaIds": ["GHSA-mh99-v99m-4gvg"],
+                "package": "brace-expansion",
+                "version": "1.1.18",
+                "purl": "",
+                "fixedIn": "5.0.8",
+                "score": "7.5",
+                "band": "high",
+                "path": "bom.json",
+                "message": "[yarn4] GHSA-mh99-v99m-4gvg in brace-expansion@1.1.18: expand() bounds the *number* of results it produces (the max option,\nseverity: high\naffected_components: brace-expansion@1.1.18\naffected_component_paths: \naffected_names: brace-expansion\naffected_versions: 1.1.18\nid: GHSA-mh99-v99m-4gvg\ndescription:\nexpand() bounds the *number* of results it produces (the max option,\n100_000 by default) but no"
+            },
+            {
+                "ruleId": "yarn4::GHSA-mh99-v99m-4gvg",
+                "cves": [],
+                "ghsaIds": ["GHSA-mh99-v99m-4gvg"],
+                "package": "brace-expansion",
+                "version": "2.1.4",
+                "purl": "",
+                "fixedIn": "5.0.8",
+                "score": "7.5",
+                "band": "high",
+                "path": "bom.json",
+                "message": "[yarn4] GHSA-mh99-v99m-4gvg in brace-expansion@2.1.4: expand() bounds the *number* of results it produces (the max option,\nseverity: high\naffected_components: brace-expansion@2.1.4\naffected_component_paths: \naffected_names: brace-expansion\naffected_versions: 2.1.4\nid: GHSA-mh99-v99m-4gvg\ndescription:\nexpand() bounds the *number* of results it produces (the max option,\n100_000 by default) but not t"
+            }
+        ],
+        "unfixed-upstream": [],
+        "unknown": []
+    }
+}
