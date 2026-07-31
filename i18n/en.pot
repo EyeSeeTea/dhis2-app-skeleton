@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-07-30T10:20:59.379Z\n"
-"PO-Revision-Date: 2026-07-30T10:20:59.379Z\n"
+"POT-Creation-Date: 2026-07-31T07:28:40.591Z\n"
+"PO-Revision-Date: 2026-07-31T07:28:40.591Z\n"
 
 msgid "Add"
 msgstr "Add"
@@ -107,11 +107,3 @@ msgstr "Users"
 
 msgid "Browse users with filters and actions"
 msgstr "Browse users with filters and actions"
-
-msgctxt "Application title"
-msgid "__MANIFEST_APP_TITLE"
-msgstr "dhis2-app-skeleton"
-
-msgctxt "Application description"
-msgid "__MANIFEST_APP_DESCRIPTION"
-msgstr "DHIS2 Skeleton App"

@@ -6,7 +6,16 @@ This file documents every entry in the `resolutions` block of `package.json`. Ea
 
 ## Conventions
 
-- Use `^` ranges for `<package>: <range>` style pins so future patch/minor releases land naturally. The pins added in `8a8d2b4` were exact versions, and by July 2026 `axios` had accumulated 10 open high-severity advisories precisely because no patch could land.
+- **`^` range or exact version? Ask what the number is asserting.**
+
+    A **floor** — "never below this" — takes a `^` range. Almost every security pin is a floor: it does not matter whether axios resolves to 1.18.0 or 1.19.0, only that it is not 1.13.5. Newer is strictly better, so let it land.
+
+    A **fixture** — "exactly this" — takes an exact version. These are compatibility constraints, not security ones: something else binds to that specific release. `@types/react`, `i18next` and `@dhis2/cli-app-scripts` below are the three in this file.
+
+    The two failure modes are mirror images. An exact version where a floor belonged **decays**: `axios: 1.13.5` was correct in February and carried 10 open high-severity advisories by July, because no patch could ever land. A `^` range where a fixture belonged **surprises**: `@dhis2/cli-app-scripts: ^12` resolved to 12.11.3, which silently started injecting `__MANIFEST_APP_*` entries into the translation bundle.
+
+    In practice: is there a higher version that would also work? Then use `^`. Does something bind to this exact release? Then pin it — **and write the condition for unpinning it.** If you cannot state that condition, it should probably have been a `^` range.
+
 - Prefer **per-parent** paths (`parent/child`) over standalone descriptors. Yarn-berry only matches a standalone descriptor on exact text — `picomatch@npm:^4` will _not_ match a child request of `^4.0.2`. The reliable forms are `parent/child`, `parent@npm:<exact-version>/child`, or `parent@npm:^<major>/child`.
 - **Versioned-parent pins go stale silently.** When a parent patch-bumps, `parent@npm:<exact>/child` matches nothing and yarn does not warn. `execa@npm:0.7.0/cross-spawn` below is the one entry of that shape.
 - **A pin that clears the scanner but breaks a consumer is not a fix.** Two pins were tried and reverted during this pass — see "Rejected pins" below. Verify with the tool that actually uses the package, not just `yarn install`.
@@ -45,6 +54,14 @@ All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vul
 - **Why:** Held at the version `@dhis2/d2-i18n` expects. ⚠️ **Do not change this blind.** Moving off this line has been observed to break app startup with `Uncaught TypeError: i18next.init is not a function`, because `@dhis2/d2-i18n` binds to an older i18next API. The correct version is specific to which `@dhis2/d2-i18n` this app uses, so validate by running the app rather than copying a version from elsewhere.
 - **Fixes:** Historic prototype-pollution advisories in the older i18next lines.
 - **Drop when:** `@dhis2/d2-i18n` declares a compatible range and `yarn start` still works. ⚠️ i18next 19 is EOL, so holding here indefinitely is itself a risk; revisit on the next `d2-i18n` bump.
+
+### Compatibility pins
+
+#### `@dhis2/cli-app-scripts: 12.11.1`
+
+- **Why:** ⚠️ **Not a security pin — a fixture.** `d2-app-scripts i18n extract` changed behaviour between 12.11.1 and 12.11.3: the newer release appends `__MANIFEST_APP_TITLE` and `__MANIFEST_APP_DESCRIPTION` entries to `i18n/en.pot`, and they end up in the shipped `src/locales/*/translations.json`. This project has no `d2.config.js` and generates its manifest through `d2-manifest`, so those strings are meaningless here and nothing ever reads them. Pinning to 12.11.1 keeps the generated output clean.
+- **Fixes:** Nothing — output correctness only.
+- **Drop when:** DHIS2 confirms whether the manifest strings can be suppressed without a `d2.config.js`, or a later release stops emitting them for projects that have none. Verify by regenerating and checking `grep MANIFEST i18n/en.pot` is empty.
 
 ### Security pins (added 2026-07-30)
 
