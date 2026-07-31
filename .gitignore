@@ -49,3 +49,8 @@ dist/
 .yarn/unplugged
 .yarn/build-state.yml
 .pnp.*
+
+# AI tooling caches (regenerable)
+.claude/
+sca-triage-report.md
+sca-suggested-actions.sh
