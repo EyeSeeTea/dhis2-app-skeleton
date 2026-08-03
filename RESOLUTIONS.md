@@ -12,7 +12,7 @@ This file documents every entry in the `resolutions` block of `package.json`. Ea
 
     A **fixture** — "exactly this" — takes an exact version. These are compatibility constraints, not security ones: something else binds to that specific release. `@types/react`, `i18next` and `@dhis2/cli-app-scripts` below are the three in this file.
 
-    The two failure modes are mirror images. An exact version where a floor belonged **decays**: `axios: 1.13.5` was correct in February and carried 10 open high-severity advisories by July, because no patch could ever land. A `^` range where a fixture belonged **surprises**: `@dhis2/cli-app-scripts: ^12` resolved to 12.11.3, which silently started injecting `__MANIFEST_APP_*` entries into the translation bundle.
+    The two failure modes are mirror images. An exact version where a floor belonged **decays**: `axios: 1.13.5` was correct in February and carried 10 open high-severity advisories by July, because no patch could ever land. Decay has a nastier form still — `qs: 6.14.2` was written to fix an advisory, and a later advisory landed on 6.14.2 itself, so the pin ended up holding the whole tree _at_ the vulnerable version rather than above it. A `^` range where a fixture belonged **surprises**: `@dhis2/cli-app-scripts: ^12` resolved to 12.11.3, which silently started injecting `__MANIFEST_APP_*` entries into the translation bundle.
 
     In practice: is there a higher version that would also work? Then use `^`. Does something bind to this exact release? Then pin it — **and write the condition for unpinning it.** If you cannot state that condition, it should probably have been a `^` range.
 
@@ -41,7 +41,6 @@ All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vul
 | `nanoid: 3.3.8`           | Historic advisory in `< 3.3.8`. **Prune candidate.**                                                                                                                                    |
 | `node-fetch: 2.6.7`       | Historic advisory in `< 2.6.7`. **Prune candidate.**                                                                                                                                    |
 | `path-to-regexp: 1.9.0`   | ReDoS in the 1.x line, reached through `react-router-dom@5.3.4`. **Drop when** `react-router-dom` v5 is removed or upgraded — it is the only consumer.                                  |
-| `qs: 6.14.2`              | GHSA-q8mj-m7cp-5q26 (medium) affects `< 6.15.2`; this pin does not clear it. Left as-is because medium is out of scope for this pass. **Drop when** no consumer requests `qs < 6.15.2`. |
 
 #### `@types/react: 18.2.22` and `@types/react-dom: 18.2.7`
 
@@ -139,6 +138,12 @@ All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vul
 - **Fixes:** GHSA-v245-v573-v5vm, GHSA-22p9-wv53-3rq4 (high) — quadratic-complexity DoS.
 - **Drop when:** `@eyeseetea/d2-ui-components` drops or replaces `react-linkify`. EyeSeeTea-owned, so fixable upstream — and that would remove this pin from every app.
 
+#### `qs: ^6.15.3`
+
+- **Why:** this entry was inherited from `8a8d2b4` as the exact version `6.14.2`, and **that exact version had itself become the vulnerable one** — GHSA-q8mj-m7cp-5q26 affects `>= 6.11.1 <= 6.15.1`, and 6.15.2 was published after the pin was written. A textbook decay: the pin was a floor written as a fixture, so it held the tree _at_ the advisory instead of above it. Converted to a `^` range, which is what a security floor should always have been. Three parents request it — `request` (build-only), `url` via the browser polyfills, and `@eyeseetea/d2-api`, which is **runtime**, so this was verified with the test suite and a build rather than with `yarn install` alone.
+- **Fixes:** GHSA-q8mj-m7cp-5q26 (medium) — unhandled `TypeError` in `qs.stringify` with `arrayFormat: 'comma'` and `encodeValuesOnly: true` over an array containing `null`.
+- **Drop when:** every consumer requests `qs >= 6.15.2` natively. `request` is the blocker — it requests `~6.5.2` and is deprecated, so this pin outlives the others in the `@dhis2/cli-app-scripts` chain.
+
 ---
 
 ## Rejected pins
@@ -172,10 +177,10 @@ _(`node-gettext` was in this section until it turned out to be fixable — see t
 
 When running `/sca-triage`, treat any of these as a signal that a pin has gone stale:
 
-- A high-severity finding reappears for a package that has an active resolution.
+- A finding of **any severity** reappears for a package that has an active resolution. Do not filter this check to critical/high: `qs` was pinned to the exact version that later became the vulnerable one, and the finding sat at medium for months because nothing was looking below the gate's threshold.
 - `yarn why <pkg>` shows the resolved version _not matching_ the right-hand side of the resolution.
 - `yarn why execa` no longer shows `0.7.0` — the `execa@npm:0.7.0/cross-spawn` pin is then a no-op and must be re-pointed or removed.
-- One of the six prune candidates above no longer needs its pin. Remove it, reinstall, and confirm nothing reappears; if a finding comes back, restore the pin and record here what blocked it.
+- One of the prune candidates above no longer needs its pin. Remove it, reinstall, and confirm nothing reappears; if a finding comes back, restore the pin and record here what blocked it.
 
 ## Future improvements
 
