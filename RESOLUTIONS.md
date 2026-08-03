@@ -82,13 +82,6 @@ All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vul
 - **Fixes:** GHSA-r5fr-rjxr-66jc (high) — code injection via `_.template` import key names.
 - **Drop when:** `@eyeseetea/d2-api` and `@eyeseetea/d2-ui-components` stop pinning lodash exactly. Both are EyeSeeTea-owned — fixing them upstream removes this pin from every app.
 
-#### `minimatch: ^10.2.6`
-
-- **Why:** `brace-expansion` 1.1.18 and 2.1.4 carry GHSA-mh99-v99m-4gvg, which is fixed only in 5.0.8. They cannot be pinned directly — see "Rejected pins". Fixing the parent works instead: **minimatch 10 is the first line to request `brace-expansion ^5.0.8`** (3.x wants `^1.1.7`; 5.x, 7.x and 9.x want `^2.0.x`). Pinning every minimatch to `^10` collapses the tree onto a single healthy `brace-expansion@5.0.9`. Consumers are all dev tooling: `@eslint/config-array`, `@eslint/eslintrc`, `jake` and `archiver` via the build, and `depcheck`.
-- **Fixes:** GHSA-mh99-v99m-4gvg (high) — DoS via unbounded expansion length.
-- **⚠️ Note:** upgrading ESLint does **not** remove these findings, contrary to what looks intuitive. eslint 9.39.5 still pulls minimatch 3.x through `@eslint/config-array` and `@eslint/eslintrc`. Verified on this branch before settling on the minimatch pin.
-- **Drop when:** No consumer requests a minimatch line below 10. Verify with `yarn why minimatch`.
-
 #### `esbuild: ^0.28.1`
 
 - **Why:** Three esbuild lines survive the vite migration: 0.28.1 (vite 7), 0.28.0 (`tsx`, which requests `~0.28.0`) and 0.25.12 (vite 6, pinned for `@dhis2/cli-app-scripts`). Only the first is patched, and one major line covers every consumer, so a global pin is the right shape.
@@ -152,8 +145,17 @@ Tried during this pass, verified to break a consumer, and reverted. Recorded so 
 
 | Pin attempted                      | What broke                                                                                                                                                                                      |
 | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `brace-expansion: ^5.0.9` (global) | `minimatch@3.x` dies with `TypeError: expand is not a function` — v5 switched from a default export to a named one. Fixed by pinning `minimatch: ^10` instead.                                  |
+| `brace-expansion: ^5.0.9` (global) | `minimatch@3.x` dies with `TypeError: expand is not a function` — v5 switched from a default export to a named one. Do not force one brace-expansion line across the tree; each minimatch major has its own, and all three are patched today.                                  |
 | `request/uuid: ^11.1.1`            | `ERR_PACKAGE_PATH_NOT_EXPORTED` — `request` does `require('uuid/v4')`, and the `./v4` subpath was removed in uuid v7. No uuid version both fixes the advisory (11.1.1+) and keeps that subpath. |
+
+#### Considered and dropped: `minimatch: ^10.2.6`
+
+Held on this branch from 2026-07-30 and removed on 2026-08-03, before merge. Recorded because the reasoning is invisible in the tree by definition — the pin is not there to be found.
+
+- **What it was for:** when it was written, GHSA-mh99-v99m-4gvg (high) recorded a single patched version, `brace-expansion@5.0.8`, so the 1.x and 2.x lines both read as unfixable — and pinning `brace-expansion` directly breaks `minimatch@3.x` (see the table above). Forcing every minimatch onto the 10.x line, the first to request `brace-expansion ^5.0.8`, collapsed the tree onto a healthy version.
+- **Why it is gone:** the maintainers backported the fix — `brace-expansion@2.1.3` on 2026-07-28 and `1.1.17` on 2026-07-29 — and the advisory was updated to record both on **2026-07-31**. The versions already in this tree, 1.1.18 and 2.1.4, are above both. Without the pin, `minimatch@3.1.5 → brace-expansion@1.1.18`, `5.1.9`/`7.4.9`/`9.0.9 → 2.1.4`, and `10.2.6 → 5.0.9`. All three lines are patched against every open brace-expansion advisory, and `yarn npm audit --severity high -R` returns no suggestions.
+- **The lesson, which is why this entry exists:** the conclusion _"no fix on this line"_ came from advisory metadata, not from the registry — the backports were published two and three days before the advisory recorded them. **Check the affected range against the published version list, not only `first_patched_version`.** That is the same check that rescued `node-gettext`, applied to a field that was filled in rather than empty.
+- **Related, worth keeping:** upgrading ESLint does not remove the minimatch 3.x chain while on the 9.x line — `eslint@9.39.5` declares `minimatch ^3.1.5` itself, and reaches it again through `@eslint/eslintrc@3.3.6` and `@eslint/config-array@0.21.2`. **eslint 10** is where that changes: 10.8.0 drops `@eslint/eslintrc` and moves to `minimatch ^10.2.5`.
 
 ---
 
