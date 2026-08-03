@@ -169,7 +169,37 @@ Recorded here rather than in `resolutions` because **no version resolves them**.
 - **Severity note:** `medium` in the GitHub advisory database; Dependency-Track scores it above 7. It is the branch's only remaining high **and its only newly-introduced instance**, so the CI gate will flag the PR.
 - **Drop when:** `@dhis2/cli-helpers-engine` stops depending on `request`, which has been deprecated since 2020.
 
-_(`node-gettext` was in this section until it turned out to be fixable — see the pin below.)_
+#### `request@2.88.2` — GHSA-p8p7-x288-28g6 (medium)
+
+- **Chain:** `@dhis2/cli-app-scripts` → `@dhis2/cli-helpers-engine@3.2.2` → `request@^2.88.0`.
+- **Why it cannot be fixed:** SSRF mitigations can be bypassed through a cross-protocol redirect. 2.88.2 is the last release and the package has been deprecated since 2020, so no patched version will ever exist. This is the same root cause as the `uuid` finding above.
+- **Impact:** build-only — the chain runs during `yarn localize`, never in the browser bundle, and the URLs it fetches are not attacker-controlled.
+- **Drop when:** `@dhis2/cli-helpers-engine` stops depending on `request`. Worth raising upstream with DHIS2, since it affects every app that replaces the archived i18n packages.
+
+#### `elliptic@6.6.1` — GHSA-848j-6mx2-7j84
+
+- **Chain:** `vite-plugin-node-polyfills` → `node-stdlib-browser` → `crypto-browserify` → `browserify-sign` and `create-ecdh`.
+- **Why it cannot be fixed:** the advisory covers **all versions `<= 6.6.1`**, and 6.6.1 is the latest published release. There is nothing to pin to — verified against the published version list, the check that rescued `node-gettext`.
+- **Impact:** the ECDSA signing path is never reached. The polyfills exist only because `md5.js` needs the `Buffer` shim.
+- **Drop when:** `elliptic` publishes a fix, or `md5.js` is replaced and the polyfill chain leaves the tree entirely.
+
+_(`node-gettext` was in this section until it turned out to be fixable — see the pin above.)_
+
+---
+
+## Deferred findings — fixable in principle, out of scope for this pass
+
+These have a published fix, but reaching it means forcing a multi-major jump on transitive build tooling: a new pin, and new decay to monitor, for findings that are dev/build-only and that the CI gate does not block on. Recorded with their chains so the next audit does not have to re-derive them.
+
+Four of the five sit under `@dhis2/cli-app-scripts`, which also drags in `jest@27` and `jsdom@16` in order to extract translation strings. **The cheap fix for most of this section is upstream, not here.**
+
+| Finding                                     | Sev    | Chain                                                                                                                 | What a fix would cost                                                                                                                                        |
+| ------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `got@9.6.0` — GHSA-pfrx-2q88-qq97           | medium | `cli-app-scripts` → `cli-helpers-engine` → `update-notifier@3.0.1` → `latest-version@5.1.0` → `package-json@6.5.0`     | Patched in 11.8.5 / 12.1.0, two majors above the `^9.6.0` its parent requests, so a `got` pin does not apply — it needs `update-notifier` forced several majors up. Only powers the CLI's "new version available" check |
+| `tough-cookie@2.5.0` — GHSA-72xf-g2v4-qvf3  | medium | `request@2.88.2` → `~2.5.0`                                                                                            | Patched in 4.1.3, but `request` is written against the 2.x API, so `request/tough-cookie: ^4.1.3` has to be verified against its cookie jar. jsdom's own copies are already on a healthy 4.1.4 |
+| `@tootallnate/once@1.1.2` and `@2.0.1` — GHSA-vpq2-c234-7xj6 | low | `http-proxy-agent@4.0.1` (via jest 27 / jsdom 16) and `@5.0.0` (via jsdom 21)                                          | Patched in 3.0.1, but both parents request the major exactly (`1` and `2`), so it needs an `http-proxy-agent` major bump. Test-time only                        |
+
+**Re-evaluate when** any of these stops being build-only, or when the `@dhis2/cli-app-scripts` chain is reworked upstream — at which point most of this table disappears on its own.
 
 ---
 
