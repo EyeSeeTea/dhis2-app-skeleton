@@ -22,7 +22,7 @@ This file documents every entry in the `resolutions` block of `package.json`. Ea
 
 ## Audit cadence
 
-Run `/sca-triage` monthly or before every release. The classifier will surface any silently-broken resolution as a recurring high-severity finding. Each entry below has a **drop when** condition — when that condition becomes true, delete the entry and re-install.
+Re-audit the dependency tree monthly, and before every release. A resolution that has silently stopped working shows up as a finding that keeps coming back for a package that already has a pin. Each entry below has a **drop when** condition — when that condition becomes true, delete the entry and re-install.
 
 Note that `yarn npm audit` and Dependency-Track disagree on severity — `esbuild` and `uuid` are scored below 7 by the GitHub advisory database and above 7 by Dependency-Track. **The CI gate follows Dependency-Track**, so measure there before concluding an app is clean, and never quote a before/after count that mixes the two sources.
 
@@ -131,7 +131,7 @@ _(`node-gettext` was in this section until it turned out to be fixable — see t
 
 ## Decay-monitoring checklist
 
-When running `/sca-triage`, treat any of these as a signal that a pin has gone stale:
+When auditing, treat any of these as a signal that a pin has gone stale:
 
 - A finding of **any severity** reappears for a package that has an active resolution. Do not filter this check to critical/high: `qs` was pinned to the exact version that later became the vulnerable one, and the finding sat at medium for months because nothing was looking below the gate's threshold.
 - `yarn why <pkg>` shows the resolved version _not matching_ the right-hand side of the resolution.
