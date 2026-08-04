@@ -10,21 +10,21 @@ This file documents every entry in the `resolutions` block of `package.json`. Ea
 
     A **floor** — "never below this" — takes a `^` range. Almost every security pin is a floor: it does not matter whether axios resolves to 1.18.0 or 1.19.0, only that it is not 1.13.5. Newer is strictly better, so let it land.
 
-    A **fixture** — "exactly this" — takes an exact version. These are compatibility constraints, not security ones: something else binds to that specific release. `@types/react`, `i18next` and `@dhis2/cli-app-scripts` below are the three in this file.
+    A **fixture** — "exactly this" — takes an exact version. These are compatibility constraints, not security ones: something else binds to that specific release. `@types/react` and `i18next` below are the two in this file.
 
     The two failure modes are mirror images. An exact version where a floor belonged **decays**: `axios: 1.13.5` was correct in February and carried 10 open high-severity advisories by July, because no patch could ever land. Decay has a nastier form still — `qs: 6.14.2` was written to fix an advisory, and a later advisory landed on 6.14.2 itself, so the pin ended up holding the whole tree _at_ the vulnerable version rather than above it. A `^` range where a fixture belonged **surprises**: `@dhis2/cli-app-scripts: ^12` resolved to 12.11.3, which silently started injecting `__MANIFEST_APP_*` entries into the translation bundle.
 
     In practice: is there a higher version that would also work? Then use `^`. Does something bind to this exact release? Then pin it — **and write the condition for unpinning it.** If you cannot state that condition, it should probably have been a `^` range.
 
 - Prefer **per-parent** paths (`parent/child`) over standalone descriptors. Yarn-berry only matches a standalone descriptor on exact text — `picomatch@npm:^4` will _not_ match a child request of `^4.0.2`. The reliable forms are `parent/child`, `parent@npm:<exact-version>/child`, or `parent@npm:^<major>/child`.
-- **Versioned-parent pins go stale silently.** When a parent patch-bumps, `parent@npm:<exact>/child` matches nothing and yarn does not warn. `execa@npm:0.7.0/cross-spawn` below is the one entry of that shape.
+- **Versioned-parent pins go stale silently.** When a parent patch-bumps, `parent@npm:<exact>/child` matches nothing and yarn does not warn. There is no entry of that shape in this file today; if you add one, mark it as a decay risk and re-check it at every audit.
 - **A pin that clears the scanner but breaks a consumer is not a fix.** Two pins were tried and reverted during this pass — see "Rejected pins" below. Verify with the tool that actually uses the package, not just `yarn install`.
 
 ## Audit cadence
 
 Run `/sca-triage` monthly or before every release. The classifier will surface any silently-broken resolution as a recurring high-severity finding. Each entry below has a **drop when** condition — when that condition becomes true, delete the entry and re-install.
 
-Note that `yarn npm audit` and Dependency-Track disagree on severity: `esbuild` and `uuid` are scored below 7 by the GitHub advisory database and above 7 by Dependency-Track. **The CI gate follows Dependency-Track**, so measure there before concluding an app is clean.
+Note that `yarn npm audit` and Dependency-Track disagree on severity — `esbuild` and `uuid` are scored below 7 by the GitHub advisory database and above 7 by Dependency-Track. **The CI gate follows Dependency-Track**, so measure there before concluding an app is clean, and never quote a before/after count that mixes the two sources.
 
 ---
 
@@ -34,13 +34,13 @@ Note that `yarn npm audit` and Dependency-Track disagree on severity: `esbuild` 
 
 All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vulnerabilities", 2026-02-26), with no recorded rationale. None currently resolves to a version with an open critical or high advisory. They were converted from exact versions to `^` ranges where safe, and are kept pending a one-at-a-time prune: remove, reinstall, and check nothing reappears.
 
-| Pin                       | Notes                                                                                                                                                                                   |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@babel/runtime: 7.26.10` | Historic advisory in the 7.26 line. **Prune candidate** — verify with `yarn why @babel/runtime` after removal.                                                                          |
-| `glob-parent: 5.1.2`      | Almost certainly CVE-2020-28469 (ReDoS in `< 5.1.2`). **Prune candidate.**                                                                                                              |
-| `nanoid: 3.3.8`           | Historic advisory in `< 3.3.8`. **Prune candidate.**                                                                                                                                    |
-| `node-fetch: 2.6.7`       | Historic advisory in `< 2.6.7`. **Prune candidate.**                                                                                                                                    |
-| `path-to-regexp: 1.9.0`   | ReDoS in the 1.x line, reached through `react-router-dom@5.3.4`. **Drop when** `react-router-dom` v5 is removed or upgraded — it is the only consumer.                                  |
+| Pin                       | Notes                                                                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `@babel/runtime: 7.26.10` | Historic advisory in the 7.26 line. **Prune candidate** — verify with `yarn why @babel/runtime` after removal.                                         |
+| `glob-parent: 5.1.2`      | Almost certainly CVE-2020-28469 (ReDoS in `< 5.1.2`). **Prune candidate.**                                                                             |
+| `nanoid: 3.3.8`           | Historic advisory in `< 3.3.8`. **Prune candidate.**                                                                                                   |
+| `node-fetch: 2.6.7`       | Historic advisory in `< 2.6.7`. **Prune candidate.**                                                                                                   |
+| `path-to-regexp: 1.9.0`   | ReDoS in the 1.x line, reached through `react-router-dom@5.3.4`. **Drop when** `react-router-dom` v5 is removed or upgraded — it is the only consumer. |
 
 #### `@types/react: 18.2.22` and `@types/react-dom: 18.2.7`
 
@@ -53,14 +53,6 @@ All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vul
 - **Why:** Held at the version `@dhis2/d2-i18n` expects. ⚠️ **Do not change this blind.** Moving off this line has been observed to break app startup with `Uncaught TypeError: i18next.init is not a function`, because `@dhis2/d2-i18n` binds to an older i18next API. The correct version is specific to which `@dhis2/d2-i18n` this app uses, so validate by running the app rather than copying a version from elsewhere.
 - **Fixes:** Historic prototype-pollution advisories in the older i18next lines.
 - **Drop when:** `@dhis2/d2-i18n` declares a compatible range and `yarn start` still works. ⚠️ i18next 19 is EOL, so holding here indefinitely is itself a risk; revisit on the next `d2-i18n` bump.
-
-### Compatibility pins
-
-#### `@dhis2/cli-app-scripts: 12.11.1`
-
-- **Why:** ⚠️ **Not a security pin — a fixture.** `d2-app-scripts i18n extract` changed behaviour between 12.11.1 and 12.11.3: the newer release appends `__MANIFEST_APP_TITLE` and `__MANIFEST_APP_DESCRIPTION` entries to `i18n/en.pot`, and they end up in the shipped `src/locales/*/translations.json`. This project has no `d2.config.js` and generates its manifest through `d2-manifest`, so those strings are meaningless here and nothing ever reads them. Pinning to 12.11.1 keeps the generated output clean.
-- **Fixes:** Nothing — output correctness only.
-- **Drop when:** DHIS2 confirms whether the manifest strings can be suppressed without a `d2.config.js`, or a later release stops emitting them for projects that have none. Verify by regenerating and checking `grep MANIFEST i18n/en.pot` is empty.
 
 ### Security pins (added 2026-07-30)
 
@@ -82,43 +74,6 @@ All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vul
 - **Fixes:** GHSA-r5fr-rjxr-66jc (high) — code injection via `_.template` import key names.
 - **Drop when:** `@eyeseetea/d2-api` and `@eyeseetea/d2-ui-components` stop pinning lodash exactly. Both are EyeSeeTea-owned — fixing them upstream removes this pin from every app.
 
-#### `esbuild: ^0.28.1`
-
-- **Why:** Three esbuild lines survive the vite migration: 0.28.1 (vite 7), 0.28.0 (`tsx`, which requests `~0.28.0`) and 0.25.12 (vite 6, pinned for `@dhis2/cli-app-scripts`). Only the first is patched, and one major line covers every consumer, so a global pin is the right shape.
-- **Fixes:** GHSA-g7r4-m6w7-qqqr. ⚠️ **`low` in the GitHub advisory database** — Dependency-Track scores it above 7 and reports it as high. Pinned because the CI gate follows Dependency-Track, not because the risk is high.
-- **Drop when:** `tsx` and vite 6 request `esbuild ^0.28.1` or later natively.
-
-#### `tmp: ^0.2.7`
-
-- **Why:** `vite-bundle-visualizer` requests `^0.2.1` and `external-editor` (via the DHIS2 CLI chain) requests `^0.2.6`; both resolve below the fix. One major line in the tree, so a global pin is correct. Dev/build-only.
-- **Fixes:** GHSA-7c78-jf6q-g5cm (high) — type-confusion bypass of `_assertPath` allowing path traversal.
-- **Drop when:** No consumer resolves below 0.2.7.
-
-#### `@dhis2/cli-helpers-engine/tar: ^7.5.19`
-
-- **Why:** `@dhis2/cli-helpers-engine@3.2.2` — the latest — requests `tar@^4.4.8`, which resolves to `4.4.19`. Scoped to that parent so the rest of the tree, already on tar 7.x via `node-gyp`, is untouched. Dev/build-only: this is the CLI framework underneath `d2-app-scripts i18n`.
-- **Fixes:** GHSA-23hp-3jrh-7fpw (critical), plus GHSA-8x88-c5mf-7j5w, GHSA-34x7-hfp2-rc4v, GHSA-83g3-92jg-28cx, GHSA-8qq5-rm4j-mr97, GHSA-9ppj-qmqm-q256, GHSA-qffp-2rhf-9h96, GHSA-r6q2-hw4h-h46w (high).
-- **Drop when:** `@dhis2/cli-helpers-engine` moves off the tar 4.x line. Verify with `yarn why tar`.
-
-#### `@dhis2/cli-app-scripts/vite: ^6.4.3`
-
-- **Why:** `@dhis2/cli-app-scripts@12.11.3` requests `vite@^5.2.9`, and the vite 5.x line has no fix for GHSA-fx2h-pf6j-xcff. Scoped to that parent so the application's own vite 7 is untouched. Dev/build-only.
-- **Fixes:** GHSA-fx2h-pf6j-xcff (high) — `server.fs.deny` bypass on Windows.
-- **Drop when:** `@dhis2/cli-app-scripts` requests vite 6 or later natively.
-
-#### `execa@npm:0.7.0/cross-spawn: ^6.0.6`
-
-- **Why:** `term-size@1.2.0` → `execa@0.7.0` → `cross-spawn@^5.0.1` → `5.1.0`. The other `execa` in the tree (5.1.1) already resolves `cross-spawn@7.0.6` and must not be dragged down, so a parent-name pin is not enough — this is scoped to the 0.7.0 parent specifically. Dev/build-only, part of the DHIS2 CLI chain.
-- **Fixes:** GHSA-3xgq-45jj-v275 (high) — ReDoS.
-- **⚠️ Decay risk: HIGH.** Exact-version parent. If `execa@0.7.0` is ever bumped, this pin silently matches nothing and the finding returns with no warning from yarn. Re-check with `yarn why cross-spawn` at every audit.
-- **Drop when:** `term-size`/`execa@0.7.0` leaves the tree, which happens when the DHIS2 CLI chain updates.
-
-#### `styled-jsx/loader-utils: ^1.4.2`
-
-- **Why:** `styled-jsx@4.0.1` (pulled by the DHIS2 CLI chain) requests `loader-utils` at exactly `1.2.3`. `babel-loader` and `@pmmmwh/react-refresh-webpack-plugin` sit on a healthy `2.0.4`; the scoped pin fixes the broken branch and leaves them alone. A global pin would rewrite all of them for no benefit. Build-time only.
-- **Fixes:** GHSA-76p3-8jx3-jpfq (critical) — prototype pollution; GHSA-3rfm-jhwj-7488, GHSA-hhq3-ff78-jv3g (high) — ReDoS.
-- **Drop when:** `styled-jsx@4.x` leaves the tree, or its consumer moves to `loader-utils` 2.x.
-
 #### `i18next-conv/node-gettext: ^3.0.1`
 
 - **Why:** `i18next-conv@9.2.1` requests `node-gettext@^2.0.0`, which resolves to the vulnerable `2.1.0`. ⚠️ **The advisory looks unfixable and is not.** GHSA-g974-hxvm-x689 declares no `first_patched_version`, so tooling reports it as having no fix — but its affected range is `<= 3.0.0`, and **3.0.1 is published and outside that range**. Always compare the affected range against the published version list before concluding a finding is a dead end. Scoped to the parent; dev/build-only, used during i18n generation.
@@ -133,9 +88,9 @@ All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vul
 
 #### `qs: ^6.15.3`
 
-- **Why:** this entry was inherited from `8a8d2b4` as the exact version `6.14.2`, and **that exact version had itself become the vulnerable one** — GHSA-q8mj-m7cp-5q26 affects `>= 6.11.1 <= 6.15.1`, and 6.15.2 was published after the pin was written. A textbook decay: the pin was a floor written as a fixture, so it held the tree _at_ the advisory instead of above it. Converted to a `^` range, which is what a security floor should always have been. Three parents request it — `request` (build-only), `url` via the browser polyfills, and `@eyeseetea/d2-api`, which is **runtime**, so this was verified with the test suite and a build rather than with `yarn install` alone.
+- **Why:** this entry was inherited from `8a8d2b4` as the exact version `6.14.2`, and **that exact version had itself become the vulnerable one** — GHSA-q8mj-m7cp-5q26 affects `>= 6.11.1 <= 6.15.1`, and 6.15.2 was published after the pin was written. A textbook decay: the pin was a floor written as a fixture, so it held the tree _at_ the advisory instead of above it. Converted to a `^` range, which is what a security floor should always have been. It is requested by `url` via the browser polyfills and by `@eyeseetea/d2-api`, which is **runtime**, so this was verified with the test suite and a build rather than with `yarn install` alone.
 - **Fixes:** GHSA-q8mj-m7cp-5q26 (medium) — unhandled `TypeError` in `qs.stringify` with `arrayFormat: 'comma'` and `encodeValuesOnly: true` over an array containing `null`.
-- **Drop when:** every consumer requests `qs >= 6.15.2` natively. `request` is the blocker — it requests `~6.5.2` and is deprecated, so this pin outlives the others in the `@dhis2/cli-app-scripts` chain.
+- **Drop when:** every consumer requests `qs >= 6.15.2` natively. `@eyeseetea/d2-api` is the blocker: it requests the exact version `6.9.7`, so removing this pin resolves `qs` _downwards_ rather than upwards — verified by removing it and re-installing.
 
 ---
 
@@ -143,10 +98,10 @@ All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vul
 
 Tried during this pass, verified to break a consumer, and reverted. Recorded so nobody re-tries them.
 
-| Pin attempted                      | What broke                                                                                                                                                                                      |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `brace-expansion: ^5.0.9` (global) | `minimatch@3.x` dies with `TypeError: expand is not a function` — v5 switched from a default export to a named one. Do not force one brace-expansion line across the tree; each minimatch major has its own, and all three are patched today.                                  |
-| `request/uuid: ^11.1.1`            | `ERR_PACKAGE_PATH_NOT_EXPORTED` — `request` does `require('uuid/v4')`, and the `./v4` subpath was removed in uuid v7. No uuid version both fixes the advisory (11.1.1+) and keeps that subpath. |
+| Pin attempted                      | What broke                                                                                                                                                                                                                                    |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `brace-expansion: ^5.0.9` (global) | `minimatch@3.x` dies with `TypeError: expand is not a function` — v5 switched from a default export to a named one. Do not force one brace-expansion line across the tree; each minimatch major has its own, and all three are patched today. |
+| `request/uuid: ^11.1.1`            | `ERR_PACKAGE_PATH_NOT_EXPORTED` — `request` does `require('uuid/v4')`, and the `./v4` subpath was removed in uuid v7. No uuid version both fixes the advisory (11.1.1+) and keeps that subpath.                                               |
 
 #### Considered and dropped: `minimatch: ^10.2.6`
 
@@ -163,21 +118,6 @@ Held on this branch from 2026-07-30 and removed on 2026-08-03, before merge. Rec
 
 Recorded here rather than in `resolutions` because **no version resolves them**.
 
-#### `uuid@3.4.0` — GHSA-w5hq-g745-h8pq
-
-- **Chain:** `@dhis2/cli-app-scripts` → `@dhis2/cli-helpers-engine@3.2.2` → `request@2.88.2` → `uuid@^3.3.2`.
-- **Why it cannot be pinned:** see "Rejected pins" — the fix and the API `request` needs never overlap.
-- **Why it is not exploitable here:** the advisory affects the `v3()`, `v5()` and `v6()` methods **when the caller supplies an output buffer**; `v4()` explicitly throws `RangeError` and is unaffected. `request` does `require('uuid/v4')` and calls `uuid()` with no arguments. Dev/build-only regardless — this chain runs during `yarn localize`, never in the browser bundle.
-- **Severity note:** `medium` in the GitHub advisory database; Dependency-Track scores it above 7. It is the branch's only remaining high **and its only newly-introduced instance**, so the CI gate will flag the PR.
-- **Drop when:** `@dhis2/cli-helpers-engine` stops depending on `request`, which has been deprecated since 2020.
-
-#### `request@2.88.2` — GHSA-p8p7-x288-28g6 (medium)
-
-- **Chain:** `@dhis2/cli-app-scripts` → `@dhis2/cli-helpers-engine@3.2.2` → `request@^2.88.0`.
-- **Why it cannot be fixed:** SSRF mitigations can be bypassed through a cross-protocol redirect. 2.88.2 is the last release and the package has been deprecated since 2020, so no patched version will ever exist. This is the same root cause as the `uuid` finding above.
-- **Impact:** build-only — the chain runs during `yarn localize`, never in the browser bundle, and the URLs it fetches are not attacker-controlled.
-- **Drop when:** `@dhis2/cli-helpers-engine` stops depending on `request`. Worth raising upstream with DHIS2, since it affects every app that replaces the archived i18n packages.
-
 #### `elliptic@6.6.1` — GHSA-848j-6mx2-7j84
 
 - **Chain:** `vite-plugin-node-polyfills` → `node-stdlib-browser` → `crypto-browserify` → `browserify-sign` and `create-ecdh`.
@@ -189,33 +129,57 @@ _(`node-gettext` was in this section until it turned out to be fixable — see t
 
 ---
 
-## Deferred findings — fixable in principle, out of scope for this pass
-
-These have a published fix, but reaching it means forcing a multi-major jump on transitive build tooling: a new pin, and new decay to monitor, for findings that are dev/build-only and that the CI gate does not block on. Recorded with their chains so the next audit does not have to re-derive them.
-
-Four of the five sit under `@dhis2/cli-app-scripts`, which also drags in `jest@27` and `jsdom@16` in order to extract translation strings. **The cheap fix for most of this section is upstream, not here.**
-
-| Finding                                     | Sev    | Chain                                                                                                                 | What a fix would cost                                                                                                                                        |
-| ------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `got@9.6.0` — GHSA-pfrx-2q88-qq97           | medium | `cli-app-scripts` → `cli-helpers-engine` → `update-notifier@3.0.1` → `latest-version@5.1.0` → `package-json@6.5.0`     | Patched in 11.8.5 / 12.1.0, two majors above the `^9.6.0` its parent requests, so a `got` pin does not apply — it needs `update-notifier` forced several majors up. Only powers the CLI's "new version available" check |
-| `tough-cookie@2.5.0` — GHSA-72xf-g2v4-qvf3  | medium | `request@2.88.2` → `~2.5.0`                                                                                            | Patched in 4.1.3, but `request` is written against the 2.x API, so `request/tough-cookie: ^4.1.3` has to be verified against its cookie jar. jsdom's own copies are already on a healthy 4.1.4 |
-| `@tootallnate/once@1.1.2` and `@2.0.1` — GHSA-vpq2-c234-7xj6 | low | `http-proxy-agent@4.0.1` (via jest 27 / jsdom 16) and `@5.0.0` (via jsdom 21)                                          | Patched in 3.0.1, but both parents request the major exactly (`1` and `2`), so it needs an `http-proxy-agent` major bump. Test-time only                        |
-
-**Re-evaluate when** any of these stops being build-only, or when the `@dhis2/cli-app-scripts` chain is reworked upstream — at which point most of this table disappears on its own.
-
----
-
 ## Decay-monitoring checklist
 
 When running `/sca-triage`, treat any of these as a signal that a pin has gone stale:
 
 - A finding of **any severity** reappears for a package that has an active resolution. Do not filter this check to critical/high: `qs` was pinned to the exact version that later became the vulnerable one, and the finding sat at medium for months because nothing was looking below the gate's threshold.
 - `yarn why <pkg>` shows the resolved version _not matching_ the right-hand side of the resolution.
-- `yarn why execa` no longer shows `0.7.0` — the `execa@npm:0.7.0/cross-spawn` pin is then a no-op and must be re-pointed or removed.
 - One of the prune candidates above no longer needs its pin. Remove it, reinstall, and confirm nothing reappears; if a finding comes back, restore the pin and record here what blocked it.
+- **A pin whose removal changes nothing.** Delete it, run `yarn install`, and compare the lockfile: if it is byte-identical, the pin matched no descriptor and was never doing anything. Pins copied between repositories are the usual source — a constraint that is load-bearing in one tree can be inert in another.
+
+---
+
+## Why the archived i18n packages are still here
+
+`@dhis2/d2-i18n-extract` and `@dhis2/d2-i18n-generate` are archived upstream and will never receive a fix. `@dhis2/cli-app-scripts` is the maintained equivalent, and replacing them was implemented on this branch and then reverted. The reasoning is recorded here because a remediation that was tried and rejected leaves no trace in the tree.
+
+**What the replacement costs.** `@dhis2/cli-app-scripts` cannot provide translation extraction without the DHIS2 CLI framework beneath it, so adopting it for i18n alone pulls in the whole chain. Measured on this branch, that chain was responsible for **every one of these**:
+
+| Brought in by the CLI chain                          | Consequence                                                                                                                                                                                                       |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `request@2.88.2` → `uuid@3.4.0`                      | A finding with **no fix in any published version**. `request` has been deprecated since 2020, and no `uuid` release satisfies both the advisory and the `uuid/v4` subpath `request` imports — see "Rejected pins" |
+| `@dhis2/cli-helpers-engine` → `tar@4.4.19`           | Needed a scoped pin                                                                                                                                                                                               |
+| `external-editor` → `tmp@0.0.33`                     | Needed a global pin                                                                                                                                                                                               |
+| `execa@0.7.0` → `cross-spawn@5.1.0`                  | Needed a versioned-parent pin, the shape with the highest decay risk                                                                                                                                              |
+| `styled-jsx@4.0.1` → `loader-utils@1.2.3`            | Needed a scoped pin                                                                                                                                                                                               |
+| Its own bundled `vite@5.x`                           | Needed a scoped pin, and an `esbuild` pin to go with it                                                                                                                                                           |
+| `update-notifier`, `inquirer`, `jest@27`, `jsdom@16` | Four further deferred findings, all build-only                                                                                                                                                                    |
+| `d2-app-scripts i18n extract` behaviour change       | Needed an exact-version fixture, because 12.11.3 injects `__MANIFEST_APP_*` strings into `i18n/en.pot`                                                                                                            |
+
+Removing the replacement removed **seven resolutions** and the exact-version fixture along with them, and `tar`, `tmp` and `cross-spawn` then resolve to patched versions unaided. The `esbuild` pin became redundant too: with the CLI's vite gone, `vite@7` requests `^0.27.0 || ^0.28.0` and reaches a patched release on its own.
+
+**Why staying is the better trade today.** The archived packages currently require exactly one constraint — `i18next-conv/node-gettext`, above — and produce no finding beyond it. So the choice is not _abandoned → maintained_; it is _two frozen packages that need one pin_ against _a maintained package that carries an abandoned chain with an unfixable finding and needs seven_. Both toolchains are build-time only: they run during `yarn localize` and never reach the browser bundle, so the difference in real exposure is negligible and the decision rests on maintainability.
+
+Being archived is not the same as being vulnerable — frozen code introduces nothing new either. The exposure here is conditional, not current.
+
+**Adopt `@dhis2/cli-app-scripts` when either becomes true:**
+
+1. `@dhis2/cli-helpers-engine` stops depending on `request`, removing the unfixable `uuid` path. The replacement then costs only scoped pins and the maintainability argument wins outright.
+2. Either archived package needs a constraint that cannot be satisfied within the ranges it already requests — that is, both re-resolution and a scoped pin fail.
+
+Re-measure rather than trusting the table above: it is a snapshot, and the replacement tooling moves.
+
+---
+
+## Notes for applications copying this baseline
+
+- **The vite 7 upgrade does not require ESLint 9.** This repository moved to `eslint@9` and flat config in the same pass, but the two are independent: `vite-plugin-checker@0.11.0` supports `vite >=5.4.20` while still accepting `eslint >=7`, and only 0.12.0 raises the floor to `eslint >=9.39.1`. An application on ESLint 8 can take the `vite`/`vitest`/`esbuild` fixes without touching its linter. ESLint 9 is worth doing here on its own merits — ESLint 8 is no longer supported upstream, and `@typescript-eslint@5` does not cover this repository's TypeScript — but it should not be presented as part of the security work, or it inflates the cost of adopting it.
+- **Re-verify every pin you copy.** A resolution that is load-bearing here can be a no-op elsewhere: `path-to-regexp: 1.9.0` binds in this tree through `react-router-dom@5.3.4`, and in at least one application that copied it there was no `path-to-regexp` in the lockfile at all — removing it left the lockfile byte-identical. Copying the block wholesale produces constraints nobody can explain later.
+- **If you upgrade `react-router-dom` off v5, go to v7, not v6.** The v6 line carries advisories whose affected range extends to `< 7.18.0`, and its final release, 6.30.4, is still inside two of them. Stopping at v6 trades one finding for several with no remediation on that line.
 
 ## Future improvements
 
-- **Upgrade `react-router-dom` off v5**, which would drop the `path-to-regexp` pin.
-- **Ask DHIS2 whether `@dhis2/cli-app-scripts` can ship i18n without the full CLI framework.** Six of the pins above exist only because `@dhis2/cli-helpers-engine` comes along for the ride: it brings `request` (deprecated), `tar`, `inquirer` and `update-notifier` in order to extract translation strings.
+- **Upgrade `react-router-dom` off v5**, which would drop the `path-to-regexp` pin. Target v7 directly, for the reason above.
+- **Ask DHIS2 whether `@dhis2/cli-app-scripts` can ship i18n without the full CLI framework.** That is the condition that would make the maintained i18n tooling adoptable — see the section above.
 - **Fix `@eyeseetea/d2-api` and `@eyeseetea/d2-ui-components` upstream.** Between them they force the `lodash` and `react-linkify` pins into every app that uses them.

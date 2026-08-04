@@ -14,6 +14,8 @@
         "$": "link:./src",
         "@dhis2/app-runtime": "^3",
         "@dhis2/d2-i18n": "^1",
+        "@dhis2/d2-i18n-extract": "^1",
+        "@dhis2/d2-i18n-generate": "^1",
         "@dhis2/data-engine": "3.17.0",
         "@dhis2/ui": "^6",
         "@eyeseetea/d2-api": "^1",
@@ -35,7 +37,6 @@
         "typed-immutable-map": ">=0"
     },
     "devDependencies": {
-        "@dhis2/cli-app-scripts": "^12",
         "@eslint/js": "^9.39.5",
         "@prettier/sync": "^0.6.1",
         "@testing-library/jest-dom": "^6.9.1",
@@ -75,14 +76,9 @@
     },
     "resolutions": {
         "@babel/runtime": "7.26.10",
-        "@dhis2/cli-app-scripts": "12.11.1",
-        "@dhis2/cli-app-scripts/vite": "^6.4.3",
-        "@dhis2/cli-helpers-engine/tar": "^7.5.19",
         "@types/react": "18.2.22",
         "@types/react-dom": "18.2.7",
         "axios": "^1.18.0",
-        "esbuild": "^0.28.1",
-        "execa@npm:0.7.0/cross-spawn": "^6.0.6",
         "form-data": "^4.0.6",
         "glob-parent": "5.1.2",
         "i18next": "19.8.5",
@@ -92,9 +88,7 @@
         "node-fetch": "2.6.7",
         "path-to-regexp": "1.9.0",
         "qs": "^6.15.3",
-        "react-linkify/linkify-it": "^5.0.2",
-        "styled-jsx/loader-utils": "^1.4.2",
-        "tmp": "^0.2.7"
+        "react-linkify/linkify-it": "^5.0.2"
     },
     "scripts": {
         "app:users-report": "yarn run-script src/scripts/UsersReportScript.ts",
@@ -102,12 +96,12 @@
         "build-dependencies-visualizer": "vite-bundle-visualizer",
         "build-folder": "rm -rf build/ && d2-manifest package.json manifest.webapp && tsc && vite build --outDir=build && yarn run manifest && cp -r i18n icon.png build",
         "check-code": "yarn lint && yarn test",
-        "extract-pot": "d2-app-scripts i18n extract -p src/ -o i18n/",
+        "extract-pot": "yarn d2-i18n-extract -p src/ -o i18n/",
         "generate-docs": "typedoc --entryPointStrategy expand ./src",
         "lint": "eslint src",
         "lint-all": "yarn lint && yarn lint-unused",
         "lint-unused": "ts-prune --ignore 'ts-utils.ts'",
-        "localize": "yarn update-po && d2-app-scripts i18n generate -n dhis2-skeleton-app -p ./i18n/ -o ./src/locales/",
+        "localize": "yarn update-po && d2-i18n-generate -l -n dhis2-skeleton-app -p ./i18n/ -o ./src/locales/",
         "manifest": "d2-manifest package.json build/manifest.webapp",
         "postinstall": "yarn localize || echo '⚠ localize failed — run `yarn localize` before building'",
         "prepare": "corepack enable 2>/dev/null || true && husky install",
