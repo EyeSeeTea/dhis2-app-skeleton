@@ -32,15 +32,11 @@ Note that `yarn npm audit` and Dependency-Track disagree on severity — `esbuil
 
 ### Pre-existing (rationale not recovered)
 
-All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vulnerabilities", 2026-02-26), with no recorded rationale. None currently resolves to a version with an open critical or high advisory. They were converted from exact versions to `^` ranges where safe, and are kept pending a one-at-a-time prune: remove, reinstall, and check nothing reappears.
+All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vulnerabilities", 2026-02-26), with no recorded rationale.
 
-| Pin                       | Notes                                                                                                                                                  |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `@babel/runtime: 7.26.10` | Historic advisory in the 7.26 line. **Prune candidate** — verify with `yarn why @babel/runtime` after removal.                                         |
-| `glob-parent: 5.1.2`      | Almost certainly CVE-2020-28469 (ReDoS in `< 5.1.2`). **Prune candidate.**                                                                             |
-| `nanoid: 3.3.8`           | Historic advisory in `< 3.3.8`. **Prune candidate.**                                                                                                   |
-| `node-fetch: 2.6.7`       | Historic advisory in `< 2.6.7`. **Prune candidate.**                                                                                                   |
-| `path-to-regexp: 1.9.0`   | ReDoS in the 1.x line, reached through `react-router-dom@5.3.4`. **Drop when** `react-router-dom` v5 is removed or upgraded — it is the only consumer. |
+**The prune was carried out on 2026-08-05 and the table is now empty.** Each of the five entries was removed, the tree re-installed, and the _resolved versions_ compared — four turned out to change nothing that mattered and were retired; one was load-bearing and became a range. See [Removed](#removed).
+
+The lesson worth keeping from that batch: **"prune candidate" and "does nothing" are not the same claim.** Of the five, the one the table described most dismissively was the only one holding a vulnerable version out of the tree.
 
 #### `@types/react: 18.2.22` and `@types/react-dom: 18.2.7`
 
@@ -62,11 +58,12 @@ All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vul
 - **Fixes:** GHSA-hfxv-24rg-xrqf, GHSA-j5f8-grm9-p9fc, GHSA-p92q-9vqr-4j8v, GHSA-35jp-ww65-95wh, GHSA-777c-7fjr-54vf, GHSA-6chq-wfr3-2hj9, GHSA-pf86-5x62-jrwf, GHSA-pmwg-cvhr-8vh7, GHSA-q8qp-cvcw-x6jj, GHSA-3g43-6gmg-66jw (10 high) plus 17 medium. Runtime-reachable — credential leakage to redirect targets and proxy-header forwarding.
 - **Drop when:** No transitive consumer requests `axios < 1.18`. Verify with `yarn why axios`.
 
-#### `form-data: ^4.0.6`
+#### `node-fetch: ^2.6.7`
 
-- **Why:** Transitive only, via `@eyeseetea/d2-api` and `jsdom`. Pinned at exactly `4.0.4` in `8a8d2b4`, which blocked the 4.x fix line.
-- **Fixes:** GHSA-hmw2-7cc7-3qxx (high) — CRLF injection via unescaped multipart field names and filenames.
-- **Drop when:** No consumer requests `form-data < 4.0.6`.
+- **Why:** ⚠️ **Load-bearing, despite having been listed as a prune candidate.** Removing it puts `node-fetch@1.7.3` back in the tree, via a consumer that requests `^1.0.1`. The advisory's 1.x fix is on 2.6.7, so the 1.x range cannot reach it and this global floor is what lifts that consumer onto a patched line. Verified by removing it and re-installing: `1.7.3` reappears.
+- **Fixes:** GHSA-r683-j2x4-v87g (high) — secure headers forwarded to untrusted sites across a cross-host redirect.
+- **Was an exact version until 2026-08-05, and that was the wrong shape.** `cross-fetch@^4.0.0` declares `node-fetch@^2.7.0`, so the exact `2.6.7` held that consumer _below_ the range its own parent declares, and no later patch could ever be selected. As a floor it resolves to 2.7.0, still removes `1.7.3`, and lets future patches land unaided. This is the file's own floor-versus-fixture rule applied to an entry that predates it.
+- **Drop when:** no consumer requests a `node-fetch` range whose lowest satisfying version is below 2.6.7 — concretely, when the `^1.0.1` consumer is gone. Verify by removing it, re-installing and confirming no 1.x appears.
 
 #### `lodash: ^4.18.0`
 
@@ -91,6 +88,53 @@ All added in a single commit, `8a8d2b4` ("fix(security): mitigate dependency vul
 - **Why:** this entry was inherited from `8a8d2b4` as the exact version `6.14.2`, and **that exact version had itself become the vulnerable one** — GHSA-q8mj-m7cp-5q26 affects `>= 6.11.1 <= 6.15.1`, and 6.15.2 was published after the pin was written. A textbook decay: the pin was a floor written as a fixture, so it held the tree _at_ the advisory instead of above it. Converted to a `^` range, which is what a security floor should always have been. It is requested by `url` via the browser polyfills and by `@eyeseetea/d2-api`, which is **runtime**, so this was verified with the test suite and a build rather than with `yarn install` alone.
 - **Fixes:** GHSA-q8mj-m7cp-5q26 (medium) — unhandled `TypeError` in `qs.stringify` with `arrayFormat: 'comma'` and `encodeValuesOnly: true` over an array containing `null`.
 - **Drop when:** every consumer requests `qs >= 6.15.2` natively. `@eyeseetea/d2-api` is the blocker: it requests the exact version `6.9.7`, so removing this pin resolves `qs` _downwards_ rather than upwards — verified by removing it and re-installing.
+
+---
+
+## Removed
+
+> **The test is whether a resolved version moves, not whether the lockfile changes.** A byte-identical lockfile proves an entry did nothing, but the reverse does not hold: an entry can rewrite a descriptor, change the lockfile, and still leave every installed version exactly where it was. `path-to-regexp` below is that case, and it is the reason this section states the criterion explicitly.
+
+Four entries retired on 2026-08-05, each tested by removing it, re-installing and comparing resolved versions. All the versions that resulted are outside every advisory affecting them, checked against the published advisory database rather than assumed.
+
+### `path-to-regexp: 1.9.0` — removed 2026-08-05
+
+**Inert.** `react-router@5.3.4` declares `path-to-regexp@^1.7.0`, and 1.9.0 is the last release of the 1.x line, so that range already resolves to 1.9.0 unaided.
+
+|                | Descriptor                  | Resolved |
+| -------------- | --------------------------- | -------- |
+| With the entry | `path-to-regexp@npm:1.9.0`  | 1.9.0    |
+| Without        | `path-to-regexp@npm:^1.7.0` | 1.9.0    |
+
+Note what this case demonstrates: the entry **does** change the lockfile — the descriptor differs — so a byte-identical comparison reports it as load-bearing. Only comparing resolved versions shows it was not. This entry was previously cited, here and elsewhere, as the example of a constraint that binds in this repository and matches nothing in an application that copied it. The second half was right; the first was not.
+
+**Restore it only if** `react-router` moves to a range that admits a 1.x release below 1.9.0, which would mean going backwards.
+
+### `glob-parent: 5.1.2` — removed 2026-08-05
+
+**Not needed, and the advisory range recorded against it was wrong.** The note said "ReDoS in `< 5.1.2`". The actual range is `>= 4.0.0, < 5.1.2`:
+
+```bash
+gh api advisories/GHSA-ww39-953v-wcq6 --jq '.vulnerabilities[]
+  | select(.package.name=="glob-parent") | "\(.vulnerable_version_range) -> \(.first_patched_version)"'
+#  >= 4.0.0, < 5.1.2 -> 5.1.2
+```
+
+That difference decides this case, because the tree has a consumer on the 3.x line. Under the range as recorded it looks affected; under the real range it is below the floor and outside it. Without the entry, three lines coexist and all three are clean: 3.1.0 (below the affected range), 5.1.2 (patched), and 6.0.2 — above 6.0.1, which patches the separate `GHSA-cj88-88mr-972w` affecting exactly `= 6.0.0`.
+
+The global entry was also pulling `eslint` down from the `^6.0.2` it declares.
+
+### `nanoid: 3.3.8` — removed 2026-08-05
+
+**Was holding a consumer below its declared range.** `postcss` requests `nanoid@^3.3.16`; the exact `3.3.8` forced it eight patches below that. Without the entry it resolves to 3.3.17, clean.
+
+### `@babel/runtime: 7.26.10` — removed 2026-08-05
+
+**Only held the tree back.** Every consumer declares a `^7.x` range admitting far newer releases. Without the entry it resolves to 7.29.7, clean.
+
+### `form-data: ^4.0.6` — removed 2026-08-05
+
+**Inert.** Parents declare `^4.0.0` (×2) and `^4.0.6`; all reach 4.0.6 on their own, so the resolved version is 4.0.6 with or without the entry. It was correct when written — it replaced an exact `4.0.4` that blocked the fix line — but re-resolution now reaches the patch unaided.
 
 ---
 
@@ -135,8 +179,8 @@ When auditing, treat any of these as a signal that a pin has gone stale:
 
 - A finding of **any severity** reappears for a package that has an active resolution. Do not filter this check to critical/high: `qs` was pinned to the exact version that later became the vulnerable one, and the finding sat at medium for months because nothing was looking below the gate's threshold.
 - `yarn why <pkg>` shows the resolved version _not matching_ the right-hand side of the resolution.
-- One of the prune candidates above no longer needs its pin. Remove it, reinstall, and confirm nothing reappears; if a finding comes back, restore the pin and record here what blocked it.
-- **A pin whose removal changes nothing.** Delete it, run `yarn install`, and compare the lockfile: if it is byte-identical, the pin matched no descriptor and was never doing anything. Pins copied between repositories are the usual source — a constraint that is load-bearing in one tree can be inert in another.
+- **A pin that holds a consumer below its declared range.** Compare the resolution against what the parents actually request: `grep -E '^\s+<pkg>: "npm:' yarn.lock | sort | uniq -c`. If a parent declares `^3.3.16` and the pin forces `3.3.8`, the pin is not protecting anything — it is overriding a package's own compatibility statement, and it cannot receive patches either. Two entries were retired on exactly this signal.
+- **A pin whose removal changes nothing.** Delete it, reinstall, and compare **the resolved versions** — not the lockfile bytes. A byte-identical lockfile proves the pin matched no descriptor, but the reverse does not hold: a pin can rewrite a descriptor, change the lockfile, and still leave every installed version where it was. `path-to-regexp` was retired on that basis and would have survived a byte comparison. Pins copied between repositories are the usual source, but as that case shows, a pin can be inert in the tree it was written for.
 
 ---
 
@@ -175,11 +219,13 @@ Re-measure rather than trusting the table above: it is a snapshot, and the repla
 ## Notes for applications copying this baseline
 
 - **The vite 7 upgrade does not require ESLint 9.** This repository moved to `eslint@9` and flat config in the same pass, but the two are independent: `vite-plugin-checker@0.11.0` supports `vite >=5.4.20` while still accepting `eslint >=7`, and only 0.12.0 raises the floor to `eslint >=9.39.1`. An application on ESLint 8 can take the `vite`/`vitest`/`esbuild` fixes without touching its linter. ESLint 9 is worth doing here on its own merits — ESLint 8 is no longer supported upstream, and `@typescript-eslint@5` does not cover this repository's TypeScript — but it should not be presented as part of the security work, or it inflates the cost of adopting it.
-- **Re-verify every pin you copy.** A resolution that is load-bearing here can be a no-op elsewhere: `path-to-regexp: 1.9.0` binds in this tree through `react-router-dom@5.3.4`, and in at least one application that copied it there was no `path-to-regexp` in the lockfile at all — removing it left the lockfile byte-identical. Copying the block wholesale produces constraints nobody can explain later.
+- **Re-verify every pin you copy — including against this tree.** `path-to-regexp: 1.9.0` used to be the example here of a pin that is load-bearing in the skeleton and a no-op in an application that copied it. Only the second half held: in at least one application no `path-to-regexp` existed in the lockfile at all, but when finally tested here it turned out to be inert in this tree too, because `react-router@5.3.4` declares `^1.7.0` and 1.9.0 is the newest 1.x release. It has been retired — see [Removed](#removed). The general lesson survives the example, and gains a second half: a constraint can be inert where it was written, not only where it was copied, and **the check has to compare resolved versions rather than lockfile bytes**, because this one changed the lockfile while changing nothing else.
+- **Check the install policy, not just the manifest.** `.yarnrc.yml` here sets `npmMinimalAgeGate: 0` and `enableScripts: true`. An application copying from this repository may run stricter settings — a non-zero age gate will refuse releases published within its window, and `yarn up -R` then silently selects one patch below the fix rather than failing. If a version you expect will not resolve, check that file before concluding the fix does not exist.
 - **If you upgrade `react-router-dom` off v5, go to v7, not v6.** The v6 line carries advisories whose affected range extends to `< 7.18.0`, and its final release, 6.30.4, is still inside two of them. Stopping at v6 trades one finding for several with no remediation on that line.
 
 ## Future improvements
 
-- **Upgrade `react-router-dom` off v5**, which would drop the `path-to-regexp` pin. Target v7 directly, for the reason above.
+- **Upgrade `react-router-dom` off v5.** Target v7 directly, for the reason above. (This no longer drops a `path-to-regexp` entry — that one was retired as inert — but it does clear the v5 line's own findings.)
+- **Decide the install policy this repository should model, and record it.** `.yarnrc.yml` sets `npmMinimalAgeGate: 0` and `enableScripts: true`, with no `enableHardenedMode` or `checksumBehavior`. That is looser than at least one application that treats this repository as its reference, and `npmMinimalAgeGate: 0` is set explicitly rather than defaulted, so it reads as a decision nobody wrote down. A zero age gate is defensible during a remediation pass — it is what lets a same-week backport be selected — but if it stays, every application copying this configuration inherits it. Worth an explicit answer either way, since a baseline that is laxer than the apps copying it is the divergence the baseline exists to prevent.
 - **Ask DHIS2 whether `@dhis2/cli-app-scripts` can ship i18n without the full CLI framework.** That is the condition that would make the maintained i18n tooling adoptable — see the section above.
 - **Fix `@eyeseetea/d2-api` and `@eyeseetea/d2-ui-components` upstream.** Between them they force the `lodash` and `react-linkify` pins into every app that uses them.
