@@ -165,6 +165,7 @@ Recorded here rather than in `resolutions` because **no version resolves them**.
 #### `elliptic@6.6.1` — GHSA-848j-6mx2-7j84
 
 - **Chain:** `vite-plugin-node-polyfills` → `node-stdlib-browser` → `crypto-browserify` → `browserify-sign` and `create-ecdh`.
+- **Advisories against this component:** **one** open — GHSA-848j-6mx2-7j84, the entry above. Eight others exist against `elliptic` and are all patched at or below 6.6.1, including the critical GHSA-vjh7-7g9h-fjfh, which 6.6.1 itself is the fix for. The count is stated rather than implied so that a missing row reads as a gap rather than as an absence: an entry written during a pass filtered to critical and high can describe a component in better shape than the scanner does.
 - **Why it cannot be fixed:** the advisory covers **all versions `<= 6.6.1`**, and 6.6.1 is the latest published release. There is nothing to pin to — verified against the published version list, the check that rescued `node-gettext`.
 - **Impact:** the ECDSA signing path is never reached. The polyfills exist only because `md5.js` needs the `Buffer` shim.
 - **Drop when:** `elliptic` publishes a fix, or `md5.js` is replaced and the polyfill chain leaves the tree entirely.
@@ -180,6 +181,7 @@ When auditing, treat any of these as a signal that a pin has gone stale:
 - A finding of **any severity** reappears for a package that has an active resolution. Do not filter this check to critical/high: `qs` was pinned to the exact version that later became the vulnerable one, and the finding sat at medium for months because nothing was looking below the gate's threshold.
 - `yarn why <pkg>` shows the resolved version _not matching_ the right-hand side of the resolution.
 - **A pin that holds a consumer below its declared range.** Compare the resolution against what the parents actually request: `grep -E '^\s+<pkg>: "npm:' yarn.lock | sort | uniq -c`. If a parent declares `^3.3.16` and the pin forces `3.3.8`, the pin is not protecting anything — it is overriding a package's own compatibility statement, and it cannot receive patches either. Two entries were retired on exactly this signal.
+- **A scanner alert whose prose contradicts the advisory's own data.** The `js-yaml` alert raised against this tree stated that the fix "was never backported" and that both legacy lines still carried the original implementation. The advisory itself recorded `>= 3.0.0, < 3.15.1 → 3.15.1` and `>= 4.0.0, < 4.3.1 → 4.3.1`, and both releases had been published days before the alert was raised. A description is prose written when the advisory was published; it does not get rewritten when a backport lands. Read the machine-readable ranges — `gh api advisories/<GHSA> --jq '.vulnerabilities[]'` — against the published version list, and treat the summary as a hint. This is the same failure as the `minimatch` entry above, one layer further out: there the advisory's metadata was stale, here the metadata was right and the text on top of it was wrong.
 - **A pin whose removal changes nothing.** Delete it, reinstall, and compare **the resolved versions** — not the lockfile bytes. A byte-identical lockfile proves the pin matched no descriptor, but the reverse does not hold: a pin can rewrite a descriptor, change the lockfile, and still leave every installed version where it was. `path-to-regexp` was retired on that basis and would have survived a byte comparison. Pins copied between repositories are the usual source, but as that case shows, a pin can be inert in the tree it was written for.
 
 ---
@@ -222,9 +224,23 @@ Re-measure rather than trusting the table above: it is a snapshot, and the repla
 - **Re-verify every pin you copy — including against this tree.** `path-to-regexp: 1.9.0` used to be the example here of a pin that is load-bearing in the skeleton and a no-op in an application that copied it. Only the second half held: in at least one application no `path-to-regexp` existed in the lockfile at all, but when finally tested here it turned out to be inert in this tree too, because `react-router@5.3.4` declares `^1.7.0` and 1.9.0 is the newest 1.x release. It has been retired — see [Removed](#removed). The general lesson survives the example, and gains a second half: a constraint can be inert where it was written, not only where it was copied, and **the check has to compare resolved versions rather than lockfile bytes**, because this one changed the lockfile while changing nothing else.
 - **Check the install policy, not just the manifest.** `.yarnrc.yml` here sets `npmMinimalAgeGate: 7d`, `enableScripts: false`, `enableHardenedMode: true` and `checksumBehavior: throw`. Copy these along with the manifest — they are part of the baseline, not incidental local settings.
 
-    **The age gate is the one that most often looks like "there is no fix".** `yarn up -R` reports success and silently selects one patch below the patched release rather than failing, so compare the version you got against the version the advisory names, not against the version you had. If the gate is the blocker, schedule the work — do not lower it, because it is a supply-chain control and weakening it inside a security change trades a real protection for a scanner number.
+    **The age gate is the one that most often looks like "there is no fix".** `yarn up -R` reports success and silently selects one patch below the patched release rather than failing, so compare the version you got against the version the advisory names, not against the version you had.
+
+    **It measures from the publish timestamp, not the publish date.** A release published at 10:17 UTC is still inside a 7-day window at 06:45 UTC on the seventh day, and the only symptom is a command that succeeds and changes nothing. Check before assuming the window has opened, and read the result out of `yarn.lock` rather than out of the exit code:
+
+    ```bash
+    npm view <pkg> time --json | python3 -c "
+    import sys,json,datetime as dt
+    t=json.load(sys.stdin)['<version>']
+    p=dt.datetime.fromisoformat(t.replace('Z','+00:00'))
+    print(t, '->', dt.datetime.now(dt.timezone.utc)-p, 'old')"
+    ```
+
+    **When the gate genuinely blocks a fix, narrow the exception rather than the control.** `npmPreapprovedPackages` takes package descriptors or name globs that are excluded from the package gates, so the one package holding up a security fix can be exempted without lowering the window for everything else. A per-package entry is reviewable in a diff and expires with the dependency; a lowered global setting is invisible afterwards and protects nothing. There is no entry of that shape here today — every fix so far has either been inside the window or worth waiting for.
 
     **`enableScripts: false` is the one most likely to surprise you.** Yarn reports `YN0004` for each package whose build script it skipped — here `core-js` and `esbuild`. Neither breaks: `esbuild` ships its binary as a platform-specific optional package (`@esbuild/linux-x64` and friends) rather than downloading it in a postinstall, and `core-js`'s script only prints a funding message. A package that genuinely needs its postinstall would fail, so treat a new `YN0004` as something to check rather than as noise.
+
+    If one does need it, the supported fix is `dependenciesMeta.<name>.built: true` in `package.json`, which turns `enableScripts: false` into an allow-list for that package alone. Re-enabling scripts tree-wide to rescue a single dependency is the same mistake as lowering the age gate to rescue a single release. No package in this tree needs an entry today.
 
 - **If you upgrade `react-router-dom` off v5, go to v7, not v6.** The v6 line carries advisories whose affected range extends to `< 7.18.0`, and its final release, 6.30.4, is still inside two of them. Stopping at v6 trades one finding for several with no remediation on that line.
 
