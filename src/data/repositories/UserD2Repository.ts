@@ -4,6 +4,7 @@ import { Paginated } from "$/domain/entities/generic/Pagination";
 import { D2Api, MetadataPick } from "$/types/d2-api";
 import { apiToFuture, FutureData } from "$/data/api-futures";
 import { getId } from "$/domain/entities/Ref";
+import { Maybe } from "$/utils/ts-utils";
 
 export class UserD2Repository implements UserRepository {
     constructor(private api: D2Api) {}
@@ -49,7 +50,7 @@ function hasAllAuthority(roles: ReadonlyArray<{ authorities: string[] }>): boole
     return roles.some(role => role.authorities.includes("ALL"));
 }
 
-function buildFilter(filters: GetUsersOptions["filters"], search: string) {
+function buildFilter(filters: GetUsersOptions["filters"], search: Maybe<string>) {
     return {
         identifiable: { token: search },
         ...(filters.userGroupIds?.length ? { "userGroups.id": { in: filters.userGroupIds } } : {}),

@@ -10,7 +10,7 @@ export interface UserRepository {
 }
 
 export type GetUsersOptions = {
-    search: string;
+    search?: string;
     page: number;
     pageSize: number;
     filters: UsersFilters;
