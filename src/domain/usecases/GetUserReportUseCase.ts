@@ -4,8 +4,7 @@ import _c from "$/domain/entities/generic/Collection";
 import { UserReport } from "$/domain/entities/UserReport";
 import { UsersFilters, UserRepository } from "$/domain/repositories/UserRepository";
 import { UserRoleRepository } from "$/domain/repositories/UserRoleRepository";
-
-const MAX_USERS = 1000;
+import { User } from "$/domain/entities/User";
 
 const emptyFilters: UsersFilters = {
     userGroupIds: undefined,
@@ -22,43 +21,32 @@ export class GetUserReportUseCase {
     ) {}
 
     execute(): FutureData<UserReport> {
-        return Future.joinObj(
-            {
-                usersPage: this.repositories.userRepository.get({
-                    search: "",
-                    page: 1,
-                    pageSize: MAX_USERS,
-                    filters: emptyFilters,
-                    order: { field: "name", order: "asc" },
-                }),
-                roles: this.repositories.userRoleRepository.getAll(),
-            },
-            { concurrency: 2 }
-        ).map(({ usersPage, roles }): UserReport => {
+        const data$ = {
+            users: this.getAllUsers(),
+            roles: this.repositories.userRoleRepository.getAll(),
+        };
+
+        return Future.joinObj(data$, { concurrency: 2 }).map(({ users, roles }): UserReport => {
             // Using an explicit return type here allows TypeScript to validate the object literal
             // against the 'UserReport' interface immediately. This provides instant type-checking,
             // superior autocompletion, and safer refactoring support within the block.
-            const users = _c(usersPage.objects);
-            const rolesCollection = _c(roles);
-
-            const roleById = rolesCollection.indexBy(role => role.id);
-
-            const adminCount = users.filter(user => user.isAdmin).size;
-            const nonAdminCount = users.reject(user => user.isAdmin).size;
-
-            const usersWithMultipleRoles = users
+            const adminCount = _c(users).filter(user => user.isAdmin).size;
+            const nonAdminCount = _c(users).reject(user => user.isAdmin).size;
+            const usersWithMultipleRoles = _c(users)
                 .filter(user => user.userRoleIds.length > 1)
                 .value();
 
-            const rolesSortedByUsage = rolesCollection
+            const rolesSortedByUsage = _c(roles)
                 .map(role => ({
                     role: role,
-                    userCount: users.filter(user => user.userRoleIds.includes(role.id)).size,
+                    userCount: _c(users).filter(user => user.userRoleIds.includes(role.id)).size,
                 }))
                 .orderBy([[obj => obj.userCount, "desc"]])
                 .value();
 
-            const uniqueAuthorities = users
+            const roleById = _c(roles).indexBy(role => role.id);
+
+            const uniqueAuthorities = _c(users)
                 .flatMap(user => user.userRoleIds)
                 .compactMap(userRoleId => roleById.get(userRoleId))
                 .flatMap(role => role.authorities)
@@ -67,13 +55,40 @@ export class GetUserReportUseCase {
                 .value();
 
             return {
-                totalUsers: users.size,
+                totalUsers: users.length,
                 adminCount: adminCount,
                 nonAdminCount: nonAdminCount,
                 usersWithMultipleRoles: usersWithMultipleRoles,
                 rolesSortedByUsage: rolesSortedByUsage,
                 uniqueAuthorities: uniqueAuthorities,
             };
+        });
+    }
+
+    // Fetches all users from the repository, handling pagination internally.
+    private getAllUsers(): FutureData<User[]> {
+        return Future.block(async $ => {
+            const allUsers: User[] = [];
+            let page = 1;
+            let pageCount = 1;
+
+            do {
+                const users = await $(
+                    this.repositories.userRepository.get({
+                        page: page,
+                        pageSize: 100,
+                        filters: emptyFilters,
+                        order: { field: "name", order: "asc" },
+                    })
+                );
+
+                allUsers.push(...users.objects);
+
+                pageCount = users.pager.pageCount;
+                page++;
+            } while (page <= pageCount);
+
+            return allUsers;
         });
     }
 }
