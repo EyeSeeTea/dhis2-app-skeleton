@@ -1,11 +1,13 @@
 import React from "react";
-import { TableAction, TableConfig, useSnackbar } from "@eyeseetea/d2-ui-components";
+import { TableAction, TableConfig, TableSorting, useSnackbar } from "@eyeseetea/d2-ui-components";
 import { User } from "$/domain/entities/User";
 import { Id } from "$/domain/entities/Ref";
 import i18n from "$/utils/i18n";
 import { useAppContext } from "$/webapp/contexts/app-context";
 import { GetRows } from "$/webapp/utils/objects-table";
-import { UsersFilters } from "$/domain/repositories/UserRepository";
+import { GetUsersOptions, UsersFilters } from "$/domain/repositories/UserRepository";
+import { FutureData } from "$/domain/entities/generic/Future";
+import { Paginated } from "$/domain/entities/generic/Pagination";
 import { UsersFilterInfo } from "./useUsersFilterInfo";
 import { isValueInUnionType, Maybe } from "$/utils/ts-utils";
 
@@ -19,11 +21,11 @@ export type ConfirmState = {
 
 export function useUsersTableConfig(options: {
     info: UsersFilterInfo;
-    rowsRef: React.MutableRefObject<UserRow[]>;
+    rows: UserRow[];
     reloadRef: React.MutableRefObject<() => void>;
     setConfirm: (state: Maybe<ConfirmState>) => void;
 }): TableConfig<UserRow> {
-    const { info, rowsRef, reloadRef, setConfirm } = options;
+    const { info, rows, reloadRef, setConfirm } = options;
     const snackbar = useSnackbar();
 
     const groupNameById = React.useMemo(
@@ -49,7 +51,7 @@ export function useUsersTableConfig(options: {
                 multiple: false,
                 primary: true,
                 onClick: selectedIds => {
-                    const row = rowsRef.current.find(r => r.id === selectedIds[0]);
+                    const row = rows.find(r => r.id === selectedIds[0]);
                     if (!row) return;
                     void navigator.clipboard.writeText(row.username).then(
                         () =>
@@ -65,7 +67,7 @@ export function useUsersTableConfig(options: {
                 text: i18n.t("Show roles"),
                 multiple: false,
                 onClick: selectedIds => {
-                    const row = rowsRef.current.find(r => r.id === selectedIds[0]);
+                    const row = rows.find(r => r.id === selectedIds[0]);
                     if (!row) return;
                     const roles = renderIds(row.userRoleIds, roleNameById) || i18n.t("(none)");
                     setConfirm({
@@ -98,7 +100,7 @@ export function useUsersTableConfig(options: {
                 },
             },
         ],
-        [rowsRef, snackbar, reloadRef, setConfirm, renderIds, roleNameById]
+        [rows, snackbar, reloadRef, setConfirm, renderIds, roleNameById]
     );
 
     return React.useMemo(
@@ -147,26 +149,35 @@ export function useUsersTableConfig(options: {
                 pageSizeOptions: [10, 25, 50],
                 pageSizeInitialValue: 25,
             },
-            initialSorting: { field: "name", order: "asc" },
+            initialSorting: initialSorting,
             searchBoxLabel: i18n.t("Search by name or username"),
         }),
         [actions, renderIds, groupNameById, roleNameById]
     );
 }
 
+/* useObjectsTable reloads the rows whenever the identity of config.initialSorting changes, so it
+   must be a constant: the config is rebuilt every time the rows change (the actions use them). */
+const initialSorting: TableSorting<UserRow> = { field: "name", order: "asc" };
+
 const sortableFields = ["name", "username"] as const;
 
-export function useGetUsersRows(options: {
-    filters: UsersFilters;
-    rowsRef: React.MutableRefObject<UserRow[]>;
-}): {
+/* Users requested in a single call when the whole selection is needed (the CSV export). Users
+   beyond this limit are not exported, the caller is expected to report it (see pager.total). */
+const maxUsersInSingleRequest = 10_000;
+
+export function useGetUsersRows(options: { filters: UsersFilters }): {
     getRows: GetRows<UserRow>;
+    getAllRows: () => FutureData<Paginated<UserRow>>;
+    rows: UserRow[];
     loading: boolean;
 } {
-    const { filters, rowsRef } = options;
+    const { filters } = options;
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const [loading, setLoading] = React.useState(false);
+    const [rows, setRows] = React.useState<UserRow[]>([]);
+    const [query, setQuery] = React.useState<UsersQuery>(initialQuery);
 
     const getRows = React.useCallback<GetRows<UserRow>>(
         (search, paging, sorting) =>
@@ -177,17 +188,23 @@ export function useGetUsersRows(options: {
                     ? sorting.field
                     : "name";
 
+                const query: UsersQuery = {
+                    search: search,
+                    order: { field: sortingField, order: sorting.order },
+                };
+
+                setQuery(query);
+
                 return compositionRoot.users.get
                     .execute({
-                        search: search,
+                        ...query,
                         page: paging.page,
                         pageSize: paging.pageSize,
                         filters: filters,
-                        order: { field: sortingField, order: sorting.order },
                     })
                     .run(
                         response => {
-                            rowsRef.current = response.objects;
+                            setRows(response.objects);
                             resolve(response);
                             setLoading(false);
                         },
@@ -198,8 +215,24 @@ export function useGetUsersRows(options: {
                         }
                     );
             }),
-        [compositionRoot, snackbar, filters, rowsRef]
+        [compositionRoot, snackbar, filters]
     );
 
-    return { getRows, loading };
+    /* Same search/filters/order as the rows currently shown, but all of them in a single page. */
+    const getAllRows = React.useCallback(
+        () =>
+            compositionRoot.users.get.execute({
+                ...query,
+                page: 1,
+                pageSize: maxUsersInSingleRequest,
+                filters: filters,
+            }),
+        [compositionRoot, filters, query]
+    );
+
+    return { getRows, getAllRows, rows, loading };
 }
+
+type UsersQuery = Pick<GetUsersOptions, "search" | "order">;
+
+const initialQuery: UsersQuery = { search: "", order: { field: "name", order: "asc" } };

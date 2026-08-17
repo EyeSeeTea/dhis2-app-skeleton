@@ -12,6 +12,7 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import i18n from "$/utils/i18n";
 import { Maybe } from "$/utils/ts-utils";
 import { UsersFilterInfo, useUsersFilterInfo } from "./useUsersFilterInfo";
+import { useExportUsersCsv } from "./useExportUsersCsv";
 import { ConfirmState, UserRow, useGetUsersRows, useUsersTableConfig } from "./UsersTableConfig";
 import {
     FiltersState,
@@ -44,14 +45,14 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
     const { filterInfo } = props;
     const [filtersState, setFiltersState] = React.useState<FiltersState>(initialFiltersState);
     const [confirm, setConfirm] = React.useState<Maybe<ConfirmState>>(undefined);
-    const rowsRef = React.useRef<UserRow[]>([]);
     const reloadRef = React.useRef<() => void>(() => {});
 
     const filters = React.useMemo(() => toUsersFilters(filtersState), [filtersState]);
 
-    const { getRows, loading } = useGetUsersRows({ filters, rowsRef });
-    const config = useUsersTableConfig({ info: filterInfo, rowsRef, reloadRef, setConfirm });
+    const { getRows, getAllRows, rows, loading } = useGetUsersRows({ filters });
+    const config = useUsersTableConfig({ info: filterInfo, rows, reloadRef, setConfirm });
     const tableProps = useObjectsTable<UserRow>(config, getRows);
+    const { exportCsv, exporting } = useExportUsersCsv({ getAllRows, info: filterInfo });
 
     reloadRef.current = tableProps.reload;
 
@@ -67,10 +68,10 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
                 name: "export-csv",
                 text: i18n.t("Export CSV"),
                 icon: <GetAppIcon />,
-                onClick: () => exportRowsToCsv(rowsRef.current, filterInfo),
+                onClick: exportCsv,
             },
         ],
-        [reloadRef, filterInfo]
+        [reloadRef, exportCsv]
     );
 
     const filterComponents = (
@@ -83,7 +84,7 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
         <Wrapper>
             <ObjectsTable<UserRow>
                 {...tableProps}
-                loading={loading}
+                loading={loading || exporting}
                 globalActions={globalActions}
                 filterComponents={filterComponents}
             />
@@ -106,43 +107,6 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
         </Wrapper>
     );
 });
-
-function exportRowsToCsv(rows: UserRow[], info: UsersFilterInfo): void {
-    const groupName = new Map(info.userGroups.map(g => [g.id, g.name]));
-    const roleName = new Map(info.userRoles.map(r => [r.id, r.name]));
-    const header = ["id", "name", "username", "userGroups", "userRoles"].join(",");
-    const body = rows
-        .map(row =>
-            [
-                row.id,
-                quote(row.name),
-                quote(row.username),
-                quote(row.userGroupIds.map(id => groupName.get(id) ?? id).join("; ")),
-                quote(row.userRoleIds.map(id => roleName.get(id) ?? id).join("; ")),
-            ].join(",")
-        )
-        .join("\n");
-
-    saveFile({
-        filename: "users.csv",
-        content: `${header}\n${body}`,
-        contentType: "text/csv",
-    });
-}
-
-function saveFile(options: { filename: string; content: string; contentType: string }): void {
-    const blob = new Blob([options.content], { type: options.contentType });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = options.filename;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-function quote(value: string): string {
-    return `"${value.replace(/"/g, '""')}"`;
-}
 
 const Wrapper = styled.div`
     margin: 10px;
