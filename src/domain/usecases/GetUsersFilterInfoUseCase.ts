@@ -1,5 +1,4 @@
-import { FutureData } from "$/data/api-futures";
-import { Future } from "$/domain/entities/generic/Future";
+import { Future, FutureData } from "$/domain/entities/generic/Future";
 import { UserGroup } from "$/domain/entities/UserGroup";
 import { UserRole } from "$/domain/entities/UserRole";
 import { UserGroupRepository } from "$/domain/repositories/UserGroupRepository";

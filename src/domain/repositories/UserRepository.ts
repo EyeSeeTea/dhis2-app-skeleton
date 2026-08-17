@@ -1,4 +1,4 @@
-import { FutureData } from "$/data/api-futures";
+import { FutureData } from "$/domain/entities/generic/Future";
 import { Paginated } from "$/domain/entities/generic/Pagination";
 import { Id } from "$/domain/entities/Ref";
 import { User } from "$/domain/entities/User";

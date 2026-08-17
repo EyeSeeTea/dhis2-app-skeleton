@@ -2,7 +2,8 @@ import { User } from "$/domain/entities/User";
 import { GetUsersOptions, UserRepository } from "$/domain/repositories/UserRepository";
 import { Paginated } from "$/domain/entities/generic/Pagination";
 import { D2Api, MetadataPick } from "$/types/d2-api";
-import { apiToFuture, FutureData } from "$/data/api-futures";
+import { apiToFuture } from "$/data/api-futures";
+import { FutureData } from "$/domain/entities/generic/Future";
 import { getId } from "$/domain/entities/Ref";
 import { Maybe } from "$/utils/ts-utils";
 

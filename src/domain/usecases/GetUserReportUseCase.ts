@@ -1,5 +1,4 @@
-import { FutureData } from "$/data/api-futures";
-import { Future } from "$/domain/entities/generic/Future";
+import { Future, FutureData } from "$/domain/entities/generic/Future";
 import _c from "$/domain/entities/generic/Collection";
 import { UserReport } from "$/domain/entities/UserReport";
 import { UsersFilters, UserRepository } from "$/domain/repositories/UserRepository";

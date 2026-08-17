@@ -204,6 +204,9 @@ export class Future<E, D> {
     }
 }
 
+/* Default future for the app: an async value that may fail with a standard Error. */
+export type FutureData<D> = Future<Error, D>;
+
 export type SequentialAccumulatedData<E, D> =
     | { type: "success"; data: D[] }
     | { type: "error"; error: E; data: D[] };
