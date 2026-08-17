@@ -9,10 +9,9 @@ import {
 } from "@eyeseetea/d2-ui-components";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import { useAppContext } from "$/webapp/contexts/app-context";
 import i18n from "$/utils/i18n";
-import { UsersFilterInfo } from "$/domain/usecases/GetUsersFilterInfoUseCase";
 import { Maybe } from "$/utils/ts-utils";
+import { UsersFilterInfo, useUsersFilterInfo } from "./useUsersFilterInfo";
 import { ConfirmState, UserRow, useGetUsersRows, useUsersTableConfig } from "./UsersTableConfig";
 import {
     FiltersState,
@@ -21,25 +20,24 @@ import {
     UsersTableFilters,
 } from "./UsersTableFilters";
 export const UsersTable: React.FC = React.memo(() => {
-    const { info, error } = useFilterInfo();
+    const filterInfo = useUsersFilterInfo();
 
-    if (error) {
-        return (
-            <LoadingWrapper>
-                <Typography color="error">{error}</Typography>
-            </LoadingWrapper>
-        );
+    switch (filterInfo.type) {
+        case "loading":
+            return (
+                <LoadingWrapper>
+                    <CircularProgress />
+                </LoadingWrapper>
+            );
+        case "error":
+            return (
+                <LoadingWrapper>
+                    <Typography color="error">{filterInfo.error.message}</Typography>
+                </LoadingWrapper>
+            );
+        case "success":
+            return <UsersTableLoaded filterInfo={filterInfo.data} />;
     }
-
-    if (!info) {
-        return (
-            <LoadingWrapper>
-                <CircularProgress />
-            </LoadingWrapper>
-        );
-    }
-
-    return <UsersTableLoaded filterInfo={info} />;
 });
 
 const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(props => {
@@ -108,20 +106,6 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
         </Wrapper>
     );
 });
-
-function useFilterInfo(): { info: Maybe<UsersFilterInfo>; error: Maybe<string> } {
-    const { compositionRoot } = useAppContext();
-    const [info, setInfo] = React.useState<UsersFilterInfo>();
-    const [error, setError] = React.useState<string>();
-
-    React.useEffect(() => {
-        return compositionRoot.users.getFiltersInfo
-            .execute()
-            .run(setInfo, err => setError(err.message));
-    }, [compositionRoot]);
-
-    return { info, error };
-}
 
 function exportRowsToCsv(rows: UserRow[], info: UsersFilterInfo): void {
     const groupName = new Map(info.userGroups.map(g => [g.id, g.name]));

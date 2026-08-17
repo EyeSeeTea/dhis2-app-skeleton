@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Dropdown, MultipleDropdown } from "@eyeseetea/d2-ui-components";
 import { Id } from "$/domain/entities/Ref";
 import { UsersFilters } from "$/domain/repositories/UserRepository";
-import { UsersFilterInfo } from "$/domain/usecases/GetUsersFilterInfoUseCase";
+import { UsersFilterInfo } from "./useUsersFilterInfo";
 import { Maybe } from "$/utils/ts-utils";
 import i18n from "$/utils/i18n";
 
@@ -28,7 +28,7 @@ export function toUsersFilters(state: FiltersState): UsersFilters {
 }
 
 type UsersTableFiltersProps = {
-    info: Maybe<UsersFilterInfo>;
+    info: UsersFilterInfo;
     selection: FiltersState;
     onChange: React.Dispatch<React.SetStateAction<FiltersState>>;
 };

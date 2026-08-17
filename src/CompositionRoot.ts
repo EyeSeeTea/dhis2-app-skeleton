@@ -8,7 +8,8 @@ import { UserGroupRepository } from "./domain/repositories/UserGroupRepository";
 import { UserRepository } from "./domain/repositories/UserRepository";
 import { UserRoleRepository } from "./domain/repositories/UserRoleRepository";
 import { GetCurrentUserUseCase } from "./domain/usecases/GetCurrentUserUseCase";
-import { GetUsersFilterInfoUseCase } from "./domain/usecases/GetUsersFilterInfoUseCase";
+import { GetUserGroupsUseCase } from "./domain/usecases/GetUserGroupsUseCase";
+import { GetUserRolesUseCase } from "./domain/usecases/GetUserRolesUseCase";
 import { GetUsersUseCase } from "./domain/usecases/GetUsersUseCase";
 import { D2Api } from "./types/d2-api";
 
@@ -25,7 +26,12 @@ function getCompositionRoot(repositories: Repositories) {
         users: {
             getCurrent: new GetCurrentUserUseCase(repositories),
             get: new GetUsersUseCase(repositories),
-            getFiltersInfo: new GetUsersFilterInfoUseCase(repositories),
+        },
+        userGroups: {
+            get: new GetUserGroupsUseCase(repositories),
+        },
+        userRoles: {
+            get: new GetUserRolesUseCase(repositories),
         },
     };
 }

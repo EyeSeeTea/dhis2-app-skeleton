@@ -6,7 +6,7 @@ import i18n from "$/utils/i18n";
 import { useAppContext } from "$/webapp/contexts/app-context";
 import { GetRows } from "$/webapp/utils/objects-table";
 import { UsersFilters } from "$/domain/repositories/UserRepository";
-import { UsersFilterInfo } from "$/domain/usecases/GetUsersFilterInfoUseCase";
+import { UsersFilterInfo } from "./useUsersFilterInfo";
 import { isValueInUnionType, Maybe } from "$/utils/ts-utils";
 
 export type UserRow = User;
