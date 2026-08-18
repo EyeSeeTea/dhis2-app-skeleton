@@ -2,7 +2,8 @@ import React from "react";
 import { Card, CardGrid } from "$/webapp/components/card-grid/CardGrid";
 import { useAppContext } from "$/webapp/contexts/app-context";
 import i18n from "$/utils/i18n";
-import { Typography } from "@material-ui/core";
+import { CurrentUserBadge } from "./CurrentUserBadge";
+import styles from "./LandingPage.module.css";
 
 export const LandingPage: React.FC = React.memo(() => {
     const { currentUser } = useAppContext();
@@ -32,14 +33,10 @@ export const LandingPage: React.FC = React.memo(() => {
     ];
 
     return (
-        <>
-            <CardGrid cards={cards} />
+        <div className={styles.page}>
+            <CurrentUserBadge user={currentUser} />
 
-            <footer>
-                <Typography variant="h6">
-                    Current user: {currentUser.name} [{currentUser.id}]
-                </Typography>
-            </footer>
-        </>
+            <CardGrid cards={cards} />
+        </div>
     );
 });

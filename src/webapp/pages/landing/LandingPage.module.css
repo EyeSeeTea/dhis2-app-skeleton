@@ -1,0 +1,4 @@
+/* Anchor for the current user badge, which is positioned out of the flow */
+.page {
+    position: relative;
+}
