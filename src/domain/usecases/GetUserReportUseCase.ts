@@ -8,7 +8,7 @@ import { User } from "$/domain/entities/User";
 const emptyFilters: UsersFilters = {
     userGroupIds: undefined,
     userRoleIds: undefined,
-    canLogin: undefined,
+    disabled: undefined,
 };
 
 export class GetUserReportUseCase {

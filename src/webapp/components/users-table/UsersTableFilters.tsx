@@ -10,20 +10,20 @@ import i18n from "$/utils/i18n";
 export type FiltersState = {
     userGroupIds: Id[];
     userRoleIds: Id[];
-    canLogin: Maybe<"yes" | "no">;
+    disabled: Maybe<boolean>;
 };
 
 export const initialFiltersState: FiltersState = {
     userGroupIds: [],
     userRoleIds: [],
-    canLogin: undefined,
+    disabled: undefined,
 };
 
 export function toUsersFilters(state: FiltersState): UsersFilters {
     return {
         userGroupIds: state.userGroupIds.length > 0 ? state.userGroupIds : undefined,
         userRoleIds: state.userRoleIds.length > 0 ? state.userRoleIds : undefined,
-        canLogin: state.canLogin === "yes" ? true : state.canLogin === "no" ? false : undefined,
+        disabled: state.disabled,
     };
 }
 
@@ -56,8 +56,8 @@ export const UsersTableFilters: React.FC<UsersTableFiltersProps> = React.memo(pr
 
     const statusItems = React.useMemo(
         () => [
-            { value: "yes", text: i18n.t("Enabled") },
-            { value: "no", text: i18n.t("Disabled") },
+            { value: "yes", text: i18n.t("Disabled") },
+            { value: "no", text: i18n.t("Enabled") },
         ],
         []
     );
@@ -84,7 +84,7 @@ export const UsersTableFilters: React.FC<UsersTableFiltersProps> = React.memo(pr
         (value: string | undefined) =>
             onChange(prev => ({
                 ...prev,
-                canLogin: value === "yes" || value === "no" ? value : undefined,
+                disabled: value === "yes" ? true : value === "no" ? false : undefined,
             })),
         [onChange]
     );
@@ -106,7 +106,13 @@ export const UsersTableFilters: React.FC<UsersTableFiltersProps> = React.memo(pr
             <Dropdown
                 label={i18n.t("Status")}
                 items={statusItems}
-                value={selection.canLogin}
+                value={
+                    selection.disabled === true
+                        ? "yes"
+                        : selection.disabled === false
+                          ? "no"
+                          : undefined
+                }
                 onChange={updateStatus}
             />
         </Container>

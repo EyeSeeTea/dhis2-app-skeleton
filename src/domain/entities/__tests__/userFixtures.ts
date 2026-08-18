@@ -15,6 +15,7 @@ export function createUser(options: {
     isAdmin?: boolean;
     userGroupIds?: Id[];
     userRoleIds?: Id[];
+    disabled?: boolean;
 }): User {
     return new User({
         id: options.id ?? "kQiwoyMYHBS",
@@ -23,5 +24,6 @@ export function createUser(options: {
         userRoleIds: options.userRoleIds ?? [],
         userGroupIds: options.userGroupIds ?? [],
         isAdmin: options.isAdmin ?? false,
+        disabled: options.disabled ?? false,
     });
 }

@@ -14,11 +14,11 @@ export type GetUsersOptions = {
     page: number;
     pageSize: number;
     filters: UsersFilters;
-    order: { field: "name" | "username"; order: "asc" | "desc" };
+    order: { field: "name" | "username" | "disabled"; order: "asc" | "desc" };
 };
 
 export type UsersFilters = {
     userGroupIds: Maybe<Id[]>;
     userRoleIds: Maybe<Id[]>;
-    canLogin: Maybe<boolean>;
+    disabled: Maybe<boolean>;
 };

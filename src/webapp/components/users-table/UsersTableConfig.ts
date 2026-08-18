@@ -128,6 +128,12 @@ export function useUsersTableConfig(options: {
                     sortable: false,
                     getValue: row => renderIds(row.userRoleIds, roleNameById),
                 },
+                {
+                    name: "disabled",
+                    text: i18n.t("Status"),
+                    sortable: true,
+                    getValue: row => (row.disabled ? i18n.t("Disabled") : i18n.t("Enabled")),
+                },
             ],
             details: [
                 { name: "id", text: i18n.t("Id") },
@@ -160,7 +166,7 @@ export function useUsersTableConfig(options: {
    must be a constant: the config is rebuilt every time the rows change (the actions use them). */
 const initialSorting: TableSorting<UserRow> = { field: "name", order: "asc" };
 
-const sortableFields = ["name", "username"] as const;
+const sortableFields = ["name", "username", "disabled"] as const;
 
 /* Users requested in a single call when the whole selection is needed (the CSV export). Users
    beyond this limit are not exported, the caller is expected to report it (see pager.total). */
