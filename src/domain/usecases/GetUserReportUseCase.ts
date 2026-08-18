@@ -30,7 +30,7 @@ export class GetUserReportUseCase {
             // against the 'UserReport' interface immediately. This provides instant type-checking,
             // superior autocompletion, and safer refactoring support within the block.
             const adminCount = _c(users).filter(user => user.isAdmin).size;
-            const nonAdminCount = _c(users).reject(user => user.isAdmin).size;
+            const nonAdminCount = users.length - adminCount;
             const usersWithMultipleRoles = _c(users)
                 .filter(user => user.userRoleIds.length > 1)
                 .value();
