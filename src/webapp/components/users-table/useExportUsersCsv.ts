@@ -1,6 +1,6 @@
 import React from "react";
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
-import { FutureData } from "$/domain/entities/generic/Future";
+import { Cancel, FutureData } from "$/domain/entities/generic/Future";
 import { Paginated } from "$/domain/entities/generic/Pagination";
 import i18n from "$/utils/i18n";
 import { UsersFilterInfo } from "./useUsersFilterInfo";
@@ -14,11 +14,15 @@ export function useExportUsersCsv(options: {
     const { getAllRows, info } = options;
     const snackbar = useSnackbar();
     const [exporting, setExporting] = React.useState(false);
+    const cancelRef = React.useRef<Cancel>(undefined);
+
+    /* Drop the export request if the user leaves while it is still running. */
+    React.useEffect(() => () => cancelRef.current?.(), []);
 
     const exportCsv = React.useCallback(() => {
         setExporting(true);
 
-        getAllRows().run(
+        cancelRef.current = getAllRows().run(
             response => {
                 if (response.pager.total > response.objects.length) {
                     snackbar.warning(
@@ -28,10 +32,12 @@ export function useExportUsersCsv(options: {
                     );
                 }
                 exportRowsToCsv(response.objects, info);
+                cancelRef.current = undefined;
                 setExporting(false);
             },
             err => {
                 snackbar.error(err.message);
+                cancelRef.current = undefined;
                 setExporting(false);
             }
         );

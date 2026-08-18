@@ -5,12 +5,13 @@ import {
     ConfirmationDialog,
     ObjectsTable,
     TableGlobalAction,
-    useObjectsTable,
+    useSnackbar,
 } from "@eyeseetea/d2-ui-components";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import i18n from "$/utils/i18n";
 import { Maybe } from "$/utils/ts-utils";
+import { useObjectsTableFuture } from "$/webapp/utils/objects-table";
 import { UsersFilterInfo, useUsersFilterInfo } from "./useUsersFilterInfo";
 import { useExportUsersCsv } from "./useExportUsersCsv";
 import { ConfirmState, UserRow, useGetUsersRows, useUsersTableConfig } from "./UsersTableConfig";
@@ -46,12 +47,20 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
     const [filtersState, setFiltersState] = React.useState<FiltersState>(initialFiltersState);
     const [confirm, setConfirm] = React.useState<Maybe<ConfirmState>>(undefined);
     const reloadRef = React.useRef<() => void>(() => {});
+    const snackbar = useSnackbar();
 
     const filters = React.useMemo(() => toUsersFilters(filtersState), [filtersState]);
+    const onError = React.useCallback(
+        (error: Error) => {
+            console.error(error);
+            return snackbar.error(error.message);
+        },
+        [snackbar]
+    );
 
-    const { getRows, getAllRows, rows, loading } = useGetUsersRows({ filters });
+    const { getRows, getAllRows, rows } = useGetUsersRows({ filters });
     const config = useUsersTableConfig({ info: filterInfo, rows, reloadRef, setConfirm });
-    const tableProps = useObjectsTable<UserRow>(config, getRows);
+    const tableProps = useObjectsTableFuture<UserRow>(config, getRows, { onError: onError });
     const { exportCsv, exporting } = useExportUsersCsv({ getAllRows, info: filterInfo });
 
     reloadRef.current = tableProps.reload;
@@ -84,7 +93,7 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
         <Wrapper>
             <ObjectsTable<UserRow>
                 {...tableProps}
-                loading={loading || exporting}
+                loading={tableProps.isLoading || exporting}
                 globalActions={globalActions}
                 filterComponents={filterComponents}
             />

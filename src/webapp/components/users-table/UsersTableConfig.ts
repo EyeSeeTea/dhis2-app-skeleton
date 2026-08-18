@@ -4,7 +4,7 @@ import { User } from "$/domain/entities/User";
 import { Id } from "$/domain/entities/Ref";
 import i18n from "$/utils/i18n";
 import { useAppContext } from "$/webapp/contexts/app-context";
-import { GetRows } from "$/webapp/utils/objects-table";
+import { GetRowsFuture } from "$/webapp/utils/objects-table";
 import { GetUsersOptions, UsersFilters } from "$/domain/repositories/UserRepository";
 import { FutureData } from "$/domain/entities/generic/Future";
 import { Paginated } from "$/domain/entities/generic/Pagination";
@@ -167,55 +167,44 @@ const sortableFields = ["name", "username"] as const;
 const maxUsersInSingleRequest = 10_000;
 
 export function useGetUsersRows(options: { filters: UsersFilters }): {
-    getRows: GetRows<UserRow>;
+    getRows: GetRowsFuture<UserRow>;
     getAllRows: () => FutureData<Paginated<UserRow>>;
     rows: UserRow[];
-    loading: boolean;
 } {
     const { filters } = options;
     const { compositionRoot } = useAppContext();
-    const snackbar = useSnackbar();
-    const [loading, setLoading] = React.useState(false);
     const [rows, setRows] = React.useState<UserRow[]>([]);
     const [query, setQuery] = React.useState<UsersQuery>(initialQuery);
 
-    const getRows = React.useCallback<GetRows<UserRow>>(
-        (search, paging, sorting) =>
-            new Promise((resolve, reject) => {
-                setLoading(true);
+    const getRows = React.useCallback<GetRowsFuture<UserRow>>(
+        (search, paging, sorting) => {
+            const sortingField = isValueInUnionType(sorting.field, sortableFields)
+                ? sorting.field
+                : "name";
 
-                const sortingField = isValueInUnionType(sorting.field, sortableFields)
-                    ? sorting.field
-                    : "name";
+            const query: UsersQuery = {
+                search: search,
+                order: { field: sortingField, order: sorting.order },
+            };
 
-                const query: UsersQuery = {
-                    search: search,
-                    order: { field: sortingField, order: sorting.order },
-                };
+            setQuery(query);
 
-                setQuery(query);
-
-                return compositionRoot.users.get
-                    .execute({
-                        ...query,
-                        page: paging.page,
-                        pageSize: paging.pageSize,
-                        filters: filters,
-                    })
-                    .run(
-                        response => {
-                            setRows(response.objects);
-                            resolve(response);
-                            setLoading(false);
-                        },
-                        err => {
-                            snackbar.error(err.message);
-                            setLoading(false);
-                            reject(err);
-                        }
-                    );
-            }),
-        [compositionRoot, snackbar, filters]
+            return compositionRoot.users.get
+                .execute({
+                    ...query,
+                    page: paging.page,
+                    pageSize: paging.pageSize,
+                    filters: filters,
+                })
+                .map(response => {
+                    /* Keep the rows shown: the row actions look them up to find the selected
+                       row, and they are built before the table props exist. A cancelled request
+                       rejects, so a stale response never reaches this point. */
+                    setRows(response.objects);
+                    return response;
+                });
+        },
+        [compositionRoot, filters]
     );
 
     /* Same search/filters/order as the rows currently shown, but all of them in a single page. */
@@ -230,7 +219,7 @@ export function useGetUsersRows(options: { filters: UsersFilters }): {
         [compositionRoot, filters, query]
     );
 
-    return { getRows, getAllRows, rows, loading };
+    return { getRows, getAllRows, rows };
 }
 
 type UsersQuery = Pick<GetUsersOptions, "search" | "order">;
