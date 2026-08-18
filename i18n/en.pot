@@ -5,17 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-18T08:47:15.605Z\n"
-"PO-Revision-Date: 2026-08-18T08:47:15.605Z\n"
-
-msgid "Add"
-msgstr ""
-
-msgid "List"
-msgstr ""
-
-msgid "Add new"
-msgstr ""
+"POT-Creation-Date: 2026-08-18T09:22:03.836Z\n"
+"PO-Revision-Date: 2026-08-18T09:22:03.837Z\n"
 
 msgid "Manage"
 msgstr ""
@@ -121,13 +112,19 @@ msgstr ""
 msgid "Some help"
 msgstr ""
 
+msgid "Roles: {{total}}"
+msgstr ""
+
+msgid "Groups: {{total}}"
+msgstr ""
+
+msgid "Administrator"
+msgstr ""
+
 msgid "Users"
 msgstr ""
 
 msgid "Browse users with filters and actions"
-msgstr ""
-
-msgid "Current user"
 msgstr ""
 
 msgid "Search by name"

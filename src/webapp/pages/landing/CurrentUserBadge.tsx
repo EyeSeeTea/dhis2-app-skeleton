@@ -9,8 +9,8 @@ export const CurrentUserBadge: React.FC<{ user: User }> = React.memo(props => {
 
     const meta = [
         `@${user.username}`,
-        i18n.t("Roles: {{total}}", { total: user.userRoleIds.length }),
-        i18n.t("Groups: {{total}}", { total: user.userGroupIds.length }),
+        i18n.t("Roles: {{total}}", { total: user.userRoleIds.length, nsSeparator: false }),
+        i18n.t("Groups: {{total}}", { total: user.userGroupIds.length, nsSeparator: false }),
     ].join(" · ");
 
     return (
