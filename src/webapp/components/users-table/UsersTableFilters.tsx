@@ -1,11 +1,11 @@
 import React from "react";
-import styled from "styled-components";
 import { Dropdown, MultipleDropdown } from "@eyeseetea/d2-ui-components";
 import { Id } from "$/domain/entities/Ref";
 import { UsersFilters } from "$/domain/repositories/UserRepository";
 import { UsersFilterInfo } from "./useUsersFilterInfo";
 import { Maybe } from "$/utils/ts-utils";
 import i18n from "$/utils/i18n";
+import styles from "./UsersTableFilters.module.css";
 
 export type FiltersState = {
     userGroupIds: Id[];
@@ -90,7 +90,7 @@ export const UsersTableFilters: React.FC<UsersTableFiltersProps> = React.memo(pr
     );
 
     return (
-        <Container>
+        <div className={styles.container}>
             <MultipleDropdown
                 label={i18n.t("User groups")}
                 items={groupItems}
@@ -115,13 +115,6 @@ export const UsersTableFilters: React.FC<UsersTableFiltersProps> = React.memo(pr
                 }
                 onChange={updateStatus}
             />
-        </Container>
+        </div>
     );
 });
-
-const Container = styled.div`
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    padding: 10px 0;
-`;

@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import { CircularProgress, Typography } from "@material-ui/core";
 import {
     ConfirmationDialog,
@@ -11,6 +10,7 @@ import GetAppIcon from "@material-ui/icons/GetApp";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import i18n from "$/utils/i18n";
 import { Maybe } from "$/utils/ts-utils";
+import styles from "./UsersTable.module.css";
 import { useObjectsTableFuture } from "$/webapp/utils/objects-table";
 import { UsersFilterInfo, useUsersFilterInfo } from "./useUsersFilterInfo";
 import { useExportUsersCsv } from "./useExportUsersCsv";
@@ -28,15 +28,15 @@ export const UsersTable: React.FC = React.memo(() => {
     switch (filterInfo.type) {
         case "loading":
             return (
-                <LoadingWrapper>
+                <div className={styles.loadingWrapper}>
                     <CircularProgress />
-                </LoadingWrapper>
+                </div>
             );
         case "error":
             return (
-                <LoadingWrapper>
+                <div className={styles.loadingWrapper}>
                     <Typography color="error">{filterInfo.error.message}</Typography>
-                </LoadingWrapper>
+                </div>
             );
         case "success":
             return <UsersTableLoaded filterInfo={filterInfo.data} />;
@@ -93,7 +93,7 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
     const closeConfirm = React.useCallback(() => setConfirm(undefined), []);
 
     return (
-        <Wrapper>
+        <div className={styles.wrapper}>
             <ObjectsTable<UserRow>
                 {...tableProps}
                 loading={tableProps.isLoading || exporting}
@@ -116,16 +116,6 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
                     <Typography variant="body2">{confirm.message}</Typography>
                 </ConfirmationDialog>
             )}
-        </Wrapper>
+        </div>
     );
 });
-
-const Wrapper = styled.div`
-    margin: 10px;
-`;
-
-const LoadingWrapper = styled.div`
-    display: flex;
-    justify-content: center;
-    padding: 40px;
-`;
