@@ -14,6 +14,7 @@ import { Router } from "$/webapp/pages/Router";
 import "./App.css";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
+import { assert } from "$/utils/assert";
 
 type AppProps = {
     compositionRoot: CompositionRoot;
@@ -29,7 +30,7 @@ function App_(props: AppProps) {
         async function setup() {
             const isShareButtonVisible = appConfig.appearance.showShareButton;
             const currentUser = await compositionRoot.users.getCurrent.execute().toPromise();
-            if (!currentUser) throw new Error("User not logged in");
+            assert(currentUser, "User not logged in");
 
             setAppContext({ currentUser, compositionRoot });
             setShowShareButton(isShareButtonVisible);
