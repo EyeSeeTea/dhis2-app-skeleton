@@ -3,15 +3,15 @@ import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import { Cancel, FutureData } from "$/domain/entities/generic/Future";
 import { Paginated } from "$/domain/entities/generic/Pagination";
 import i18n from "$/utils/i18n";
-import { UsersFilterInfo } from "./useUsersFilterInfo";
+import { UserView } from "./UserView";
 import { UserRow } from "./UsersTableConfig";
 
 /* Exports all the users matching the current search/filters/order, not only the page shown. */
 export function useExportUsersCsv(options: {
     getAllRows: () => FutureData<Paginated<UserRow>>;
-    info: UsersFilterInfo;
+    userView: UserView;
 }): { exportCsv: () => void; exporting: boolean } {
-    const { getAllRows, info } = options;
+    const { getAllRows, userView } = options;
     const snackbar = useSnackbar();
     const [exporting, setExporting] = React.useState(false);
     const cancelRef = React.useRef<Cancel>(undefined);
@@ -31,7 +31,7 @@ export function useExportUsersCsv(options: {
                         })
                     );
                 }
-                exportRowsToCsv(response.objects, info);
+                exportRowsToCsv(response.objects, userView);
                 cancelRef.current = undefined;
                 setExporting(false);
             },
@@ -41,14 +41,12 @@ export function useExportUsersCsv(options: {
                 setExporting(false);
             }
         );
-    }, [getAllRows, info, snackbar]);
+    }, [getAllRows, userView, snackbar]);
 
     return { exportCsv: exportCsv, exporting: exporting };
 }
 
-function exportRowsToCsv(rows: UserRow[], info: UsersFilterInfo): void {
-    const groupName = new Map(info.userGroups.map(g => [g.id, g.name]));
-    const roleName = new Map(info.userRoles.map(r => [r.id, r.name]));
+function exportRowsToCsv(rows: UserRow[], userView: UserView): void {
     const header = ["id", "name", "username", "userGroups", "userRoles"].join(",");
     const body = rows
         .map(row =>
@@ -56,8 +54,8 @@ function exportRowsToCsv(rows: UserRow[], info: UsersFilterInfo): void {
                 row.id,
                 quote(row.name),
                 quote(row.username),
-                quote(row.userGroupIds.map(id => groupName.get(id) ?? id).join("; ")),
-                quote(row.userRoleIds.map(id => roleName.get(id) ?? id).join("; ")),
+                quote(userView.renderUserGroups(row)),
+                quote(userView.renderUserRoles(row)),
             ].join(",")
         )
         .join("\n");

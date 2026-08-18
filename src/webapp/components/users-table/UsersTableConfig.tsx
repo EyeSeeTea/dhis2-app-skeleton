@@ -1,14 +1,14 @@
 import React from "react";
 import { TableAction, TableConfig, TableSorting, useSnackbar } from "@eyeseetea/d2-ui-components";
+import { Tooltip } from "@material-ui/core";
 import { User } from "$/domain/entities/User";
-import { Id } from "$/domain/entities/Ref";
 import i18n from "$/utils/i18n";
 import { useAppContext } from "$/webapp/contexts/app-context";
 import { GetRowsFuture } from "$/webapp/utils/objects-table";
 import { GetUsersOptions, UsersFilters } from "$/domain/repositories/UserRepository";
 import { FutureData } from "$/domain/entities/generic/Future";
 import { Paginated } from "$/domain/entities/generic/Pagination";
-import { UsersFilterInfo } from "./useUsersFilterInfo";
+import { UserView } from "./UserView";
 import { isValueInUnionType, Maybe } from "$/utils/ts-utils";
 
 export type UserRow = User;
@@ -20,28 +20,13 @@ export type ConfirmState = {
 };
 
 export function useUsersTableConfig(options: {
-    info: UsersFilterInfo;
+    userView: UserView;
     rows: UserRow[];
     reloadRef: React.MutableRefObject<() => void>;
     setConfirm: (state: Maybe<ConfirmState>) => void;
 }): TableConfig<UserRow> {
-    const { info, rows, reloadRef, setConfirm } = options;
+    const { userView, rows, reloadRef, setConfirm } = options;
     const snackbar = useSnackbar();
-
-    const groupNameById = React.useMemo(
-        () => new Map(info.userGroups.map(g => [g.id, g.name])),
-        [info.userGroups]
-    );
-
-    const roleNameById = React.useMemo(
-        () => new Map(info.userRoles.map(r => [r.id, r.name])),
-        [info.userRoles]
-    );
-
-    const renderIds = React.useCallback(
-        (ids: Id[], lookup: Map<Id, string>) => ids.map(id => lookup.get(id) ?? id).join(", "),
-        []
-    );
 
     const actions = React.useMemo<TableAction<UserRow>[]>(
         () => [
@@ -69,7 +54,7 @@ export function useUsersTableConfig(options: {
                 onClick: selectedIds => {
                     const row = rows.find(r => r.id === selectedIds[0]);
                     if (!row) return;
-                    const roles = renderIds(row.userRoleIds, roleNameById) || i18n.t("(none)");
+                    const roles = userView.renderUserRoles(row) || i18n.t("(none)");
                     setConfirm({
                         title: i18n.t("Roles for {{name}}", { name: row.name }),
                         message: roles,
@@ -100,7 +85,7 @@ export function useUsersTableConfig(options: {
                 },
             },
         ],
-        [rows, snackbar, reloadRef, setConfirm, renderIds, roleNameById]
+        [rows, snackbar, reloadRef, setConfirm, userView]
     );
 
     return React.useMemo(
@@ -120,13 +105,21 @@ export function useUsersTableConfig(options: {
                     name: "userGroupIds",
                     text: i18n.t("User groups"),
                     sortable: false,
-                    getValue: row => renderIds(row.userGroupIds, groupNameById),
+                    getValue: row =>
+                        renderNamesCell(
+                            userView.renderUserGroups(row, { ellipsis: maxNamesInColumn }),
+                            userView.renderUserGroups(row)
+                        ),
                 },
                 {
                     name: "userRoleIds",
                     text: i18n.t("User roles"),
                     sortable: false,
-                    getValue: row => renderIds(row.userRoleIds, roleNameById),
+                    getValue: row =>
+                        renderNamesCell(
+                            userView.renderUserRoles(row, { ellipsis: maxNamesInColumn }),
+                            userView.renderUserRoles(row)
+                        ),
                 },
                 {
                     name: "disabled",
@@ -142,12 +135,12 @@ export function useUsersTableConfig(options: {
                 {
                     name: "userGroupIds",
                     text: i18n.t("User groups"),
-                    getValue: row => renderIds(row.userGroupIds, groupNameById),
+                    getValue: row => userView.renderUserGroups(row),
                 },
                 {
                     name: "userRoleIds",
                     text: i18n.t("User roles"),
-                    getValue: row => renderIds(row.userRoleIds, roleNameById),
+                    getValue: row => userView.renderUserRoles(row),
                 },
             ],
             actions: actions,
@@ -158,7 +151,7 @@ export function useUsersTableConfig(options: {
             initialSorting: initialSorting,
             searchBoxLabel: i18n.t("Search by name or username"),
         }),
-        [actions, renderIds, groupNameById, roleNameById]
+        [actions, userView]
     );
 }
 
@@ -167,6 +160,18 @@ export function useUsersTableConfig(options: {
 const initialSorting: TableSorting<UserRow> = { field: "name", order: "asc" };
 
 const sortableFields = ["name", "username", "disabled"] as const;
+
+/* Groups/roles shown in a table cell. The details panel and the roles dialog show them all. */
+const maxNamesInColumn = 3;
+
+/* Shows the names that fit in the cell, with the full list as its tooltip. */
+function renderNamesCell(shown: string, all: string): React.ReactNode {
+    return (
+        <Tooltip title={all} placement="bottom-start">
+            <span>{shown}</span>
+        </Tooltip>
+    );
+}
 
 /* Users requested in a single call when the whole selection is needed (the CSV export). Users
    beyond this limit are not exported, the caller is expected to report it (see pager.total). */

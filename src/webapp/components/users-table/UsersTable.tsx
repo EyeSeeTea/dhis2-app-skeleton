@@ -14,6 +14,7 @@ import { Maybe } from "$/utils/ts-utils";
 import { useObjectsTableFuture } from "$/webapp/utils/objects-table";
 import { UsersFilterInfo, useUsersFilterInfo } from "./useUsersFilterInfo";
 import { useExportUsersCsv } from "./useExportUsersCsv";
+import { UserView } from "./UserView";
 import { ConfirmState, UserRow, useGetUsersRows, useUsersTableConfig } from "./UsersTableConfig";
 import {
     FiltersState,
@@ -50,6 +51,8 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
     const snackbar = useSnackbar();
 
     const filters = React.useMemo(() => toUsersFilters(filtersState), [filtersState]);
+    /* Built once here, so both the table and the export share the same indexes. */
+    const userView = React.useMemo(() => new UserView(filterInfo), [filterInfo]);
     const onError = React.useCallback(
         (error: Error) => {
             console.error(error);
@@ -59,9 +62,9 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
     );
 
     const { getRows, getAllRows, rows } = useGetUsersRows({ filters });
-    const config = useUsersTableConfig({ info: filterInfo, rows, reloadRef, setConfirm });
+    const config = useUsersTableConfig({ userView, rows, reloadRef, setConfirm });
     const tableProps = useObjectsTableFuture<UserRow>(config, getRows, { onError: onError });
-    const { exportCsv, exporting } = useExportUsersCsv({ getAllRows, info: filterInfo });
+    const { exportCsv, exporting } = useExportUsersCsv({ getAllRows, userView });
 
     reloadRef.current = tableProps.reload;
 
