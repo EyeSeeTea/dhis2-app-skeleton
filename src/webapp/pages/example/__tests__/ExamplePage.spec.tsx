@@ -4,6 +4,8 @@ import { RenderResult } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import prettier from "prettier";
 
+/* Note: React tests are much slower than regular unit tests, so only add them when they add value */
+
 describe("ExamplePage", () => {
     // Snapshot testing verifies rendered HTML structure rather than specific  behaviour
     // or interactions. This approach is very useful when refactoring code while ensuring

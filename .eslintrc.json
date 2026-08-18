@@ -52,6 +52,7 @@
         "no-useless-rename": "off",
         "react-hooks/rules-of-hooks": "warn",
         "react-hooks/exhaustive-deps": "warn",
+        "react/no-unknown-property": ["error", { "ignore": ["jsx", "global"] }],
         "testing-library/await-async-query": "error",
         "testing-library/no-await-sync-query": "error",
         "testing-library/prefer-screen-queries": "off",
