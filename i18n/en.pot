@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-27T11:26:42.425Z\n"
-"PO-Revision-Date: 2026-05-27T11:26:42.425Z\n"
+"POT-Creation-Date: 2026-08-18T08:15:55.699Z\n"
+"PO-Revision-Date: 2026-08-18T08:15:55.699Z\n"
 
 msgid "Add"
 msgstr ""
@@ -19,6 +19,11 @@ msgstr ""
 
 msgid "Help"
 msgstr ""
+
+msgid "(+{{count}} more)"
+msgid_plural "(+{{count}} more)"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Refresh"
 msgstr ""
@@ -78,20 +83,25 @@ msgstr ""
 msgid "User roles"
 msgstr ""
 
+msgid "Status"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
 msgid "Id"
 msgstr ""
 
 msgid "Search by name or username"
 msgstr ""
 
-msgid "Enabled"
-msgstr ""
-
-msgid "Disabled"
-msgstr ""
-
-msgid "Status"
-msgstr ""
+msgid "Only the first {{count}} users have been exported"
+msgid_plural "Only the first {{count}} users have been exported"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Hello {{name}}"
 msgstr ""
@@ -106,4 +116,7 @@ msgid "Users"
 msgstr ""
 
 msgid "Browse users with filters and actions"
+msgstr ""
+
+msgid "Search by name"
 msgstr ""

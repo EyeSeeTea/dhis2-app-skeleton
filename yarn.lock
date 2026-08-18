@@ -4529,6 +4529,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/gettext-parser@npm:^9":
+  version: 9.0.0
+  resolution: "@types/gettext-parser@npm:9.0.0"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/d1aa62018d179930f8601b97d134b03899655ee91ada43bdb10c12f2d57f2e8d2b89eaebb541547d62f845d497f4ac302ad8079bfc46a9be2f43fa889fc14744
+  languageName: node
+  linkType: hard
+
 "@types/hast@npm:^3.0.4":
   version: 3.0.4
   resolution: "@types/hast@npm:3.0.4"
@@ -6540,6 +6549,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"content-type@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "content-type@npm:1.0.5"
+  checksum: 10c0/b76ebed15c000aee4678c3707e0860cb6abd4e680a598c0a26e17f0bfae723ec9cc2802f0ff1bc6e4d80603719010431d2231018373d4dde10f9ccff9dadf5af
+  languageName: node
+  linkType: hard
+
 "convert-source-map@npm:^1.5.0, convert-source-map@npm:^1.7.0":
   version: 1.9.0
   resolution: "convert-source-map@npm:1.9.0"
@@ -7033,6 +7049,7 @@ __metadata:
     "@prettier/sync": "npm:^0.6.1"
     "@testing-library/jest-dom": "npm:^5.16.5"
     "@testing-library/react": "npm:^14.0.0"
+    "@types/gettext-parser": "npm:^9"
     "@types/material-ui": "npm:^0.21.12"
     "@types/node": "npm:^20"
     "@types/react": "npm:18.2.22"
@@ -7051,6 +7068,7 @@ __metadata:
     eslint-plugin-testing-library: "npm:^5.11.1"
     eslint-plugin-unused-imports: "npm:^4"
     expect-type: "npm:^0"
+    gettext-parser: "npm:^9"
     husky: "npm:^7"
     jsdom: "npm:^21"
     material-ui: "npm:0.20.2"
@@ -7273,7 +7291,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"encoding@npm:^0.1.12":
+"encoding@npm:^0.1.12, encoding@npm:^0.1.13":
   version: 0.1.13
   resolution: "encoding@npm:0.1.13"
   dependencies:
@@ -8498,6 +8516,16 @@ __metadata:
     encoding: "npm:^0.1.12"
     safe-buffer: "npm:^5.1.1"
   checksum: 10c0/c498f38346f5d8dce4731ee4577df4d7e349c808820542be8ccf706a6dae0c8e2cd18505d6cc574e108695963066d3d67d324b88630b3149f96b46078e6b9980
+  languageName: node
+  linkType: hard
+
+"gettext-parser@npm:^9":
+  version: 9.1.1
+  resolution: "gettext-parser@npm:9.1.1"
+  dependencies:
+    content-type: "npm:^1.0.5"
+    encoding: "npm:^0.1.13"
+  checksum: 10c0/a34bda8a72554fc9c979aaf935dea33fbd9d443201d0f57e11bab902c4241937b84d89711c6ffcb798d57116b4c11d86175d8aade658c19ca3d5503ba7c48206
   languageName: node
   linkType: hard
 
