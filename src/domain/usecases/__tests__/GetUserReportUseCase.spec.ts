@@ -32,7 +32,7 @@ describe("GetUserReportUseCase", () => {
             expect(userRepository.get).toHaveBeenCalledWith({
                 page: 1,
                 pageSize: expect.any(Number),
-                filters: { userGroupIds: undefined, userRoleIds: undefined, canLogin: undefined },
+                filters: { userGroupIds: undefined, userRoleIds: undefined, disabled: undefined },
                 order: { field: "name", order: "asc" },
             });
         });
