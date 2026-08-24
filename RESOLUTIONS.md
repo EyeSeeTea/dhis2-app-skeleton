@@ -254,6 +254,5 @@ Re-measure rather than trusting the table above: it is a snapshot, and the repla
 ## Future improvements
 
 - **Upgrade `react-router-dom` off v5.** Target v7 directly, for the reason above. (This no longer drops a `path-to-regexp` entry — that one was retired as inert — but it does clear the v5 line's own findings.)
-- **The install policy is now aligned and should stay that way.** On 2026-08-05 `.yarnrc.yml` was brought level with the application that treats this repository as its reference: `npmMinimalAgeGate` from `0` to `7d`, `enableScripts` from `true` to `false`, and `enableHardenedMode: true` and `checksumBehavior: throw` added. A baseline looser than the apps copying it is the divergence a baseline exists to prevent. Alignment cost nothing measurable — the lockfile came back byte-identical after each change. If a future change needs one of these relaxed, relax it deliberately and record why here, rather than letting the two drift apart again.
 - **Ask DHIS2 whether `@dhis2/cli-app-scripts` can ship i18n without the full CLI framework.** That is the change that would remove the trade-off entirely, for every application — see the section above.
 - **Fix `@eyeseetea/d2-api` and `@eyeseetea/d2-ui-components` upstream.** Between them they force the `lodash` and `react-linkify` pins into every app that uses them.
