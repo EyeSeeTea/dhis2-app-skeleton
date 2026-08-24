@@ -212,11 +212,11 @@ When auditing, treat any of these as a signal that a pin has gone stale:
 
 Removing the replacement removed **seven resolutions** and the exact-version fixture along with them, and `tar`, `tmp` and `cross-spawn` then resolve to patched versions unaided. The `esbuild` pin became redundant too: with the CLI's vite gone, `vite@7` requests `^0.27.0 || ^0.28.0` and reaches a patched release on its own.
 
-**Why staying is the better trade today.** The archived packages currently require exactly one constraint — `i18next-conv/node-gettext`, above — and produce no finding beyond it. So the choice is not _abandoned → maintained_; it is _two frozen packages that need one pin_ against _a maintained package that carries an abandoned chain with an unfixable finding and needs seven_. Both toolchains are build-time only: they run during `yarn localize` and never reach the browser bundle, so the difference in real exposure is negligible and the decision rests on maintainability.
+**Why this repository is staying, for now.** The archived packages currently require exactly one constraint — `i18next-conv/node-gettext`, above — and produce no finding beyond it. So the choice is not _abandoned → maintained_; it is _two frozen packages that need one pin_ against _a maintained package that carries an abandoned chain with an unfixable finding and needs seven_. Both toolchains are build-time only: they run during `yarn localize` and never reach the browser bundle, so the difference in real exposure is negligible and the decision rests on maintainability.
 
 Being archived is not the same as being vulnerable — frozen code introduces nothing new either. The exposure here is conditional, not current.
 
-**Adopt `@dhis2/cli-app-scripts` when either becomes true:**
+**This repository revisits when either becomes true:**
 
 1. `@dhis2/cli-helpers-engine` stops depending on `request`, removing the unfixable `uuid` path. The replacement then costs only scoped pins and the maintainability argument wins outright.
 2. Either archived package needs a constraint that cannot be satisfied within the ranges it already requests — that is, both re-resolution and a scoped pin fail.
@@ -255,5 +255,5 @@ Re-measure rather than trusting the table above: it is a snapshot, and the repla
 
 - **Upgrade `react-router-dom` off v5.** Target v7 directly, for the reason above. (This no longer drops a `path-to-regexp` entry — that one was retired as inert — but it does clear the v5 line's own findings.)
 - **The install policy is now aligned and should stay that way.** On 2026-08-05 `.yarnrc.yml` was brought level with the application that treats this repository as its reference: `npmMinimalAgeGate` from `0` to `7d`, `enableScripts` from `true` to `false`, and `enableHardenedMode: true` and `checksumBehavior: throw` added. A baseline looser than the apps copying it is the divergence a baseline exists to prevent. Alignment cost nothing measurable — the lockfile came back byte-identical after each change. If a future change needs one of these relaxed, relax it deliberately and record why here, rather than letting the two drift apart again.
-- **Ask DHIS2 whether `@dhis2/cli-app-scripts` can ship i18n without the full CLI framework.** That is the condition that would make the maintained i18n tooling adoptable — see the section above.
+- **Ask DHIS2 whether `@dhis2/cli-app-scripts` can ship i18n without the full CLI framework.** That is the change that would remove the trade-off entirely, for every application — see the section above.
 - **Fix `@eyeseetea/d2-api` and `@eyeseetea/d2-ui-components` upstream.** Between them they force the `lodash` and `react-linkify` pins into every app that uses them.
