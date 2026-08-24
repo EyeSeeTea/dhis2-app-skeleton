@@ -29,7 +29,7 @@ This file documents every entry in the `resolutions` block of `package.json`. Ea
 
 ## Audit cadence
 
-Re-audit the dependency tree monthly, and before every release. A resolution that has silently stopped working shows up as a finding that keeps coming back for a package that already has a pin. Each entry below has a **drop when** condition — when that condition becomes true, delete the entry and re-install.
+Re-audit the dependency tree monthly, before every release, and again immediately before requesting review on a change that claims a clean gate: a verification table goes stale when an advisory is published *or widened*, not when the tree changes. Run it over the whole tree (`yarn npm audit --recursive`), not only the packages named in this file — `nanoid` had no entry here, and a widened advisory turned it into a high finding on a tree nobody had touched. A resolution that has silently stopped working shows up as a finding that keeps coming back for a package that already has a pin. Each entry below has a **drop when** condition — when that condition becomes true, delete the entry and re-install.
 
 Note that `yarn npm audit` and Dependency-Track disagree on severity — `esbuild` and `uuid` are scored below 7 by the GitHub advisory database and above 7 by Dependency-Track. **The CI gate follows Dependency-Track**, so measure there before concluding an app is clean, and never quote a before/after count that mixes the two sources.
 
@@ -133,7 +133,7 @@ The global entry was also pulling `eslint` down from the `^6.0.2` it declares.
 
 ### `nanoid: 3.3.8` — removed 2026-08-05
 
-**Was holding a consumer below its declared range.** `postcss` requests `nanoid@^3.3.16`; the exact `3.3.8` forced it eight patches below that. Without the entry it resolves to 3.3.17, clean.
+**Was holding a consumer below its declared range.** `postcss` requests `nanoid@^3.3.16`; the exact `3.3.8` forced it eight patches below that. Without the entry it resolves to 3.3.18, clean.
 
 ### `@babel/runtime: 7.26.10` — removed 2026-08-05
 
