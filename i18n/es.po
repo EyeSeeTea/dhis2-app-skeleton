@@ -1,18 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-07-31T07:28:40.591Z\n"
-"PO-Revision-Date: 2018-10-25T09:02:35.143Z\n"
+"POT-Creation-Date: 2026-08-18T09:22:03.836Z\n"
+"PO-Revision-Date: 2026-08-18T08:31:01.792Z\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-msgid "Add"
-msgstr "Añadir"
-
-msgid "List"
-msgstr "Listar"
+msgid "Manage"
+msgstr "Gestionar"
 
 msgid "Back"
 msgstr "Volver"
@@ -20,100 +17,121 @@ msgstr "Volver"
 msgid "Help"
 msgstr "Ayuda"
 
-msgid "Refresh"
+msgid "Close"
 msgstr ""
+
+msgid "(+{{count}} more)"
+msgid_plural "(+{{count}} more)"
+msgstr[0] "(+{{count}} más)"
+msgstr[1] "(+{{count}} más)"
+
+msgid "Refresh"
+msgstr "Actualizar"
 
 msgid "Export CSV"
-msgstr ""
+msgstr "Exportar CSV"
 
 msgid "OK"
-msgstr ""
+msgstr "Aceptar"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 msgid "Copy username"
-msgstr ""
+msgstr "Copiar nombre de usuario"
 
-#, fuzzy
 msgid "Copied {{username}}"
-msgstr "Hola {{name}}"
+msgstr "{{username}} copiado"
 
 msgid "Failed to copy to clipboard"
-msgstr ""
+msgstr "No se pudo copiar al portapapeles"
 
 msgid "Show roles"
-msgstr ""
+msgstr "Ver roles"
 
 msgid "(none)"
-msgstr ""
+msgstr "(ninguno)"
 
-#, fuzzy
 msgid "Roles for {{name}}"
-msgstr "Hola {{name}}"
+msgstr "Roles de {{name}}"
 
 msgid "Disable user"
-msgstr ""
+msgstr "Deshabilitar usuario"
 
 msgid "Disable users"
-msgstr ""
+msgstr "Deshabilitar usuarios"
 
 msgid "You are about to disable {{count}} user(s)"
 msgid_plural "You are about to disable {{count}} user(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Va a deshabilitar {{count}} usuario"
+msgstr[1] "Va a deshabilitar {{count}} usuarios"
 
 msgid "Disabled {{count}} users (stub)"
 msgid_plural "Disabled {{count}} users (stub)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Se ha deshabilitado {{count}} usuario (stub)"
+msgstr[1] "Se han deshabilitado {{count}} usuarios (stub)"
 
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 msgid "Username"
-msgstr ""
+msgstr "Nombre de usuario"
 
 msgid "User groups"
-msgstr ""
+msgstr "Grupos de usuarios"
 
 msgid "User roles"
-msgstr ""
-
-msgid "Id"
-msgstr ""
-
-msgid "Search by name or username"
-msgstr ""
-
-msgid "Enabled"
-msgstr ""
-
-msgid "Disabled"
-msgstr ""
+msgstr "Roles de usuario"
 
 msgid "Status"
-msgstr ""
+msgstr "Estado"
+
+msgid "Disabled"
+msgstr "Deshabilitado"
+
+msgid "Enabled"
+msgstr "Habilitado"
+
+msgid "Id"
+msgstr "Id"
+
+msgid "Search by name or username"
+msgstr "Buscar por nombre o nombre de usuario"
+
+msgid "Only the first {{count}} users have been exported"
+msgid_plural "Only the first {{count}} users have been exported"
+msgstr[0] "Solo se ha exportado {{count}} usuario"
+msgstr[1] "Solo se han exportado los primeros {{count}} usuarios"
 
 msgid "Hello {{name}}"
 msgstr "Hola {{name}}"
 
 msgid "Detail page"
+msgstr "Página de detalle"
+
+msgid "Some help"
 msgstr ""
 
-msgid "Section"
-msgstr "Sección"
+msgid "Roles: {{total}}"
+msgstr "Roles: {{total}}"
+
+msgid "Groups: {{total}}"
+msgstr "Grupos: {{total}}"
+
+msgid "Administrator"
+msgstr "Administrador"
 
 msgid "Users"
-msgstr ""
+msgstr "Usuarios"
 
 msgid "Browse users with filters and actions"
-msgstr ""
+msgstr "Explore usuarios con filtros y acciones"
 
-#~ msgctxt "Application title"
-#~ msgid "__MANIFEST_APP_TITLE"
-#~ msgstr "dhis2-app-skeleton"
+msgid "Search by name"
+msgstr "Buscar por nombre"
 
-#~ msgctxt "Application description"
-#~ msgid "__MANIFEST_APP_DESCRIPTION"
-#~ msgstr "DHIS2 Skeleton App"
+#~ msgid "Add new"
+#~ msgstr "Añadir"
+
+#~ msgid "Section"
+#~ msgstr "Sección"

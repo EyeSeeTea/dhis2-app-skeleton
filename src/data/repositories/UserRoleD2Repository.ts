@@ -1,6 +1,7 @@
 import { UserRole } from "$/domain/entities/UserRole";
 import { UserRoleRepository } from "$/domain/repositories/UserRoleRepository";
-import { apiToFuture, FutureData } from "$/data/api-futures";
+import { apiToFuture } from "$/data/api-futures";
+import { FutureData } from "$/domain/entities/generic/Future";
 import { D2Api } from "$/types/d2-api";
 
 export class UserRoleD2Repository implements UserRoleRepository {

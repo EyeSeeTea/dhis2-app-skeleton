@@ -1,47 +1,42 @@
-import { Typography } from "@material-ui/core";
 import React from "react";
-import { useHistory } from "react-router-dom";
 import { Card, CardGrid } from "$/webapp/components/card-grid/CardGrid";
 import { useAppContext } from "$/webapp/contexts/app-context";
 import i18n from "$/utils/i18n";
+import { CurrentUserBadge } from "./CurrentUserBadge";
+import styles from "./LandingPage.module.css";
 
 export const LandingPage: React.FC = React.memo(() => {
-    const history = useHistory();
     const { currentUser } = useAppContext();
 
     const cards: Card[] = [
         {
-            title: i18n.t("Section"),
+            title: i18n.t("Users"),
             key: "main",
-            children: [
-                {
-                    name: "John",
-                    description: "Entry point 1",
-                    listAction: () => history.push("/for/John"),
-                },
+            items: [
                 {
                     name: "Mary",
-                    description: "Entry point 2",
-                    listAction: () => history.push("/for/Mary"),
+                    description: "Go to Mary's page",
+                    route: "for/Mary",
+                },
+                {
+                    name: "John",
+                    description: "Go to John's page",
+                    route: "for/John",
                 },
                 {
                     name: i18n.t("Users"),
                     description: i18n.t("Browse users with filters and actions"),
-                    listAction: () => history.push("/users"),
+                    route: "users",
                 },
             ],
         },
     ];
 
     return (
-        <>
-            <CardGrid cards={cards} />
+        <div className={styles.page}>
+            <CurrentUserBadge user={currentUser} />
 
-            <footer>
-                <Typography variant="h6">
-                    Current user: {currentUser.name} [{currentUser.id}]
-                </Typography>
-            </footer>
-        </>
+            <CardGrid cards={cards} />
+        </div>
     );
 });

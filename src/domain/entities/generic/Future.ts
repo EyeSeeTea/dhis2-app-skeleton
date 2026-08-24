@@ -1,3 +1,10 @@
+import {
+    FutureWithAccumulation,
+    ParallelAccumulatedData,
+    ParallelWithAccumulationOptions,
+    SequentialAccumulatedData,
+    SequentialWithAccumulationOptions,
+} from "./FutureWithAccumulation";
 import * as rcpromise from "real-cancellable-promise";
 
 /**
@@ -169,46 +176,24 @@ export class Future<E, D> {
 
     static sequentialWithAccumulation<E, D>(
         futures: Array<Future<E, D>>,
-        options: { stopOnError?: boolean } = {}
+        options: SequentialWithAccumulationOptions = {}
     ): Future<never, SequentialAccumulatedData<E, D>> {
-        const { stopOnError = false } = options;
-        const processSequentially = (
-            futures: Array<Future<E, D>>,
-            accumulatedData: D[] = []
-        ): Future<never, SequentialAccumulatedData<E, D>> => {
-            const [firstFuture, ...remainingFutures] = futures;
+        return FutureWithAccumulation.sequential(futures, options);
+    }
 
-            if (!firstFuture) {
-                return Future.success({ type: "success", data: accumulatedData });
-            }
-
-            return firstFuture
-                .flatMap(resultData => {
-                    return processSequentially(remainingFutures, [...accumulatedData, resultData]);
-                })
-                .flatMapError((error: E) => {
-                    if (stopOnError) {
-                        const accumulatedDataWithError: SequentialAccumulatedData<E, D> = {
-                            type: "error",
-                            error: error,
-                            data: accumulatedData,
-                        };
-                        return Future.success(accumulatedDataWithError);
-                    } else {
-                        return processSequentially(remainingFutures, accumulatedData);
-                    }
-                });
-        };
-
-        return processSequentially(futures);
+    static parallelWithAccumulation<E, D>(
+        futures: Array<Future<E, D>>,
+        options: ParallelWithAccumulationOptions = {}
+    ): Future<never, ParallelAccumulatedData<E, D>> {
+        return FutureWithAccumulation.parallel(futures, options);
     }
 }
 
-export type SequentialAccumulatedData<E, D> =
-    | { type: "success"; data: D[] }
-    | { type: "error"; error: E; data: D[] };
-
 export type Cancel = (() => void) | undefined;
+
+/* Error a cancelled Future rejects with. Future.run ignores it, as a cancellation is requested
+   by the caller and should not be reported as a failure. */
+export const Cancellation = rcpromise.Cancellation;
 
 interface CaptureAsync<E> {
     <D>(async: Future<E, D>): Promise<D>;
@@ -243,3 +228,5 @@ export function getJSON<U>(url: string): Future<TypeError | SyntaxError, U> {
 function isNamedError(error: unknown): error is { name: string } {
     return Boolean(error && typeof error === "object" && "name" in error);
 }
+
+export type FutureData<Data> = Future<Error, Data>;

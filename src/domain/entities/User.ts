@@ -8,6 +8,7 @@ export type UserAttrs = {
     userRoleIds: Id[];
     userGroupIds: Id[];
     isAdmin: boolean;
+    disabled: boolean;
 };
 
 export class User extends Struct<UserAttrs>() {

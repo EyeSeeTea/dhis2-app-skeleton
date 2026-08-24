@@ -1,4 +1,4 @@
-import { FutureData } from "$/data/api-futures";
+import { FutureData } from "$/domain/entities/generic/Future";
 import { UserRole } from "$/domain/entities/UserRole";
 
 export interface UserRoleRepository {

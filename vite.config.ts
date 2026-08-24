@@ -18,15 +18,16 @@ export default ({ mode }): UserConfig => {
             // which only supports Vite <= 4.
             nodePolyfills(),
             react(),
-            checker({
-                overlay: false,
-                typescript: true,
-                eslint: {
-                    lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
-                    useFlatConfig: true,
-                    dev: { logLevel: ["warning"] },
-                },
-            }),
+            !isTest &&
+                checker({
+                    overlay: false,
+                    typescript: true,
+                    eslint: {
+                        lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+                        useFlatConfig: true,
+                        dev: { logLevel: ["warning"] },
+                    },
+                }),
         ],
         test: {
             environment: "jsdom",
@@ -73,3 +74,5 @@ function getProxy(env: Record<string, string>) {
         };
     }
 }
+
+const isTest = process.env.VITEST;

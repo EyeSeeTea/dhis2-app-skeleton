@@ -2,8 +2,10 @@ import { User } from "$/domain/entities/User";
 import { GetUsersOptions, UserRepository } from "$/domain/repositories/UserRepository";
 import { Paginated } from "$/domain/entities/generic/Pagination";
 import { D2Api, MetadataPick } from "$/types/d2-api";
-import { apiToFuture, FutureData } from "$/data/api-futures";
+import { apiToFuture } from "$/data/api-futures";
+import { FutureData } from "$/domain/entities/generic/Future";
 import { getId } from "$/domain/entities/Ref";
+import { Maybe } from "$/utils/ts-utils";
 
 export class UserD2Repository implements UserRepository {
     constructor(private api: D2Api) {}
@@ -41,6 +43,7 @@ export class UserD2Repository implements UserRepository {
             userGroupIds: d2User.userGroups.map(getId),
             userRoleIds: d2User.userRoles.map(getId),
             isAdmin: hasAllAuthority(d2User.userRoles),
+            disabled: d2User.disabled,
         });
     }
 }
@@ -49,15 +52,15 @@ function hasAllAuthority(roles: ReadonlyArray<{ authorities: string[] }>): boole
     return roles.some(role => role.authorities.includes("ALL"));
 }
 
-function buildFilter(filters: GetUsersOptions["filters"], search: string) {
+function buildFilter(filters: GetUsersOptions["filters"], search: Maybe<string>) {
     return {
         identifiable: { token: search },
         ...(filters.userGroupIds?.length ? { "userGroups.id": { in: filters.userGroupIds } } : {}),
         ...(filters.userRoleIds?.length ? { "userRoles.id": { in: filters.userRoleIds } } : {}),
-        ...(filters.canLogin === true
-            ? { disabled: { eq: "false" } }
-            : filters.canLogin === false
-              ? { disabled: { eq: "true" } }
+        ...(filters.disabled === true
+            ? { disabled: { eq: "true" } }
+            : filters.disabled === false
+              ? { disabled: { eq: "false" } }
               : {}),
     };
 }
@@ -68,6 +71,7 @@ const userFields = {
     username: true,
     userGroups: { id: true },
     userRoles: { id: true, authorities: true },
+    disabled: true,
 } as const;
 
 type D2User = MetadataPick<{ users: { fields: typeof userFields } }>["users"][number];

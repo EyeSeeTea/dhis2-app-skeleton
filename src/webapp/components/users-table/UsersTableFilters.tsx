@@ -1,34 +1,34 @@
 import React from "react";
-import styled from "styled-components";
 import { Dropdown, MultipleDropdown } from "@eyeseetea/d2-ui-components";
 import { Id } from "$/domain/entities/Ref";
 import { UsersFilters } from "$/domain/repositories/UserRepository";
-import { UsersFilterInfo } from "$/domain/usecases/GetUsersFilterInfoUseCase";
+import { UsersFilterInfo } from "./useUsersFilterInfo";
 import { Maybe } from "$/utils/ts-utils";
 import i18n from "$/utils/i18n";
+import styles from "./UsersTableFilters.module.css";
 
 export type FiltersState = {
     userGroupIds: Id[];
     userRoleIds: Id[];
-    canLogin: Maybe<"yes" | "no">;
+    disabled: Maybe<boolean>;
 };
 
 export const initialFiltersState: FiltersState = {
     userGroupIds: [],
     userRoleIds: [],
-    canLogin: undefined,
+    disabled: undefined,
 };
 
 export function toUsersFilters(state: FiltersState): UsersFilters {
     return {
         userGroupIds: state.userGroupIds.length > 0 ? state.userGroupIds : undefined,
         userRoleIds: state.userRoleIds.length > 0 ? state.userRoleIds : undefined,
-        canLogin: state.canLogin === "yes" ? true : state.canLogin === "no" ? false : undefined,
+        disabled: state.disabled,
     };
 }
 
 type UsersTableFiltersProps = {
-    info: Maybe<UsersFilterInfo>;
+    info: UsersFilterInfo;
     selection: FiltersState;
     onChange: React.Dispatch<React.SetStateAction<FiltersState>>;
 };
@@ -56,8 +56,8 @@ export const UsersTableFilters: React.FC<UsersTableFiltersProps> = React.memo(pr
 
     const statusItems = React.useMemo(
         () => [
-            { value: "yes", text: i18n.t("Enabled") },
-            { value: "no", text: i18n.t("Disabled") },
+            { value: "yes", text: i18n.t("Disabled") },
+            { value: "no", text: i18n.t("Enabled") },
         ],
         []
     );
@@ -84,13 +84,13 @@ export const UsersTableFilters: React.FC<UsersTableFiltersProps> = React.memo(pr
         (value: string | undefined) =>
             onChange(prev => ({
                 ...prev,
-                canLogin: value === "yes" || value === "no" ? value : undefined,
+                disabled: value === "yes" ? true : value === "no" ? false : undefined,
             })),
         [onChange]
     );
 
     return (
-        <Container>
+        <div className={styles.container}>
             <MultipleDropdown
                 label={i18n.t("User groups")}
                 items={groupItems}
@@ -106,16 +106,15 @@ export const UsersTableFilters: React.FC<UsersTableFiltersProps> = React.memo(pr
             <Dropdown
                 label={i18n.t("Status")}
                 items={statusItems}
-                value={selection.canLogin}
+                value={
+                    selection.disabled === true
+                        ? "yes"
+                        : selection.disabled === false
+                          ? "no"
+                          : undefined
+                }
                 onChange={updateStatus}
             />
-        </Container>
+        </div>
     );
 });
-
-const Container = styled.div`
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    padding: 10px 0;
-`;

@@ -4,10 +4,9 @@ import {
     createNonAdminUser,
     createUser,
 } from "$/domain/entities/__tests__/userFixtures";
-import { Future } from "$/domain/entities/generic/Future";
+import { Future, FutureData } from "$/domain/entities/generic/Future";
 import { Paginated } from "$/domain/entities/generic/Pagination";
 import { GetUsersOptions, UserRepository } from "$/domain/repositories/UserRepository";
-import { FutureData } from "$/data/api-futures";
 
 export class UserTestRepository implements UserRepository {
     getCurrent(): FutureData<User> {

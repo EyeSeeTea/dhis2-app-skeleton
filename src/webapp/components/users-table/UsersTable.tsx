@@ -1,18 +1,20 @@
 import React from "react";
-import styled from "styled-components";
 import { CircularProgress, Typography } from "@material-ui/core";
 import {
     ConfirmationDialog,
     ObjectsTable,
     TableGlobalAction,
-    useObjectsTable,
+    useSnackbar,
 } from "@eyeseetea/d2-ui-components";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import { useAppContext } from "$/webapp/contexts/app-context";
 import i18n from "$/utils/i18n";
-import { UsersFilterInfo } from "$/domain/usecases/GetUsersFilterInfoUseCase";
 import { Maybe } from "$/utils/ts-utils";
+import styles from "./UsersTable.module.css";
+import { useObjectsTableFuture } from "$/webapp/utils/objects-table";
+import { UsersFilterInfo, useUsersFilterInfo } from "./useUsersFilterInfo";
+import { useExportUsersCsv } from "./useExportUsersCsv";
+import { UserView } from "./UserView";
 import { ConfirmState, UserRow, useGetUsersRows, useUsersTableConfig } from "./UsersTableConfig";
 import {
     FiltersState,
@@ -21,39 +23,48 @@ import {
     UsersTableFilters,
 } from "./UsersTableFilters";
 export const UsersTable: React.FC = React.memo(() => {
-    const { info, error } = useFilterInfo();
+    const filterInfo = useUsersFilterInfo();
 
-    if (error) {
-        return (
-            <LoadingWrapper>
-                <Typography color="error">{error}</Typography>
-            </LoadingWrapper>
-        );
+    switch (filterInfo.type) {
+        case "loading":
+            return (
+                <div className={styles.loadingWrapper}>
+                    <CircularProgress />
+                </div>
+            );
+        case "error":
+            return (
+                <div className={styles.loadingWrapper}>
+                    <Typography color="error">{filterInfo.error.message}</Typography>
+                </div>
+            );
+        case "success":
+            return <UsersTableLoaded filterInfo={filterInfo.data} />;
     }
-
-    if (!info) {
-        return (
-            <LoadingWrapper>
-                <CircularProgress />
-            </LoadingWrapper>
-        );
-    }
-
-    return <UsersTableLoaded filterInfo={info} />;
 });
 
 const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(props => {
     const { filterInfo } = props;
     const [filtersState, setFiltersState] = React.useState<FiltersState>(initialFiltersState);
     const [confirm, setConfirm] = React.useState<Maybe<ConfirmState>>(undefined);
-    const rowsRef = React.useRef<UserRow[]>([]);
     const reloadRef = React.useRef<() => void>(() => {});
+    const snackbar = useSnackbar();
 
     const filters = React.useMemo(() => toUsersFilters(filtersState), [filtersState]);
+    /* Built once here, so both the table and the export share the same indexes. */
+    const userView = React.useMemo(() => new UserView(filterInfo), [filterInfo]);
+    const onError = React.useCallback(
+        (error: Error) => {
+            console.error(error);
+            return snackbar.error(error.message);
+        },
+        [snackbar]
+    );
 
-    const { getRows, loading } = useGetUsersRows({ filters, rowsRef });
-    const config = useUsersTableConfig({ info: filterInfo, rowsRef, reloadRef, setConfirm });
-    const tableProps = useObjectsTable<UserRow>(config, getRows);
+    const { getRows, getAllRows, rows } = useGetUsersRows({ filters });
+    const config = useUsersTableConfig({ userView, rows, reloadRef, setConfirm });
+    const tableProps = useObjectsTableFuture<UserRow>(config, getRows, { onError: onError });
+    const { exportCsv, exporting } = useExportUsersCsv({ getAllRows, userView });
 
     reloadRef.current = tableProps.reload;
 
@@ -69,10 +80,10 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
                 name: "export-csv",
                 text: i18n.t("Export CSV"),
                 icon: <GetAppIcon />,
-                onClick: () => exportRowsToCsv(rowsRef.current, filterInfo),
+                onClick: exportCsv,
             },
         ],
-        [reloadRef, filterInfo]
+        [reloadRef, exportCsv]
     );
 
     const filterComponents = (
@@ -82,10 +93,10 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
     const closeConfirm = React.useCallback(() => setConfirm(undefined), []);
 
     return (
-        <Wrapper>
+        <div className={styles.wrapper}>
             <ObjectsTable<UserRow>
                 {...tableProps}
-                loading={loading}
+                loading={tableProps.isLoading || exporting}
                 globalActions={globalActions}
                 filterComponents={filterComponents}
             />
@@ -105,67 +116,6 @@ const UsersTableLoaded: React.FC<{ filterInfo: UsersFilterInfo }> = React.memo(p
                     <Typography variant="body2">{confirm.message}</Typography>
                 </ConfirmationDialog>
             )}
-        </Wrapper>
+        </div>
     );
 });
-
-function useFilterInfo(): { info: Maybe<UsersFilterInfo>; error: Maybe<string> } {
-    const { compositionRoot } = useAppContext();
-    const [info, setInfo] = React.useState<UsersFilterInfo>();
-    const [error, setError] = React.useState<string>();
-
-    React.useEffect(() => {
-        return compositionRoot.users.getFiltersInfo
-            .execute()
-            .run(setInfo, err => setError(err.message));
-    }, [compositionRoot]);
-
-    return { info, error };
-}
-
-function exportRowsToCsv(rows: UserRow[], info: UsersFilterInfo): void {
-    const groupName = new Map(info.userGroups.map(g => [g.id, g.name]));
-    const roleName = new Map(info.userRoles.map(r => [r.id, r.name]));
-    const header = ["id", "name", "username", "userGroups", "userRoles"].join(",");
-    const body = rows
-        .map(row =>
-            [
-                row.id,
-                quote(row.name),
-                quote(row.username),
-                quote(row.userGroupIds.map(id => groupName.get(id) ?? id).join("; ")),
-                quote(row.userRoleIds.map(id => roleName.get(id) ?? id).join("; ")),
-            ].join(",")
-        )
-        .join("\n");
-
-    saveFile({
-        filename: "users.csv",
-        content: `${header}\n${body}`,
-        contentType: "text/csv",
-    });
-}
-
-function saveFile(options: { filename: string; content: string; contentType: string }): void {
-    const blob = new Blob([options.content], { type: options.contentType });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = options.filename;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-function quote(value: string): string {
-    return `"${value.replace(/"/g, '""')}"`;
-}
-
-const Wrapper = styled.div`
-    margin: 10px;
-`;
-
-const LoadingWrapper = styled.div`
-    display: flex;
-    justify-content: center;
-    padding: 40px;
-`;
