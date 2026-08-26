@@ -22,22 +22,24 @@ type Repositories = {
 };
 
 function getCompositionRoot(repositories: Repositories) {
+    const { userRepository, userGroupRepository, userRoleRepository } = repositories;
+
     return {
         users: {
-            getCurrent: new GetCurrentUserUseCase(repositories),
-            get: new GetUsersUseCase(repositories),
+            getCurrent: new GetCurrentUserUseCase(userRepository),
+            get: new GetUsersUseCase(userRepository),
         },
         userGroups: {
-            get: new GetUserGroupsUseCase(repositories),
+            get: new GetUserGroupsUseCase(userGroupRepository),
         },
         userRoles: {
-            get: new GetUserRolesUseCase(repositories),
+            get: new GetUserRolesUseCase(userRoleRepository),
         },
     };
 }
 
 export function getWebappCompositionRoot(api: D2Api) {
-    const repositories: Repositories = {
+    const repositories = {
         userRepository: new UserD2Repository(api),
         userGroupRepository: new UserGroupD2Repository(api),
         userRoleRepository: new UserRoleD2Repository(api),
@@ -47,7 +49,7 @@ export function getWebappCompositionRoot(api: D2Api) {
 }
 
 export function getTestCompositionRoot() {
-    const repositories: Repositories = {
+    const repositories = {
         userRepository: new UserTestRepository(),
         userGroupRepository: new UserGroupTestRepository(),
         userRoleRepository: new UserRoleTestRepository(),

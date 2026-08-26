@@ -4,9 +4,9 @@ import { Paginated } from "$/domain/entities/generic/Pagination";
 import { GetUsersOptions, UserRepository } from "$/domain/repositories/UserRepository";
 
 export class GetUsersUseCase {
-    constructor(private repositories: { userRepository: UserRepository }) {}
+    constructor(private userRepository: UserRepository) {}
 
     execute(options: GetUsersOptions): FutureData<Paginated<User>> {
-        return this.repositories.userRepository.get(options);
+        return this.userRepository.get(options);
     }
 }
