@@ -1,6 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
-import { Future, FutureData } from "$/domain/entities/generic/Future";
-import { Paginated } from "$/domain/entities/generic/Pagination";
+import { describe, expect, it } from "vitest";
+import { Future } from "$/domain/entities/generic/Future";
 import { Id } from "$/domain/entities/Ref";
 import { User } from "$/domain/entities/User";
 import { UserRole } from "$/domain/entities/UserRole";
@@ -19,8 +18,7 @@ describe("GetUserReportUseCase", () => {
             const report = await useCase.execute().toPromise();
 
             expect(report.totalUsers).toBe(250);
-            expect(userRepository.get).toHaveBeenCalledTimes(3);
-            expect(pagesRequested(userRepository.get)).toEqual([1, 2, 3]);
+            expect(userRepository.getCalls.map(call => call.page)).toEqual([1, 2, 3]);
         });
 
         it("requests all the users, with no filters and a stable order", async () => {
@@ -29,12 +27,13 @@ describe("GetUserReportUseCase", () => {
 
             await useCase.execute().toPromise();
 
-            expect(userRepository.get).toHaveBeenCalledWith({
+            const expectedCall: GetUsersOptions = {
                 page: 1,
-                pageSize: expect.any(Number),
+                pageSize: 100,
                 filters: { userGroupIds: undefined, userRoleIds: undefined, disabled: undefined },
                 order: { field: "name", order: "asc" },
-            });
+            };
+            expect(userRepository.getCalls).toEqual([expectedCall]);
         });
     });
 
@@ -96,7 +95,7 @@ describe("GetUserReportUseCase", () => {
             ];
             const useCase = createUseCase({
                 users: fakeUserRepository(users).repository,
-                roles: fakeUserRoleRepository(roles).repository,
+                roles: fakeUserRoleRepository(roles),
             });
 
             const report = await useCase.execute().toPromise();
@@ -121,7 +120,7 @@ describe("GetUserReportUseCase", () => {
             ];
             const useCase = createUseCase({
                 users: fakeUserRepository(users).repository,
-                roles: fakeUserRoleRepository(roles).repository,
+                roles: fakeUserRoleRepository(roles),
             });
 
             const report = await useCase.execute().toPromise();
@@ -137,7 +136,7 @@ describe("GetUserReportUseCase", () => {
             ];
             const useCase = createUseCase({
                 users: fakeUserRepository(users).repository,
-                roles: fakeUserRoleRepository(roles).repository,
+                roles: fakeUserRoleRepository(roles),
             });
 
             const report = await useCase.execute().toPromise();
@@ -150,7 +149,7 @@ describe("GetUserReportUseCase", () => {
             const roles = [createUserRole({ id: "role1", authorities: ["F_USER_ADD"] })];
             const useCase = createUseCase({
                 users: fakeUserRepository(users).repository,
-                roles: fakeUserRoleRepository(roles).repository,
+                roles: fakeUserRoleRepository(roles),
             });
 
             const report = await useCase.execute().toPromise();
@@ -164,47 +163,38 @@ function createUseCase(options: {
     users: UserRepository;
     roles?: UserRoleRepository;
 }): GetUserReportUseCase {
-    return new GetUserReportUseCase({
-        userRepository: options.users,
-        userRoleRepository: options.roles ?? fakeUserRoleRepository([]).repository,
-    });
+    return new GetUserReportUseCase(options.users, options.roles ?? fakeUserRoleRepository([]));
 }
 
-/* Repository fakes: plain objects implementing the domain interfaces, backed by vi.fn so the
-   tests can also assert how the use case calls them (see the pagination tests). */
+/* Repository fakes: plain objects implementing the domain interfaces. Calls are recorded
+   manually into typed arrays, so tests can assert both what was passed and compile-check it. */
 
 function fakeUserRepository(users: User[]) {
-    const get = vi.fn((options: GetUsersOptions): FutureData<Paginated<User>> => {
-        const { page, pageSize } = options;
-
-        return Future.success({
-            pager: {
-                page: page,
-                pageSize: pageSize,
-                total: users.length,
-                pageCount: Math.ceil(users.length / pageSize),
-            },
-            objects: users.slice((page - 1) * pageSize, page * pageSize),
-        });
-    });
+    const getCalls: GetUsersOptions[] = [];
 
     const repository: UserRepository = {
-        get: get,
+        get: options => {
+            getCalls.push(options);
+            const { page, pageSize } = options;
+
+            return Future.success({
+                pager: {
+                    page: page,
+                    pageSize: pageSize,
+                    total: users.length,
+                    pageCount: Math.ceil(users.length / pageSize),
+                },
+                objects: users.slice((page - 1) * pageSize, page * pageSize),
+            });
+        },
         getCurrent: () => Future.error(new Error("getCurrent: not used by this use case")),
     };
 
-    return { repository: repository, get: get };
+    return { repository: repository, getCalls: getCalls };
 }
 
-function fakeUserRoleRepository(roles: UserRole[]) {
-    const getAll = vi.fn((): FutureData<UserRole[]> => Future.success(roles));
-    const repository: UserRoleRepository = { getAll: getAll };
-
-    return { repository: repository, getAll: getAll };
-}
-
-function pagesRequested(get: ReturnType<typeof fakeUserRepository>["get"]): number[] {
-    return get.mock.calls.map(([options]) => options.page);
+function fakeUserRoleRepository(roles: UserRole[]): UserRoleRepository {
+    return { getAll: () => Future.success(roles) };
 }
 
 function createUsers(count: number): User[] {
