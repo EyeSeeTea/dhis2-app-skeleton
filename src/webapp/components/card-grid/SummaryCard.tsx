@@ -57,10 +57,6 @@ interface SummaryCardActionsProps {
     section: ModelSection;
 }
 
-function getSectionNewPath(_section: SectionBase) {
-    return "NEW-TODO";
-}
-
 function getSectionPath(section: ModelSection) {
     return section.route;
 }
@@ -68,14 +64,6 @@ function getSectionPath(section: ModelSection) {
 export const SummaryCardActions = ({ section }: SummaryCardActionsProps) => {
     return (
         <div className={styles.cardActions}>
-            {
-                <Link to={`/${getSectionNewPath(section)}`} tabIndex={-1}>
-                    <Button secondary small>
-                        {i18n.t("Add new")}
-                    </Button>
-                </Link>
-            }
-
             <Link to={`/${getSectionPath(section)}`} tabIndex={-1}>
                 <Button secondary small>
                     {i18n.t("Manage")}

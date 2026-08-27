@@ -7,13 +7,17 @@ import { HashMap } from "./HashMap";
  * import _ from "./Collection";
  *
  * const values = _(["1", "2", "3", "3", "4"])
- *     .map(x => parseInt(x))
- *     .filter(x => x > 1)
- *     .uniq()
- *     .reverse()
+ *     .map(x => parseInt(x)) // Collection[1, 2, 3, 3, 4]
+ *     .filter(x => x > 1) // Collection[2, 3, 3, 4]
+ *     .uniq() // Collection[2, 3, 4]
+ *     .reverse() // Collection[4, 3, 2]
  *     .value(); // [4, 3, 2]
  * ```
  */
+
+export default function _c<T>(xs: T[]): Collection<T> {
+    return Collection.from(xs);
+}
 
 export class Collection<T> {
     protected xs: T[];
@@ -56,8 +60,8 @@ export class Collection<T> {
         return _c(this.xs.flat()) as any;
     }
 
-    flatMap<U>(fn: (x: T) => Collection<U>): Collection<U> {
-        return _c(this.xs.flatMap(x => fn(x).toArray()));
+    flatMap<U>(fn: (x: T) => Array<U>): Collection<U> {
+        return _c(this.xs.flatMap(x => fn(x)));
     }
 
     select(pred: (x: T) => boolean): Collection<T> {
@@ -196,7 +200,7 @@ export class Collection<T> {
     }
 
     intersperse(value: T): Collection<T> {
-        return this.flatMap(x => _c([x, value])).thru(cs => cs.take(cs.size - 1));
+        return this.flatMap(x => [x, value]).thru(cs => cs.take(cs.size - 1));
     }
 
     uniq(): Collection<T> {
@@ -238,6 +242,7 @@ export class Collection<T> {
                 _c(zss)
                     .cartesian()
                     .map(zs => [x, ...zs])
+                    .toArray()
             ) as any;
         }
     }
@@ -322,7 +327,3 @@ function compareArray<T>(a: T, b: T, items: OrderItem<T>[]): CompareRes {
 }
 
 type OrderItem<T> = [(obj: T) => unknown, "asc" | "desc"];
-
-export default function _c<T>(xs: T[]): Collection<T> {
-    return Collection.from(xs);
-}

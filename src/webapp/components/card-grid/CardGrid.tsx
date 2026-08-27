@@ -4,7 +4,9 @@ import { SummaryCard, SummaryCardGroup } from "$/webapp/components/card-grid/Sum
 
 const section = { title: "title2", name: "name2" };
 
-export const CardGrid: React.FC<CardGridProps> = React.memo(({ title, cards, onBackClick }) => {
+export const CardGrid: React.FC<CardGridProps> = React.memo(props => {
+    const { title, cards, onBackClick } = props;
+
     return (
         <React.Fragment>
             {!!title && <PageHeader title={title} onBackClick={onBackClick} />}

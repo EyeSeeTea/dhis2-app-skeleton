@@ -1,10 +1,14 @@
 import ReactDOM from "react-dom/client";
 import { Dhis2App } from "./pages/app/Dhis2App";
 import { CssReset, CssVariables } from "@dhis2/ui";
+import { assertValue } from "$/utils/assert";
 
 const domElementId = "root";
-const root = document.getElementById(domElementId);
-if (!root) throw new Error(`Root DOM element not found: id=${domElementId}`);
+const root = assertValue(
+    document.getElementById(domElementId),
+    `Root DOM element not found: id=${domElementId}`
+);
+
 ReactDOM.createRoot(root).render(
     <AppWrapper>
         <Dhis2App />

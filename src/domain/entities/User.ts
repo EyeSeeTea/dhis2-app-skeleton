@@ -1,26 +1,18 @@
 import { Struct } from "./generic/Struct";
-import { Id, NamedRef } from "./Ref";
+import { Id } from "./Ref";
 
 export type UserAttrs = {
     id: Id;
     name: string;
     username: string;
-    userRoles: UserRole[];
-    userGroups: NamedRef[];
-};
-
-export type UserRole = {
-    id: Id;
-    name: string;
-    authorities: string[];
+    userRoleIds: Id[];
+    userGroupIds: Id[];
+    isAdmin: boolean;
+    disabled: boolean;
 };
 
 export class User extends Struct<UserAttrs>() {
-    belongToUserGroup(userGroupUid: string): boolean {
-        return this.userGroups.some(({ id }) => id === userGroupUid);
-    }
-
-    isAdmin(): boolean {
-        return this.userRoles.some(({ authorities }) => authorities.includes("ALL"));
+    belongsToUserGroup(userGroupUid: Id): boolean {
+        return this.userGroupIds.includes(userGroupUid);
     }
 }

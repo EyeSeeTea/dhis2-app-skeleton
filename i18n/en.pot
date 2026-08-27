@@ -5,11 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-09T09:34:28.901Z\n"
-"PO-Revision-Date: 2025-09-09T09:34:28.901Z\n"
-
-msgid "Add new"
-msgstr ""
+"POT-Creation-Date: 2026-08-18T09:22:03.836Z\n"
+"PO-Revision-Date: 2026-08-18T09:22:03.837Z\n"
 
 msgid "Manage"
 msgstr ""
@@ -23,6 +20,89 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
+msgid "(+{{count}} more)"
+msgid_plural "(+{{count}} more)"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Refresh"
+msgstr ""
+
+msgid "Export CSV"
+msgstr ""
+
+msgid "OK"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Copy username"
+msgstr ""
+
+msgid "Copied {{username}}"
+msgstr ""
+
+msgid "Failed to copy to clipboard"
+msgstr ""
+
+msgid "Show roles"
+msgstr ""
+
+msgid "(none)"
+msgstr ""
+
+msgid "Roles for {{name}}"
+msgstr ""
+
+msgid "Disable user"
+msgstr ""
+
+msgid "Disable users"
+msgstr ""
+
+msgid "You are about to disable {{count}} user(s)"
+msgid_plural "You are about to disable {{count}} user(s)"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Disabled {{count}} users (stub)"
+msgid_plural "Disabled {{count}} users (stub)"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "User groups"
+msgstr ""
+
+msgid "User roles"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Id"
+msgstr ""
+
+msgid "Search by name or username"
+msgstr ""
+
+msgid "Only the first {{count}} users have been exported"
+msgid_plural "Only the first {{count}} users have been exported"
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "Hello {{name}}"
 msgstr ""
 
@@ -32,8 +112,20 @@ msgstr ""
 msgid "Some help"
 msgstr ""
 
+msgid "Roles: {{total}}"
+msgstr ""
+
+msgid "Groups: {{total}}"
+msgstr ""
+
+msgid "Administrator"
+msgstr ""
+
 msgid "Users"
 msgstr ""
 
-msgid "Current user"
+msgid "Browse users with filters and actions"
+msgstr ""
+
+msgid "Search by name"
 msgstr ""

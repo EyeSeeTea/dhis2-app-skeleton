@@ -1,4 +1,5 @@
 import { HeaderBar as D2HeaderBar } from "@dhis2/ui";
+import styles from "./HeaderBar.module.css";
 
 type HeaderBarProps = {
     appName: string;
@@ -12,13 +13,8 @@ export const HeaderBar: React.FC<HeaderBarProps> = props => {
     if (!shouldRenderHeaderBar) return null;
 
     return (
-        <div className="header-bar-wrapper">
+        <div className={styles.headerBarWrapper}>
             <D2HeaderBar appName={appName} />
-            <style jsx>{`
-                .header-bar-wrapper :global(div:first-of-type) {
-                    box-sizing: border-box;
-                }
-            `}</style>
         </div>
     );
 };
