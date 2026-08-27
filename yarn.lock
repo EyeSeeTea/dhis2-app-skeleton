@@ -4101,6 +4101,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@johanblumenberg/ts-mockito@npm:^1.0.52":
+  version: 1.0.52
+  resolution: "@johanblumenberg/ts-mockito@npm:1.0.52"
+  dependencies:
+    lodash: "npm:^4.17.20"
+  checksum: 10c0/bc9a2ca30264e8aad70483d4eb886443aae2b8dc137859cc436dd9f33059797cbe927f16df4b00bb11c288d18eff7ac895f5545c9b66fadf3908d5c27aa2bf8e
+  languageName: node
+  linkType: hard
+
 "@jridgewell/gen-mapping@npm:^0.3.12, @jridgewell/gen-mapping@npm:^0.3.5":
   version: 0.3.13
   resolution: "@jridgewell/gen-mapping@npm:0.3.13"
@@ -4660,17 +4669,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/hoist-non-react-statics@npm:*":
-  version: 3.3.7
-  resolution: "@types/hoist-non-react-statics@npm:3.3.7"
-  dependencies:
-    hoist-non-react-statics: "npm:^3.3.0"
-  peerDependencies:
-    "@types/react": "*"
-  checksum: 10c0/ed8f4e88338f7d021d0f956adf6089d2a12b2e254a03c05292324f2e986d2376eb9efdb8a4f04596823e8fca88c9d06361d20dab4a2a00dc935fb36ac911de55
-  languageName: node
-  linkType: hard
-
 "@types/i18next@npm:^11.9.0":
   version: 11.9.3
   resolution: "@types/i18next@npm:11.9.3"
@@ -4861,17 +4859,6 @@ __metadata:
   version: 2.0.3
   resolution: "@types/stack-utils@npm:2.0.3"
   checksum: 10c0/1f4658385ae936330581bcb8aa3a066df03867d90281cdf89cc356d404bd6579be0f11902304e1f775d92df22c6dd761d4451c804b0a4fba973e06211e9bd77c
-  languageName: node
-  linkType: hard
-
-"@types/styled-components@npm:5.1.24":
-  version: 5.1.24
-  resolution: "@types/styled-components@npm:5.1.24"
-  dependencies:
-    "@types/hoist-non-react-statics": "npm:*"
-    "@types/react": "npm:*"
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/d80e73d54c299056f4944b51ac2d13a5f51ed949d496781a5cc5de02d4c5fbdd49a69af0cca7413c1a7e83ec5bd27dcc392e3e7829917aeda5aeec35e77e8022
   languageName: node
   linkType: hard
 
@@ -7124,6 +7111,7 @@ __metadata:
     "@eyeseetea/d2-api": "npm:^1"
     "@eyeseetea/d2-ui-components": "npm:^2"
     "@eyeseetea/feedback-component": "npm:^0"
+    "@johanblumenberg/ts-mockito": "npm:^1.0.52"
     "@material-ui/core": "npm:^4"
     "@material-ui/icons": "npm:^4"
     "@material-ui/styles": "npm:^4"
@@ -7136,7 +7124,6 @@ __metadata:
     "@types/react": "npm:18.2.22"
     "@types/react-dom": "npm:18.2.7"
     "@types/react-router-dom": "npm:5.3.3"
-    "@types/styled-components": "npm:5.1.24"
     "@typescript-eslint/eslint-plugin": "npm:^8"
     "@typescript-eslint/parser": "npm:^8"
     "@vitejs/plugin-react": "npm:^3.1.0"
@@ -8891,7 +8878,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.1.0, hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.2":
+"hoist-non-react-statics@npm:^3.1.0, hoist-non-react-statics@npm:^3.3.2":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:

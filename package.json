@@ -35,6 +35,7 @@
         "typed-immutable-map": ">=0"
     },
     "devDependencies": {
+        "@johanblumenberg/ts-mockito": "^1.0.52",
         "@prettier/sync": "^0.6.1",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^14.0.0",

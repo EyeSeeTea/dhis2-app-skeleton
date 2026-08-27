@@ -1,4 +1,13 @@
 import { describe, expect, it } from "vitest";
+import {
+    anything,
+    capture,
+    deepEqual,
+    imock,
+    instance,
+    verify,
+    when,
+} from "@johanblumenberg/ts-mockito";
 import { Future } from "$/domain/entities/generic/Future";
 import { Id } from "$/domain/entities/Ref";
 import { User } from "$/domain/entities/User";
@@ -13,17 +22,21 @@ describe("GetUserReportUseCase", () => {
         it("requests pages until the pager is exhausted", async () => {
             const users = createUsers(250);
             const userRepository = fakeUserRepository(users);
-            const useCase = createUseCase({ users: userRepository.repository });
+            const useCase = createUseCase({ users: userRepository.instance });
 
             const report = await useCase.execute().toPromise();
 
             expect(report.totalUsers).toBe(250);
-            expect(userRepository.getCalls.map(call => call.page)).toEqual([1, 2, 3]);
+            expect(
+                capture(userRepository.mock.get)
+                    .all()
+                    .map(call => call[0].page)
+            ).toEqual([1, 2, 3]);
         });
 
         it("requests all the users, with no filters and a stable order", async () => {
             const userRepository = fakeUserRepository(createUsers(2));
-            const useCase = createUseCase({ users: userRepository.repository });
+            const useCase = createUseCase({ users: userRepository.instance });
 
             await useCase.execute().toPromise();
 
@@ -33,7 +46,7 @@ describe("GetUserReportUseCase", () => {
                 filters: { userGroupIds: undefined, userRoleIds: undefined, disabled: undefined },
                 order: { field: "name", order: "asc" },
             };
-            expect(userRepository.getCalls).toEqual([expectedCall]);
+            verify(userRepository.mock.get(deepEqual(expectedCall))).once();
         });
     });
 
@@ -44,7 +57,7 @@ describe("GetUserReportUseCase", () => {
                 createUser({ id: "user2", isAdmin: false }),
                 createUser({ id: "user3", isAdmin: false }),
             ];
-            const useCase = createUseCase({ users: fakeUserRepository(users).repository });
+            const useCase = createUseCase({ users: fakeUserRepository(users).instance });
 
             const report = await useCase.execute().toPromise();
 
@@ -54,7 +67,7 @@ describe("GetUserReportUseCase", () => {
         });
 
         it("returns an empty report when there are no users", async () => {
-            const useCase = createUseCase({ users: fakeUserRepository([]).repository });
+            const useCase = createUseCase({ users: fakeUserRepository([]).instance });
 
             const report = await useCase.execute().toPromise();
 
@@ -73,7 +86,7 @@ describe("GetUserReportUseCase", () => {
                 createUser({ id: "user2", name: "One role", userRoleIds: ["role1"] }),
                 createUser({ id: "user3", name: "Two roles", userRoleIds: ["role1", "role2"] }),
             ];
-            const useCase = createUseCase({ users: fakeUserRepository(users).repository });
+            const useCase = createUseCase({ users: fakeUserRepository(users).instance });
 
             const report = await useCase.execute().toPromise();
 
@@ -94,7 +107,7 @@ describe("GetUserReportUseCase", () => {
                 createUserRole({ id: "role3", name: "Unassigned role" }),
             ];
             const useCase = createUseCase({
-                users: fakeUserRepository(users).repository,
+                users: fakeUserRepository(users).instance,
                 roles: fakeUserRoleRepository(roles),
             });
 
@@ -119,7 +132,7 @@ describe("GetUserReportUseCase", () => {
                 createUserRole({ id: "role2", authorities: ["F_USER_ADD", "F_USER_DELETE"] }),
             ];
             const useCase = createUseCase({
-                users: fakeUserRepository(users).repository,
+                users: fakeUserRepository(users).instance,
                 roles: fakeUserRoleRepository(roles),
             });
 
@@ -135,7 +148,7 @@ describe("GetUserReportUseCase", () => {
                 createUserRole({ id: "role2", authorities: ["F_USER_DELETE"] }),
             ];
             const useCase = createUseCase({
-                users: fakeUserRepository(users).repository,
+                users: fakeUserRepository(users).instance,
                 roles: fakeUserRoleRepository(roles),
             });
 
@@ -148,7 +161,7 @@ describe("GetUserReportUseCase", () => {
             const users = [createUser({ id: "user1", userRoleIds: ["role1", "unknownRole"] })];
             const roles = [createUserRole({ id: "role1", authorities: ["F_USER_ADD"] })];
             const useCase = createUseCase({
-                users: fakeUserRepository(users).repository,
+                users: fakeUserRepository(users).instance,
                 roles: fakeUserRoleRepository(roles),
             });
 
@@ -166,35 +179,32 @@ function createUseCase(options: {
     return new GetUserReportUseCase(options.users, options.roles ?? fakeUserRoleRepository([]));
 }
 
-/* Repository fakes: plain objects implementing the domain interfaces. Calls are recorded
-   manually into typed arrays, so tests can assert both what was passed and compile-check it. */
+/* Repository doubles built with ts-mockito: the mocks satisfy the whole domain interface
+   compile-time (no hand-written stubs), calls are verified against the real signatures. */
 
 function fakeUserRepository(users: User[]) {
-    const getCalls: GetUsersOptions[] = [];
+    const repository = imock<UserRepository>();
 
-    const repository: UserRepository = {
-        get: options => {
-            getCalls.push(options);
-            const { page, pageSize } = options;
+    when(repository.get(anything())).thenCall(({ page, pageSize }: GetUsersOptions) => {
+        return Future.success({
+            pager: {
+                page: page,
+                pageSize: pageSize,
+                total: users.length,
+                pageCount: Math.ceil(users.length / pageSize),
+            },
+            objects: users.slice((page - 1) * pageSize, page * pageSize),
+        });
+    });
 
-            return Future.success({
-                pager: {
-                    page: page,
-                    pageSize: pageSize,
-                    total: users.length,
-                    pageCount: Math.ceil(users.length / pageSize),
-                },
-                objects: users.slice((page - 1) * pageSize, page * pageSize),
-            });
-        },
-        getCurrent: () => Future.error(new Error("getCurrent: not used by this use case")),
-    };
-
-    return { repository: repository, getCalls: getCalls };
+    return { mock: repository, instance: instance(repository) };
 }
 
 function fakeUserRoleRepository(roles: UserRole[]): UserRoleRepository {
-    return { getAll: () => Future.success(roles) };
+    const repository = imock<UserRoleRepository>();
+    when(repository.getAll()).thenReturn(Future.success(roles));
+
+    return instance(repository);
 }
 
 function createUsers(count: number): User[] {
