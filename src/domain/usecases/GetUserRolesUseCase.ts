@@ -3,9 +3,9 @@ import { UserRole } from "$/domain/entities/UserRole";
 import { UserRoleRepository } from "$/domain/repositories/UserRoleRepository";
 
 export class GetUserRolesUseCase {
-    constructor(private repositories: { userRoleRepository: UserRoleRepository }) {}
+    constructor(private userRoleRepository: UserRoleRepository) {}
 
     execute(): FutureData<UserRole[]> {
-        return this.repositories.userRoleRepository.getAll();
+        return this.userRoleRepository.getAll();
     }
 }

@@ -13,16 +13,14 @@ const emptyFilters: UsersFilters = {
 
 export class GetUserReportUseCase {
     constructor(
-        private repositories: {
-            userRepository: UserRepository;
-            userRoleRepository: UserRoleRepository;
-        }
+        private userRepository: UserRepository,
+        private userRoleRepository: UserRoleRepository
     ) {}
 
     execute(): FutureData<UserReport> {
         const data$ = {
             users: this.getAllUsers(),
-            roles: this.repositories.userRoleRepository.getAll(),
+            roles: this.userRoleRepository.getAll(),
         };
 
         return Future.joinObj(data$, { concurrency: 2 }).map(({ users, roles }): UserReport => {
@@ -73,7 +71,7 @@ export class GetUserReportUseCase {
 
             do {
                 const users = await $(
-                    this.repositories.userRepository.get({
+                    this.userRepository.get({
                         page: page,
                         pageSize: 100,
                         filters: emptyFilters,

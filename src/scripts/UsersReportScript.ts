@@ -32,10 +32,10 @@ function main() {
             const info = await api.system.info.getData();
             console.info("System info:", info);
 
-            const useCase = new GetUserReportUseCase({
-                userRepository: new UserD2Repository(api),
-                userRoleRepository: new UserRoleD2Repository(api),
-            });
+            const useCase = new GetUserReportUseCase(
+                new UserD2Repository(api),
+                new UserRoleD2Repository(api)
+            );
 
             const report = await useCase.execute().toPromise();
             printReport(report);
