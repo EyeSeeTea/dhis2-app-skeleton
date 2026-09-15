@@ -36,30 +36,41 @@ yarn typecheck
 
 Clean architecture with three layers:
 
-| Directory | Purpose |
-|---|---|
-| `src/domain` | Entities, use cases, repository interfaces |
-| `src/data` | Repository implementations (DHIS2 API, test doubles) |
-| `src/webapp` | React presentation (pages, components, contexts) |
-| `src/scripts` | CLI scripts |
-| `src/types` | Shared type definitions |
-| `src/utils` | Misc utilities |
-| `i18n/` | Translations (gettext `.po` format) |
-| `public/` | Static webapp resources |
+| Directory     | Purpose                                              |
+| ------------- | ---------------------------------------------------- |
+| `src/domain`  | Entities, use cases, repository interfaces           |
+| `src/data`    | Repository implementations (DHIS2 API, test doubles) |
+| `src/webapp`  | React presentation (pages, components, contexts)     |
+| `src/scripts` | CLI scripts                                          |
+| `src/types`   | Shared type definitions                              |
+| `src/utils`   | Misc utilities                                       |
+| `i18n/`       | Translations (gettext `.po` format)                  |
+| `public/`     | Static webapp resources                              |
 
-The `$` path alias resolves to `src/`, so imports look like `import { Foo } from "$/domain/entities/Foo"`.
+## Check
+
+Run all code-quality to validate changes:
+
+```
+$ yarn run check
+```
+
+This runs the TypeScript typecheck, Prettier check, lint, and tests.
+Individual checks can also be run with `yarn typecheck`, `yarn prettify:check`, `yarn lint`, and `yarn test`.
+
+## Some development tips
 
 ### Data structures (`src/domain/entities/generic`)
 
-| Module | Description |
-|---|---|
-| `Future` | Cancellable async values with type-safe errors (lazily evaluated, unlike promises) |
-| `Collection` | Wrapper over JS arrays with extended methods |
-| `HashMap` | Immutable map (like ES6 Map, but immutable) |
-| `Either` | Represents either a success value or an error |
-| `Struct` | Base class for value objects with `create` and `update` |
-| `Rec` | Extended methods for JS objects |
-| `Pagination` | Pagination types |
+| Module       | Description                                                                        |
+| ------------ | ---------------------------------------------------------------------------------- |
+| `Future`     | Cancellable async values with type-safe errors (lazily evaluated, unlike promises) |
+| `Collection` | Wrapper over JS arrays with extended methods                                       |
+| `HashMap`    | Immutable map (like ES6 Map, but immutable)                                        |
+| `Either`     | Represents either a success value or an error                                      |
+| `Struct`     | Base class for value objects with `create` and `update`                            |
+| `Rec`        | Extended methods for JS objects                                                    |
+| `Pagination` | Pagination types                                                                   |
 
 ### d2-api version
 
