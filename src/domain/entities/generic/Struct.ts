@@ -40,6 +40,6 @@ export function Struct<Attrs>() {
     };
 }
 
-const _GenericStruct = Struct<unknown>();
+export const GenericStruct = Struct<unknown>();
 
-export type GenericStructInstance = InstanceType<typeof _GenericStruct>;
+export type GenericStructInstance = InstanceType<typeof GenericStruct>;
