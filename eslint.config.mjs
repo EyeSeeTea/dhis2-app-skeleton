@@ -1,10 +1,10 @@
 import js from "@eslint/js";
-import noRelativeImportPaths from "eslint-plugin-no-relative-import-paths";
+import tseslint from "typescript-eslint";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import testingLibrary from "eslint-plugin-testing-library";
+import noRelativeImportPaths from "eslint-plugin-no-relative-import-paths";
 import unusedImports from "eslint-plugin-unused-imports";
-import tseslint from "typescript-eslint";
 
 import requireFutureBlockCapture from "./eslint/rules/require-future-block-capture.js";
 
@@ -85,7 +85,6 @@ export default tseslint.config(
             "@typescript-eslint/no-use-before-define": "off",
             "@typescript-eslint/no-explicit-any": "off",
             "@typescript-eslint/no-empty-interface": "off",
-            "@typescript-eslint/no-empty-object-type": "off",
             "@typescript-eslint/no-empty-function": "off",
             "@typescript-eslint/explicit-module-boundary-types": "off",
             "@typescript-eslint/ban-ts-comment": "off",
@@ -102,8 +101,7 @@ export default tseslint.config(
 
             "react-hooks/rules-of-hooks": "warn",
             "react-hooks/exhaustive-deps": "warn",
-            // Data loading in existing table hooks is intentionally started from
-            // an effect. Keep that established pattern while using Hooks v7.
+            // TODO: Enable `react-hooks/set-state-in-effect`.
             "react-hooks/set-state-in-effect": "off",
 
             "no-relative-import-paths/no-relative-import-paths": [
