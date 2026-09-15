@@ -58,7 +58,6 @@ function isFutureBlockCallback(functionNode) {
 module.exports = {
     meta: {
         type: "problem",
-        fixable: "code",
         docs: {
             description:
                 "Require await calls inside Future.block callbacks to go through the capture function",
@@ -93,10 +92,6 @@ module.exports = {
                     node,
                     messageId: "wrapAwait",
                     data: { capture: captureParam.name },
-                    fix(fixer) {
-                        const awaitedText = sourceCode.getText(awaited);
-                        return fixer.replaceText(awaited, `${captureParam.name}(${awaitedText})`);
-                    },
                 });
             },
         };
