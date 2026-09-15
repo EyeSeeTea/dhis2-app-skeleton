@@ -191,6 +191,10 @@ export class Future<E, D> {
 
 export type Cancel = (() => void) | undefined;
 
+/* Error a cancelled Future rejects with. Future.run ignores it, as a cancellation is requested
+   by the caller and should not be reported as a failure. */
+export const Cancellation = rcpromise.Cancellation;
+
 interface CaptureAsync<E> {
     <D>(async: Future<E, D>): Promise<D>;
     throw: (error: E) => never;
@@ -224,3 +228,5 @@ export function getJSON<U>(url: string): Future<TypeError | SyntaxError, U> {
 function isNamedError(error: unknown): error is { name: string } {
     return Boolean(error && typeof error === "object" && "name" in error);
 }
+
+export type FutureData<Data> = Future<Error, Data>;

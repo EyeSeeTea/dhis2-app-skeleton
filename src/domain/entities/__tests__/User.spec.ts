@@ -1,37 +1,28 @@
 import { describe, expect, it } from "vitest";
-import { createAdminUser, createNonAdminUser, createUserWithGroups } from "./userFixtures";
+import { createUser } from "./userFixtures";
 
 describe("User", () => {
-    it("should be admin if has a role with authority ALL", () => {
-        const user = createAdminUser();
+    describe("belongsToUserGroup", () => {
+        it("returns true when the user is in the group", () => {
+            const userGroupId = "BwyMfDBLih9";
+            const user = createUser({ userGroupIds: [userGroupId] });
 
-        expect(user.isAdmin()).toBe(true);
-    });
-    it("should no be admin if hasn't a role with authority ALL", () => {
-        const user = createNonAdminUser();
+            expect(user.belongsToUserGroup(userGroupId)).toBe(true);
+        });
 
-        expect(user.isAdmin()).toBe(false);
-    });
-    it("should return belong to user group equal to false when the id exist", () => {
-        const userGroupId = "BwyMfDBLih9";
+        it("returns false when the user is not in the group", () => {
+            const existingUserGroupId = "BwyMfDBLih9";
+            const nonExistentUserGroupId = "f31IM13BgwJ";
+            const user = createUser({ userGroupIds: [existingUserGroupId] });
 
-        const user = createUserWithGroups([{ id: userGroupId, name: "Group 1" }]);
+            expect(user.belongsToUserGroup(nonExistentUserGroupId)).toBe(false);
+        });
 
-        expect(user.belongToUserGroup(userGroupId)).toBe(true);
-    });
-    it("should return belong to user group equal to false when the id does not exist", () => {
-        const existedUserGroupId = "BwyMfDBLih9";
-        const nonExistedUserGroupId = "f31IM13BgwJ";
+        it("returns false when the user has no groups", () => {
+            const nonExistentUserGroupId = "f31IM13BgwJ";
+            const user = createUser({ userGroupIds: [] });
 
-        const user = createUserWithGroups([{ id: existedUserGroupId, name: "Group 1" }]);
-
-        expect(user.belongToUserGroup(nonExistedUserGroupId)).toBe(false);
-    });
-    it("should return belong to user group equal to false if user groups is empty", () => {
-        const nonExistedUserGroupId = "f31IM13BgwJ";
-
-        const user = createUserWithGroups();
-
-        expect(user.belongToUserGroup(nonExistedUserGroupId)).toBe(false);
+            expect(user.belongsToUserGroup(nonExistentUserGroupId)).toBe(false);
+        });
     });
 });

@@ -14,7 +14,7 @@ describe("Collection", () => {
     });
 
     test("flatMap", () => {
-        const values = _([1, 2, 3]).flatMap(x => _([x, -x]));
+        const values = _([1, 2, 3]).flatMap(x => [x, -x]);
         expect(values.toArray()).toEqual([1, -1, 2, -2, 3, -3]);
     });
 

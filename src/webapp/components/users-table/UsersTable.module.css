@@ -1,0 +1,9 @@
+.wrapper {
+    margin: 10px;
+}
+
+.loadingWrapper {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
