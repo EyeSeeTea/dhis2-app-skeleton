@@ -5,13 +5,20 @@ import { D2Api } from "$/types/d2-api";
 import { App } from "./App";
 import { CompositionRoot, getWebappCompositionRoot } from "$/CompositionRoot";
 
-export function Dhis2App(_props: {}) {
+export function Dhis2App() {
     const [compositionRootRes, setCompositionRootRes] = React.useState<CompositionRootResult>({
         type: "loading",
     });
 
     React.useEffect(() => {
-        getData().then(setCompositionRootRes);
+        getData()
+            .then(setCompositionRootRes)
+            .catch(err => {
+                setCompositionRootRes({
+                    type: "error",
+                    error: { baseUrl: "", error: err as Error },
+                });
+            });
     }, []);
 
     switch (compositionRootRes.type) {
@@ -20,12 +27,12 @@ export function Dhis2App(_props: {}) {
         case "error": {
             const { baseUrl, error } = compositionRootRes.error;
             return (
-                <h3 style={{ margin: 20 }}>
+                <div style={{ margin: 20 }}>
                     <h3>{error.message}</h3>
                     <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
                         Login {baseUrl}
                     </a>
-                </h3>
+                </div>
             );
         }
         case "loaded": {
