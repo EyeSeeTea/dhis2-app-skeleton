@@ -5,27 +5,27 @@ exports[`ExamplePage > renders the component 1`] = `
   <div>
     <div>
       <span
-        tabindex=\\"0\\"
-        aria-describedby=\\"\\"
-        data-test=\\"dhis2-uicore-tooltip-reference\\"
-        ><button data-test=\\"page-header-back\\" type=\\"button\\">
+        tabindex="0"
+        aria-describedby=""
+        data-test="dhis2-uicore-tooltip-reference"
+        ><button data-test="page-header-back" type="button">
           <span
             ><svg
-              height=\\"24\\"
-              viewBox=\\"0 0 24 24\\"
-              width=\\"24\\"
-              xmlns=\\"http://www.w3.org/2000/svg\\"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                d=\\"M13.293 6.293a1 1 0 011.497 1.32l-.083.094L10.415 12l4.292 4.293a1 1 0 01.083 1.32l-.083.094a1 1 0 01-1.32.083l-.094-.083-5-5a1 1 0 01-.083-1.32l.083-.094z\\"
-                fill=\\"currentColor\\"
+                d="M13.293 6.293a1 1 0 011.497 1.32l-.083.094L10.415 12l4.292 4.293a1 1 0 01.083 1.32l-.083.094a1 1 0 01-1.32.083l-.094-.083-5-5a1 1 0 01-.083-1.32l.083-.094z"
+                fill="currentColor"
               ></path></svg
           ></span></button
       ></span>
     </div>
-    <h2 data-test=\\"page-header-title\\">Detail page</h2>
+    <h2 data-test="page-header-title">Detail page</h2>
   </div>
-  <button data-test=\\"dhis2-uicore-button\\" type=\\"button\\">Help</button>
+  <button data-test="dhis2-uicore-button" type="button">Help</button>
 </div>
 <h2>Hello Mary</h2>
 "
