@@ -55,7 +55,7 @@ function isFutureBlockCallback(functionNode) {
     return isFutureBlockFactoryCall(callee);
 }
 
-export default {
+module.exports = {
     meta: {
         type: "problem",
         fixable: "code",
