@@ -7,6 +7,7 @@ import { Share } from "$/webapp/components/share/Share";
 import { AppContext, AppContextState } from "$/webapp/contexts/app-context";
 import { Router } from "$/webapp/pages/Router";
 import "./App.css";
+import { assert } from "$/utils/assert";
 import { HeaderBar } from "$/webapp/pages/app/header-bar/HeaderBar";
 
 type AppProps = {
@@ -23,7 +24,7 @@ function App_(props: AppProps) {
         async function setup() {
             const isShareButtonVisible = appConfig.appearance.showShareButton;
             const currentUser = await compositionRoot.users.getCurrent.execute().toPromise();
-            if (!currentUser) throw new Error("User not logged in");
+            assert(currentUser, "User not logged in");
 
             setAppContext({ currentUser, compositionRoot });
             setShowShareButton(isShareButtonVisible);
