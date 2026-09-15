@@ -1,5 +1,4 @@
 import js from "@eslint/js";
-import globals from "globals";
 import noRelativeImportPaths from "eslint-plugin-no-relative-import-paths";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
@@ -33,11 +32,6 @@ export default tseslint.config(
 
     {
         languageOptions: {
-            globals: {
-                ...globals.browser,
-                ...globals.node,
-                ...globals.jest,
-            },
             parserOptions: {
                 ecmaVersion: "latest",
                 project: "./tsconfig.json",
