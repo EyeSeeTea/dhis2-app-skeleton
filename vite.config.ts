@@ -1,11 +1,11 @@
 /// <reference types="vitest/config" />
-import { UserConfig, defineConfig, loadEnv } from "vite";
+import { ConfigEnv, UserConfig, defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import checker from "vite-plugin-checker";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import * as path from "path";
 
-export default ({ mode }): UserConfig => {
+export default ({ mode }: ConfigEnv): UserConfig => {
     const env = { ...process.env, ...loadEnv(mode, process.cwd()) };
     const proxy = getProxy(env);
 
@@ -69,7 +69,7 @@ function getProxy(env: Record<string, string>) {
                 target: targetUrl,
                 changeOrigin: true,
                 auth: auth,
-                rewrite: path => path.replace(/^\/dhis2/, ""),
+                rewrite: (requestPath: string) => requestPath.replace(/^\/dhis2/, ""),
             },
         };
     }
