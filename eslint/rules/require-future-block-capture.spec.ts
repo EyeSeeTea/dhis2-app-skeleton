@@ -5,12 +5,16 @@ import { describe, expect, test } from "vitest";
 import requireFutureBlockCapture from "./require-future-block-capture.js";
 
 function lint(source: string) {
-    const linter = new Linter({ configType: "eslintrc" });
-    linter.defineRule("require-future-block-capture", requireFutureBlockCapture);
+    const linter = new Linter();
 
     return linter.verifyAndFix(source, {
-        parserOptions: { ecmaVersion: 2022, sourceType: "module" },
-        rules: { "require-future-block-capture": "error" },
+        languageOptions: { ecmaVersion: 2022, sourceType: "module" },
+        plugins: {
+            local: {
+                rules: { "require-future-block-capture": requireFutureBlockCapture },
+            },
+        },
+        rules: { "local/require-future-block-capture": "error" },
     });
 }
 
