@@ -12,65 +12,39 @@ function isIdentifier(
     return node?.type === "Identifier" && node.name === name;
 }
 
-function isFutureBlockCall(node: TSESTree.Node | null | undefined): boolean {
+function isFutureMethodCall(
+    node: TSESTree.Node | null | undefined,
+    method: "block" | "block_"
+): boolean {
     return (
         node?.type === "CallExpression" &&
         node.callee.type === "MemberExpression" &&
         !node.callee.computed &&
         isIdentifier(node.callee.object, "Future") &&
-        isIdentifier(node.callee.property, "block")
+        isIdentifier(node.callee.property, method)
     );
 }
 
-function isFutureBlockFactoryCall(node: TSESTree.Node | null | undefined): boolean {
+function isFunctionNode(node: TSESTree.Node): node is FunctionNode {
     return (
-        node?.type === "CallExpression" &&
-        node.callee.type === "MemberExpression" &&
-        !node.callee.computed &&
-        isIdentifier(node.callee.object, "Future") &&
-        isIdentifier(node.callee.property, "block_")
+        node.type === "ArrowFunctionExpression" ||
+        node.type === "FunctionDeclaration" ||
+        node.type === "FunctionExpression"
     );
-}
-
-function getBlockCaptureParam(functionNode: FunctionNode): TSESTree.Identifier | null {
-    const [firstParam] = functionNode.params;
-    return firstParam?.type === "Identifier" ? firstParam : null;
 }
 
 function getFunctionAncestor(
     sourceCode: TSESLint.SourceCode,
     node: TSESTree.Node
 ): FunctionNode | null {
-    const ancestors = sourceCode.getAncestors(node);
-    for (let idx = ancestors.length - 1; idx >= 0; idx -= 1) {
-        const ancestor = ancestors[idx];
-        if (!ancestor) continue;
-        if (
-            ancestor.type === "ArrowFunctionExpression" ||
-            ancestor.type === "FunctionDeclaration" ||
-            ancestor.type === "FunctionExpression"
-        ) {
-            return ancestor;
-        }
-    }
-
-    return null;
+    return sourceCode.getAncestors(node).findLast(isFunctionNode) ?? null;
 }
 
 function isFutureBlockCallback(functionNode: FunctionNode): boolean {
     const parent = functionNode.parent;
-    if (parent?.type !== "CallExpression") return false;
+    if (parent?.type !== "CallExpression" || parent.arguments[0] !== functionNode) return false;
 
-    if (isFutureBlockCall(parent) && parent.arguments[0] === functionNode) {
-        return true;
-    }
-
-    if (parent.arguments[0] !== functionNode) return false;
-
-    const callee = parent.callee;
-    if (callee.type !== "CallExpression") return false;
-
-    return isFutureBlockFactoryCall(callee);
+    return isFutureMethodCall(parent, "block") || isFutureMethodCall(parent.callee, "block_");
 }
 
 const createRule = ESLintUtils.RuleCreator(
@@ -100,21 +74,13 @@ export default createRule({
                 if (!functionNode) return;
                 if (!isFutureBlockCallback(functionNode)) return;
 
-                const captureParam = getBlockCaptureParam(functionNode);
-                if (!captureParam) {
-                    context.report({
-                        node,
-                        messageId: "wrapAwait",
-                        data: { capture: "$" },
-                    });
-                    return;
-                }
-
+                const firstParam = functionNode.params[0];
+                const captureName = firstParam?.type === "Identifier" ? firstParam.name : null;
                 const awaited = node.argument;
                 if (
+                    captureName !== null &&
                     awaited.type === "CallExpression" &&
-                    awaited.callee.type === "Identifier" &&
-                    awaited.callee.name === captureParam.name
+                    isIdentifier(awaited.callee, captureName)
                 ) {
                     return;
                 }
@@ -122,7 +88,7 @@ export default createRule({
                 context.report({
                     node,
                     messageId: "wrapAwait",
-                    data: { capture: captureParam.name },
+                    data: { capture: captureName ?? "$" },
                 });
             },
         };
