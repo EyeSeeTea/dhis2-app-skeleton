@@ -6,7 +6,7 @@ import testingLibrary from "eslint-plugin-testing-library";
 import noRelativeImportPaths from "eslint-plugin-no-relative-import-paths";
 import unusedImports from "eslint-plugin-unused-imports";
 
-import requireFutureBlockCapture from "./eslint/rules/require-future-block-capture.js";
+import requireFutureBlockCapture from "./eslint/rules/require-future-block-capture.ts";
 
 // ESLint 9 flat config, converted from .eslintrc.json. Same rule set: the file
 // is longer because flat config spells out what `extends` and `env` used to imply.

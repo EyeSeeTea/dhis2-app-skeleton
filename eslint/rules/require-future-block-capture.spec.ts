@@ -1,13 +1,11 @@
-import { Linter } from "eslint";
+import { TSESLint } from "@typescript-eslint/utils";
 import { describe, expect, test } from "vitest";
 
-// @ts-expect-error Local CommonJS rule has no TypeScript declaration.
-import requireFutureBlockCapture from "./require-future-block-capture.js";
+import requireFutureBlockCapture from "./require-future-block-capture";
 
 function lint(source: string) {
-    const linter = new Linter();
-
-    return linter.verifyAndFix(source, {
+    const linter = new TSESLint.Linter({ configType: "flat" });
+    const config = {
         languageOptions: { ecmaVersion: 2022, sourceType: "module" },
         plugins: {
             local: {
@@ -15,7 +13,9 @@ function lint(source: string) {
             },
         },
         rules: { "local/require-future-block-capture": "error" },
-    });
+    } satisfies TSESLint.FlatConfig.Config;
+
+    return linter.verifyAndFix(source, config, {});
 }
 
 describe("require-future-block-capture", () => {

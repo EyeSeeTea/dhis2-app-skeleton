@@ -1,8 +1,18 @@
-function isIdentifier(node, name) {
+import { ESLintUtils, type TSESLint, type TSESTree } from "@typescript-eslint/utils";
+
+type FunctionNode =
+    | TSESTree.ArrowFunctionExpression
+    | TSESTree.FunctionDeclaration
+    | TSESTree.FunctionExpression;
+
+function isIdentifier(
+    node: TSESTree.Node | null | undefined,
+    name: string
+): node is TSESTree.Identifier {
     return node?.type === "Identifier" && node.name === name;
 }
 
-function isFutureBlockCall(node) {
+function isFutureBlockCall(node: TSESTree.Node | null | undefined): boolean {
     return (
         node?.type === "CallExpression" &&
         node.callee.type === "MemberExpression" &&
@@ -12,7 +22,7 @@ function isFutureBlockCall(node) {
     );
 }
 
-function isFutureBlockFactoryCall(node) {
+function isFutureBlockFactoryCall(node: TSESTree.Node | null | undefined): boolean {
     return (
         node?.type === "CallExpression" &&
         node.callee.type === "MemberExpression" &&
@@ -22,15 +32,19 @@ function isFutureBlockFactoryCall(node) {
     );
 }
 
-function getBlockCaptureParam(functionNode) {
+function getBlockCaptureParam(functionNode: FunctionNode): TSESTree.Identifier | null {
     const [firstParam] = functionNode.params;
     return firstParam?.type === "Identifier" ? firstParam : null;
 }
 
-function getFunctionAncestor(sourceCode, node) {
+function getFunctionAncestor(
+    sourceCode: TSESLint.SourceCode,
+    node: TSESTree.Node
+): FunctionNode | null {
     const ancestors = sourceCode.getAncestors(node);
     for (let idx = ancestors.length - 1; idx >= 0; idx -= 1) {
         const ancestor = ancestors[idx];
+        if (!ancestor) continue;
         if (
             ancestor.type === "ArrowFunctionExpression" ||
             ancestor.type === "FunctionDeclaration" ||
@@ -43,7 +57,7 @@ function getFunctionAncestor(sourceCode, node) {
     return null;
 }
 
-function isFutureBlockCallback(functionNode) {
+function isFutureBlockCallback(functionNode: FunctionNode): boolean {
     const parent = functionNode.parent;
     if (parent?.type !== "CallExpression") return false;
 
@@ -59,7 +73,12 @@ function isFutureBlockCallback(functionNode) {
     return isFutureBlockFactoryCall(callee);
 }
 
-module.exports = {
+const createRule = ESLintUtils.RuleCreator(
+    name => `https://github.com/EyeSeeTea/dhis2-app-skeleton/blob/master/eslint/rules/${name}.md`
+);
+
+export default createRule({
+    name: "require-future-block-capture",
     meta: {
         type: "problem",
         docs: {
@@ -71,6 +90,7 @@ module.exports = {
             wrapAwait: "Use `await {{capture}}(...)` inside `Future.block`.",
         },
     },
+    defaultOptions: [],
     create(context) {
         const sourceCode = context.sourceCode;
 
@@ -107,4 +127,4 @@ module.exports = {
             },
         };
     },
-};
+});
