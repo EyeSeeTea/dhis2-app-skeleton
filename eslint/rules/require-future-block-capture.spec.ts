@@ -34,4 +34,44 @@ describe("require-future-block-capture", () => {
         expect(result.output).toBe(source);
         expect(result.messages).toMatchObject([{ messageId: "wrapAwait" }]);
     });
+
+    test("does not report awaits in nested function declarations", () => {
+        const source = `
+            Future.block(async $ => {
+                async function helper() {
+                    await fetch(url);
+                }
+
+                return $(Future.fromPromise(helper()));
+            });
+        `;
+
+        expect(lint(source).messages).toEqual([]);
+    });
+
+    test("does not report awaits in nested arrow functions", () => {
+        const source = `
+            Future.block(async $ => {
+                const helper = async () => {
+                    await fetch(url);
+                };
+
+                return $(Future.fromPromise(helper()));
+            });
+        `;
+
+        expect(lint(source).messages).toEqual([]);
+    });
+
+    test("reports awaits when the callback has no capture parameter", () => {
+        const result = lint("Future.block(async () => await Promise.resolve(1));");
+
+        expect(result.messages).toMatchObject([{ messageId: "wrapAwait" }]);
+    });
+
+    test("reports awaits when the callback destructures its capture parameter", () => {
+        const result = lint("Future.block(async ({ length }) => await Promise.resolve(length));");
+
+        expect(result.messages).toMatchObject([{ messageId: "wrapAwait" }]);
+    });
 });

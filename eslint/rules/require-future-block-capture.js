@@ -31,7 +31,11 @@ function getFunctionAncestor(sourceCode, node) {
     const ancestors = sourceCode.getAncestors(node);
     for (let idx = ancestors.length - 1; idx >= 0; idx -= 1) {
         const ancestor = ancestors[idx];
-        if (ancestor.type === "ArrowFunctionExpression" || ancestor.type === "FunctionExpression") {
+        if (
+            ancestor.type === "ArrowFunctionExpression" ||
+            ancestor.type === "FunctionDeclaration" ||
+            ancestor.type === "FunctionExpression"
+        ) {
             return ancestor;
         }
     }
@@ -77,7 +81,14 @@ module.exports = {
                 if (!isFutureBlockCallback(functionNode)) return;
 
                 const captureParam = getBlockCaptureParam(functionNode);
-                if (!captureParam) return;
+                if (!captureParam) {
+                    context.report({
+                        node,
+                        messageId: "wrapAwait",
+                        data: { capture: "$" },
+                    });
+                    return;
+                }
 
                 const awaited = node.argument;
                 if (
