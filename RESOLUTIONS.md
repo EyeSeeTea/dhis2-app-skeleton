@@ -54,11 +54,11 @@ Note that `yarn npm audit` and Dependency-Track disagree on severity: `uuid` is 
 
 ### Security pins
 
-#### `axios: ^1.18.0`
+#### `axios: ^1.20.0`
 
-- **Why:** Transitive only: no direct dependency declares `axios`, so this resolution is the sole control on the version. A range rather than an exact version, so patches land whenever the lockfile is re-resolved; it resolves to 1.19.0.
-- **Fixes:** GHSA-hfxv-24rg-xrqf, GHSA-j5f8-grm9-p9fc, GHSA-p92q-9vqr-4j8v, GHSA-35jp-ww65-95wh, GHSA-777c-7fjr-54vf, GHSA-6chq-wfr3-2hj9, GHSA-pf86-5x62-jrwf, GHSA-pmwg-cvhr-8vh7, GHSA-q8qp-cvcw-x6jj, GHSA-3g43-6gmg-66jw (10 high) plus 17 medium. Runtime-reachable: credential leakage to redirect targets and proxy-header forwarding.
-- **Drop when:** No transitive consumer requests `axios < 1.18`. Verify with `yarn why axios`.
+- **Why:** Transitive only: no direct dependency declares `axios`, so this resolution is the sole control on the version. A range rather than an exact version, so patches land whenever the lockfile is re-resolved; it resolves to 1.20.0. `@eyeseetea/d2-api` makes it **runtime**, so changes to it are verified with a request through `D2Api` against a local server, not only with `yarn install`.
+- **Fixes:** GHSA-hfxv-24rg-xrqf, GHSA-j5f8-grm9-p9fc, GHSA-p92q-9vqr-4j8v, GHSA-35jp-ww65-95wh, GHSA-777c-7fjr-54vf, GHSA-6chq-wfr3-2hj9, GHSA-pf86-5x62-jrwf, GHSA-pmwg-cvhr-8vh7, GHSA-q8qp-cvcw-x6jj, GHSA-3g43-6gmg-66jw (10 high) plus 17 medium. Runtime-reachable: credential leakage to redirect targets and proxy-header forwarding. The floor is 1.20.0 because of GHSA-3pq3-5fj3-cg6v, GHSA-542g-h47m-68v8, GHSA-c29m-xwm3-cm6r, GHSA-m8m8-qj5v-23w3, GHSA-mghh-pgcx-3jjj, GHSA-r4gj-5m52-g5wh, GHSA-x97p-jq2g-jp4f (high) and GHSA-44g4-m2mj-wpvx, GHSA-4hqw-qxg8-jxx2, GHSA-9fr6-4gfg-395g, GHSA-j8rh-479h-cp32, GHSA-vh66-26gq-q6x8 (medium), all affecting the 1.x line below 1.20.0.
+- **Drop when:** No transitive consumer requests `axios < 1.20`. Verify with `yarn why axios`.
 
 #### `node-fetch: ^2.6.7`
 
@@ -71,6 +71,12 @@ Note that `yarn npm audit` and Dependency-Track disagree on severity: `uuid` is 
 - **Why:** `lodash` is not a direct dependency. Without the pin it resolves _down_ to `4.17.21`, because `@eyeseetea/d2-api@1.21.0` and `@eyeseetea/d2-ui-components@2.12.0` both request that exact version. Every other consumer asks for a range satisfied by 4.18.x, and `yarn why` shows a single major line, so a global pin is safe.
 - **Fixes:** GHSA-r5fr-rjxr-66jc (high): code injection via `_.template` import key names.
 - **Drop when:** `@eyeseetea/d2-api` and `@eyeseetea/d2-ui-components` stop pinning lodash exactly.
+
+#### `@eyeseetea/d2-ui-components/moment: ^2.31.0`
+
+- **Why:** `@eyeseetea/d2-ui-components@2.12.0` requests `moment` at exactly `2.29.4`, and `2.13.0`, its latest release, still does, so upgrading that library does not help. Every other consumer requests a range that re-resolves to 2.31.0 on its own. Scoped to `d2-ui-components` so it binds only that exact request. **Runtime:** the library uses moment in `DatePicker` (through `@date-io/moment`), in the data table's date formatting and in `formatDateLong`. Exercised by rendering `DatePicker`, opening the calendar and picking a day, and by formatting ISO strings and `Date` values through `formatRowValue` and `formatDateLong`. moment 2.31.0 adds a `devEngines` Node range, which applies only to moment's own development; `engines.node` is still `*`.
+- **Fixes:** GHSA-4p3w-j4w9-5jqw (medium): path traversal via a crafted non-string locale name.
+- **Drop when:** `@eyeseetea/d2-ui-components` requests `moment >= 2.31.0` natively. Verify with `yarn why moment`.
 
 #### `react-linkify/linkify-it: ^5.0.2`
 
