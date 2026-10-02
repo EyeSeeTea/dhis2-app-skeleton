@@ -54,3 +54,6 @@ dist/
 .claude/
 sca-triage-report.md
 sca-suggested-actions.sh
+
+# OpenSpec: tasks stay local; proposal, design and specs are committed
+openspec/**/tasks.md
