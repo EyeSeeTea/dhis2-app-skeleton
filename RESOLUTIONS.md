@@ -91,12 +91,11 @@ Note that `yarn npm audit` and Dependency-Track disagree on severity: `uuid` is 
 - ⚠️ **The floor does not cover GHSA-4mjr-xmp4-gh2g or GHSA-x5fp-wj9c-mxmx** (both medium, fixed in 6.16.0). The range admits 6.16.0 and the lockfile resolves it, so the tree is clean, but a lockfile held at 6.15.3 would not be.
 - **Drop when:** every consumer requests `qs >= 6.16.0` natively. `@eyeseetea/d2-api` is the blocker.
 
-#### `@dhis2/cli-app-scripts/vite: ^6.4.3`
+#### `@dhis2/cli-app-scripts/vite: ^7.3.6`
 
-- **Why:** `@dhis2/cli-app-scripts` requests `vite@^5.2.9`, and the 5.x line has no fix for the three vite advisories below; its `esbuild@0.21.5` is also in range of GHSA-67mh-4wv8-2f99. 6.4.3 is the lowest release that clears all three, and it requests `esbuild@^0.25.0`. The i18n commands this repository runs do not load vite; only the package's `build` and `start` commands do, through `import('vite')`, and this repository does not use them. Checked that those command modules still load and that the import resolves to 6.4.3.
-- **Fixes:** GHSA-fx2h-pf6j-xcff (high), GHSA-v6wh-96g9-6wx3 and GHSA-4w7w-66w2-5vf9 (medium) against vite; GHSA-67mh-4wv8-2f99 (medium) against `esbuild@0.21.5`.
-- ⚠️ Dependency-Track may report `esbuild@0.25.12` against GHSA-gv7w-rqvm-qjhr. That advisory was withdrawn: dismiss the alert, do not remediate it.
-- **Drop when:** `@dhis2/cli-app-scripts` requests `vite >= 6.4.3` natively.
+- **Why:** `@dhis2/cli-app-scripts` requests `vite@^5.2.9`, and the 5.x line has no fix for the three vite advisories below; its `esbuild@0.21.5` is also in range of GHSA-67mh-4wv8-2f99. The floor is the application's own vite, so both resolve to a single 7.3.6, which requests `esbuild@^0.27.0 || ^0.28.0`. The i18n commands this repository runs do not load vite; only the package's `build` and `start` commands do, through `import('vite')`, and this repository does not use them. Checked that `yarn localize` still extracts and generates the translations, that those command modules still load, and that the import resolves to 7.3.6.
+- **Fixes:** GHSA-fx2h-pf6j-xcff (high), GHSA-v6wh-96g9-6wx3 and GHSA-4w7w-66w2-5vf9 (medium) against vite; GHSA-67mh-4wv8-2f99 (medium) against `esbuild@0.21.5`. It also takes `esbuild@0.25.12` out of the tree, which Dependency-Track reports against GHSA-gv7w-rqvm-qjhr (`>= 0.17.0, < 0.28.1`) although GitHub withdrew that advisory. A 6.x floor brings it back.
+- **Drop when:** `@dhis2/cli-app-scripts` requests `vite >= 7.3.6` natively.
 
 #### `@dhis2/cli-helpers-engine/tar: ^7.5.21`
 
