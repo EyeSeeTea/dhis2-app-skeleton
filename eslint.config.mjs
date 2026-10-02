@@ -6,23 +6,47 @@ import testingLibrary from "eslint-plugin-testing-library";
 import noRelativeImportPaths from "eslint-plugin-no-relative-import-paths";
 import unusedImports from "eslint-plugin-unused-imports";
 
+import requireFutureBlockCapture from "./eslint/rules/require-future-block-capture.ts";
+
 // ESLint 9 flat config, converted from .eslintrc.json. Same rule set: the file
 // is longer because flat config spells out what `extends` and `env` used to imply.
 export default tseslint.config(
-    { ignores: ["build/**", "src/locales/**", "src/**/snapshots/*.ts", "**/*.d.ts"] },
+    {
+        ignores: [
+            "dist/**",
+            "build/**",
+            "node_modules/**",
+            "coverage/**",
+            "eslint.config.*",
+            "src/locales/**",
+            "src/**/snapshots/*.ts",
+            "**/*.d.ts",
+        ],
+    },
 
     js.configs.recommended,
     ...tseslint.configs.recommended,
     react.configs.flat.recommended,
+    react.configs.flat["jsx-runtime"],
+    reactHooks.configs.flat.recommended,
 
     {
         languageOptions: {
-            parserOptions: { project: "./tsconfig.json" },
+            parserOptions: {
+                ecmaVersion: "latest",
+                project: "./tsconfig.json",
+                sourceType: "module",
+            },
         },
         settings: {
-            react: { pragma: "React", version: "16.6.0" },
+            react: { version: "detect" },
         },
         plugins: {
+            local: {
+                rules: {
+                    "require-future-block-capture": requireFutureBlockCapture,
+                },
+            },
             "react-hooks": reactHooks,
             "no-relative-import-paths": noRelativeImportPaths,
             "unused-imports": unusedImports,
@@ -77,11 +101,14 @@ export default tseslint.config(
 
             "react-hooks/rules-of-hooks": "warn",
             "react-hooks/exhaustive-deps": "warn",
+            // TODO: Enable `react-hooks/set-state-in-effect`.
+            "react-hooks/set-state-in-effect": "off",
 
             "no-relative-import-paths/no-relative-import-paths": [
                 "error",
                 { allowSameFolder: true, rootDir: "src", prefix: "$" },
             ],
+            "local/require-future-block-capture": "error",
         },
     },
 

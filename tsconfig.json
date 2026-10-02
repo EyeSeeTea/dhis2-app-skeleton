@@ -21,6 +21,6 @@
             "$/*": ["./*"]
         }
     },
-    "include": ["src"],
+    "include": ["src", "eslint/**/*.ts"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }
