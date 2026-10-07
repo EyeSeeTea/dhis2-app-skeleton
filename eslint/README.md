@@ -2,6 +2,8 @@
 
 `eyeseetea-config.ts` implements automated checks for EyeSeeTea's coding conventions.
 The coverage below describes the enforced checks and their limitations.
+See the [downstream migration guide](MIGRATION.md) for adoption, gradual hardening,
+and project-specific overrides.
 
 ## Organization
 
