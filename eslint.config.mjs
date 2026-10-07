@@ -6,10 +6,9 @@ import testingLibrary from "eslint-plugin-testing-library";
 import noRelativeImportPaths from "eslint-plugin-no-relative-import-paths";
 import unusedImports from "eslint-plugin-unused-imports";
 
-import requireFutureBlockCapture from "./eslint/rules/require-future-block-capture.ts";
+import eyeseeteaConfig from "./eslint/eyeseetea-config.ts";
 
-// ESLint 9 flat config, converted from .eslintrc.json. Same rule set: the file
-// is longer because flat config spells out what `extends` and `env` used to imply.
+// Framework defaults plus the EyeSeeTea policy in eslint/eyeseetea-config.ts.
 export default tseslint.config(
     {
         ignores: [
@@ -42,11 +41,6 @@ export default tseslint.config(
             react: { version: "detect" },
         },
         plugins: {
-            local: {
-                rules: {
-                    "require-future-block-capture": requireFutureBlockCapture,
-                },
-            },
             "react-hooks": reactHooks,
             "no-relative-import-paths": noRelativeImportPaths,
             "unused-imports": unusedImports,
@@ -108,7 +102,6 @@ export default tseslint.config(
                 "error",
                 { allowSameFolder: true, rootDir: "src", prefix: "$" },
             ],
-            "local/require-future-block-capture": "error",
         },
     },
 
@@ -124,6 +117,8 @@ export default tseslint.config(
             "testing-library/no-dom-import": "off",
         },
     },
+
+    ...eyeseeteaConfig,
 
     {
         files: ["**/*.js"],

@@ -56,6 +56,9 @@ $ yarn run check
 ```
 
 This runs the TypeScript typecheck, Prettier check, lint, and tests.
+The [EyeSeeTea ESLint policy](eslint/README.md) documents enforced conventions, warning/error levels,
+legacy-code rollout, justified exceptions, and practices that still require review.
+
 Individual checks can also be run with `yarn typecheck`, `yarn prettify:check`, `yarn lint`, and `yarn test`.
 
 ## Some development tips

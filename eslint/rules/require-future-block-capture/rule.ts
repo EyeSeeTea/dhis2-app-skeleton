@@ -48,7 +48,8 @@ function isFutureBlockCallback(functionNode: FunctionNode): boolean {
 }
 
 const createRule = ESLintUtils.RuleCreator(
-    name => `https://github.com/EyeSeeTea/dhis2-app-skeleton/blob/master/eslint/rules/${name}.md`
+    name =>
+        `https://github.com/EyeSeeTea/dhis2-app-skeleton/blob/master/eslint/rules/${name}/README.md`
 );
 
 export default createRule({
