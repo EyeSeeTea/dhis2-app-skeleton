@@ -104,17 +104,49 @@ Review these before the first lint run:
 | Parser uses `./tsconfig.json`                                             | Include every linted TS file, or point `parserOptions.project` at a dedicated `tsconfig.eslint.json`. Preserve application build settings.                                                                                                                                       |
 | Typechecking includes `eslint/**/*.ts` and allows `.ts` import extensions | Include copied rules in a no-emit typecheck; use `allowImportingTsExtensions: true`.                                                                                                                                                                                             |
 | Source is under `src/`, with `$/*` imports                                | Adapt policy file globs, base import-path options, and TS aliases.                                                                                                                                                                                                               |
-| Layers are `src/domain`, `src/data`, `src/webapp`, and `src/scripts`      | The architecture rule hardcodes these paths, API adapters, `CompositionRoot.ts`, and `getWebappCompositionRoot`. It has no options. Disable it for a different layout or change its implementation and regression tests. Merely changing `files` does not change its boundaries. |
+| Layers are `src/domain`, `src/data`, `src/webapp`, and `src/scripts`      | Configure the architecture rule’s `paths` and `clientFactories` for the project layout. Roots and adapters take precedence over their containing layer. See the [architecture options](rules/architecture/README.md#options); no directory restructuring is required. |
 | Domain/data use Futures                                                   | Review Promise restrictions and the two Future implementation exclusions. Projects using native Promises should adopt selected rules or maintain an explicitly adapted policy.                                                                                                   |
 | React, Material UI, and Testing Library conventions apply                 | Omit irrelevant framework modules and adapt company rules; the styling rule recommends styled-components but does not install it.                                                                                                                                                |
 | Unit tests use `*.spec.ts(x)`                                             | The framework testing preset covers `.spec` files, while company test overrides also cover `.test`, `__tests__`, and `src/tests`. Align both scopes with the project.                                                                                                            |
 | E2E tests use `src/tests/playwright` or `*.e2e.ts(x)`                     | Adapt both E2E checks and general test exclusions for other locations.                                                                                                                                                                                                           |
 | Generated files use skeleton paths                                        | Review global ignores and lint command targets. An ignored file receives no checks.                                                                                                                                                                                              |
 
-The custom rules currently have no options. Severity and file scopes can be changed
-through flat config; internal architecture boundaries and detection behavior require
-an implementation change. Monorepos need per-package parser projects and scoped
+The architecture rule accepts layout, factory, and independent check options. The
+other custom rules have no options. Severity and file scopes can be changed through
+flat config. Monorepos need per-package parser projects and scoped
 config entries rather than assuming one root `src/` and one `tsconfig.json`.
+
+### Feature-based layouts
+
+For repositories under `src/data/<feature>/`, presentation under `src/presentation/`,
+and multiple composition roots, append an override after the company policy:
+
+```js
+export default [{
+    files: ["src/**/*.{ts,tsx}"],
+    rules: {
+        "eyeseetea/architecture": ["warn", {
+            paths: {
+                presentation: ["src/presentation/**"],
+                repositories: ["src/data/**/*Repository.ts"],
+                compositionRoots: [
+                    "src/presentation/AppCompositionRoot.ts",
+                    "src/presentation/TestCompositionRoot.ts"
+                ],
+                apiAdapters: ["src/data/common/utils/api-futures.ts"]
+            },
+            clientFactories: ["createApp", "createTest"]
+        }]
+    }
+}];
+```
+
+Replace the example filenames and factory names with actual project names. Add any
+client type wrapper to `apiAdapters`; supplied arrays replace defaults. Keep repository
+patterns narrow rather than granting client access to all data files. To adopt only
+layer checks, set `checks: { httpClientAccess: false, clientConstruction: false }`.
+The [policy-only composition](#incorporate-the-configuration) keeps framework presets
+under the consuming project's control.
 
 ## 3. Establish a baseline and adopt in CI
 

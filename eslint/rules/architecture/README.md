@@ -37,7 +37,69 @@ import { D2Api } from "$/types/d2-api";
 
 ## Options
 
-This rule has no options.
+The skeleton layout and `getWebappCompositionRoot` factory are the defaults.
+Pass one options object to adapt the layout without modifying the shared rule:
+
+```js
+"eyeseetea/architecture": ["warn", {
+    paths: {
+        domain: ["src/domain/**"],
+        data: ["src/data/**"],
+        presentation: ["src/presentation/**"],
+        repositories: ["src/data/**/*Repository.ts"],
+        compositionRoots: [
+            "src/presentation/AppCompositionRoot.ts",
+            "src/presentation/TestCompositionRoot.ts"
+        ],
+        apiAdapters: ["src/data/common/utils/api-futures.ts"]
+    },
+    clientFactories: ["createApp", "createTest"],
+    checks: {
+        layerDependencies: true,
+        httpClientAccess: true,
+        clientConstruction: true
+    }
+}]
+```
+
+Paths are relative to ESLint's working directory. Use `/` separators. Patterns
+support `*` (within one path segment), `**` (across segments), and `?` (one
+non-separator character); `**/` also matches zero directories. Brace expansion,
+negation, and extglobs are not supported. Omitted path groups retain their defaults;
+provided arrays replace that group's defaults, and `[]` disables that group.
+
+| Path group | Default |
+| --- | --- |
+| `domain` | `src/domain/**` |
+| `data` | `src/data/**` |
+| `presentation` | `src/webapp/**`, `src/scripts/**` |
+| `repositories` | `src/data/repositories/**` |
+| `compositionRoots` | `src/CompositionRoot.ts` |
+| `apiAdapters` | `src/types/d2-api.ts`, `src/data/api-futures.ts` |
+
+Roots and adapters take precedence over their containing domain/data/presentation
+layer. This lets composition roots inside presentation import concrete repositories.
+Repository patterns grant client-import permission, so keep them narrow. Adapters
+may import clients, but are not permitted to construct them outside a configured root.
+Imports of configured adapters are treated as infrastructure dependencies.
+
+`clientFactories` replaces the allowed factory names. Function declarations and
+arrow/function expressions bound to named variables are supported. Construction
+requires both a configured composition-root file and an enclosing permitted factory.
+An empty factory list permits no construction.
+
+All checks default to `true` and can be toggled independently:
+
+- `layerDependencies`: domain → data/presentation/roots/adapters, data →
+  presentation/roots, and presentation → data imports.
+- `httpClientAccess`: domain platform APIs/imports, repository/presentation HTTP
+  access, and DHIS2 client/adapter import permissions.
+- `clientConstruction`: where imported named `D2Api` constructors may run.
+
+Diagnostics include the import specifier and resolved project-relative target.
+Type-aware parser compiler options take precedence; without a parser program, the
+rule reads the nearest `tsconfig.json` from ESLint's working directory. Missing local
+modules cannot be classified by layer until TypeScript can resolve them.
 
 ## Limitations
 
@@ -47,5 +109,5 @@ nonliteral imports, namespace constructors, and indirect factories require revie
 
 ## When Not To Use It
 
-Disable this rule in projects with a different architecture or directory structure.
+Configure paths and checks for a different directory structure or architecture.
 For a justified exception, use a narrow suppression with an explanation.
