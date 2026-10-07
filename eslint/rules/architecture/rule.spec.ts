@@ -39,6 +39,14 @@ describe("EyeSeeTea architecture", () => {
             )
         ).toEqual([]);
     });
+    test.each(["axios", "node-fetch", "cross-fetch", "undici", "got", "ky"])(
+        "reports HTTP client imports in domain: %s",
+        source => {
+            for (const module of [source, `${source}/client`]) {
+                expect(lintArchitecture(`import client from '${module}';`)).toHaveLength(1);
+            }
+        }
+    );
     test("reports data depending on UI", () => {
         expect(
             lintArchitecture(

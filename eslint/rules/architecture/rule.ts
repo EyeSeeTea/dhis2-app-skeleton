@@ -69,6 +69,7 @@ export default ESLintUtils.RuleCreator(
                 (/\/src\/(data|webapp|scripts)\//.test(target) ||
                     target.endsWith("/src/CompositionRoot.ts") ||
                     target.endsWith("/src/types/d2-api.ts") ||
+                    httpPackages.test(source) ||
                     infrastructurePackages.test(source))
             ) {
                 report(
