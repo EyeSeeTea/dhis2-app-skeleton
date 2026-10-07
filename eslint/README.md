@@ -16,8 +16,13 @@ rule metadata links to that reference through `meta.docs.url`.
 Policy integration tests live in `eyeseetea-config.spec.ts`.
 
 `eyeseetea-config.ts` registers the plugin and defines policy severities and file
-scopes, including conventions enforced through third-party rules. Framework defaults
-and parser setup remain in the root `eslint.config.mjs`.
+scopes, including conventions enforced through third-party rules. The root
+`eslint.config.mjs` composes these configurations in order:
+
+- `base-config.mjs`: JavaScript/TypeScript presets, parser setup, ignores, and general overrides.
+- `react-config.mjs`: React and Hooks presets and project overrides.
+- `testing-config.mjs`: Testing Library preset and test overrides.
+- `eyeseetea-config.ts`: company policy, applied last to override framework defaults.
 
 The Future capture rule applies across the root configuration's linted files at
 error severity; architecture and collection mutation apply to `src/**/*.{ts,tsx}`
