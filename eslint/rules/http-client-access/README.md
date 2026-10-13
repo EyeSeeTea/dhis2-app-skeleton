@@ -37,3 +37,16 @@ see [shared limitations](../architecture/README.md#limitations).
 
 Disable if the policy does not apply; adapt paths for other layouts and use narrow,
 justified suppressions for exceptions.
+
+Repositories calling external APIs rather than DHIS2 may use an appropriate HTTP
+client. Add a scoped config exception or, for a dedicated external API repository,
+a file-level comment naming the integration and reason:
+
+```ts
+/* eslint-disable eyeseetea/http-client-access -- Calls the external weather API; d2-api only supports DHIS2. */
+```
+
+This disables all checks in this rule for the file; layer dependency and client
+construction rules remain active. Prefer a statement-level exception for mixed
+DHIS2/external access. If using the compatibility wrapper, suppress
+`eyeseetea/architecture` instead; that also disables its layer and construction checks.

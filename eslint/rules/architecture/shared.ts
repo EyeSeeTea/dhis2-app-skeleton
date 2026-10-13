@@ -196,10 +196,10 @@ export function createArchitectureRule(
                 const target = resolveModule(source);
                 const targetMatches = (key: keyof typeof defaultPaths) =>
                     target !== undefined && matches(key, target);
-                const boundary = (layer: string, destination: string) =>
+                const boundary = (layer: string, destination: string, guidance = "") =>
                     report(
                         node,
-                        `${layer} must not import ${destination} through '${source}'${target ? ` (resolved to ${normalize(path.relative(context.cwd, target))})` : ""}.`
+                        `${layer} must not import ${destination} through '${source}'${target ? ` (resolved to ${normalize(path.relative(context.cwd, target))})` : ""}.${guidance ? ` ${guidance}` : ""}`
                     );
                 if (checks.layerDependencies) {
                     if (
@@ -229,7 +229,10 @@ export function createArchitectureRule(
                     else if ((repository || presentation) && httpPackages.test(source))
                         boundary(
                             repository ? "Repositories" : "Presentation",
-                            "HTTP clients; access HTTP through d2-api repositories"
+                            "HTTP clients",
+                            repository
+                                ? "Use d2-api for DHIS2 access. For an external API, add a justified exception for this rule."
+                                : "Access HTTP through d2-api repositories."
                         );
                     if (
                         !domain &&
@@ -344,7 +347,7 @@ export function createArchitectureRule(
                             )
                                 report(
                                     reference.identifier,
-                                    "Repositories access HTTP through d2-api."
+                                    "Use d2-api for DHIS2 access. For an external API, add a justified exception for this rule."
                                 );
                             else if (
                                 presentation &&

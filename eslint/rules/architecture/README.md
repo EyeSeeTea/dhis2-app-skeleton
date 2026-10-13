@@ -115,3 +115,7 @@ nonliteral imports, namespace constructors, and indirect factories require revie
 
 Configure paths and checks for a different directory structure or architecture.
 For a justified exception, use a narrow suppression with an explanation.
+External API repositories may need an HTTP exception; see
+[external API guidance](../http-client-access/README.md#when-not-to-use-it).
+Suppressing this wrapper also disables its layer and client-construction checks;
+use the individual rules when those checks should remain enabled.
