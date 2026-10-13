@@ -112,7 +112,9 @@ instructions; they cannot replace them.
 
 ## Verification
 
-`yarn test` includes the EyeSeeTea policy regression tests as well as application tests.
+`yarn test` / `yarn test:unit` runs application tests; `yarn test:eslint` runs policy,
+rule, and baseline regression tests through `eslint/vitest.config.mjs` in Node,
+without React setup or browser polyfills. `yarn check` requires both suites.
 `yarn lint` applies the EyeSeeTea policy to application TypeScript. Rule tests exercise
 both positive and negative examples, including aliases, relative imports, legacy
 interop exclusions, and legitimate similarly named methods.

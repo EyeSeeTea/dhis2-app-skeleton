@@ -19,8 +19,10 @@ revision when updating; keep project overrides separate from copied policy files
 | Selected custom rules                        | `eslint/eyeseetea-plugin.ts` and `eslint/rules/`                                | A project whose architecture or Promise conventions differ        |
 
 Keep rule documentation with the implementation. If copying policy regression tests,
-adapt their fixture paths and test runner setup: they currently use Vitest and actual
-skeleton source paths. Do not expect them to run unchanged in another application.
+adapt their fixture paths and test runner setup: they use Vitest with a dedicated
+Node configuration (`eslint/vitest.config.mjs`) and actual skeleton source paths.
+Copy the `test:eslint` script and require it alongside application tests in CI;
+do not expect fixtures to run unchanged in another application.
 
 ### Runtime and dependencies
 

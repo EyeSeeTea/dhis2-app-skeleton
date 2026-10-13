@@ -1,8 +1,8 @@
 import path from "node:path";
+import { isBuiltin } from "node:module";
 import ts from "typescript";
 import { ESLintUtils, type TSESTree, type TSESLint } from "@typescript-eslint/utils";
 
-const { isBuiltin } = globalThis.process.getBuiltinModule("module");
 const globalNamespaces = new Set(["window", "globalThis", "self"]);
 const platformGlobals = new Set([
     "window",

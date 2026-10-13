@@ -55,11 +55,12 @@ Run all code-quality to validate changes:
 $ yarn run check
 ```
 
-This runs the TypeScript typecheck, Prettier check, lint, and tests.
+This runs the TypeScript typecheck, Prettier check, lint, application tests, and ESLint tooling tests.
 The [EyeSeeTea ESLint policy](eslint/README.md) documents enforced conventions, warning/error levels,
 legacy-code rollout, justified exceptions, and practices that still require review.
 
-Individual checks can also be run with `yarn typecheck`, `yarn prettify:check`, `yarn lint`, and `yarn test`.
+Individual checks: `yarn typecheck`, `yarn prettify:check`, `yarn lint`,
+`yarn test` (application), and `yarn test:eslint` (ESLint tooling).
 
 Lint uses a committed [ESLint baseline](eslint/BASELINE.md): `yarn lint:new` rejects
 errors above accepted legacy counts; `yarn lint:all` shows the backlog. Use

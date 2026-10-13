@@ -1,7 +1,6 @@
 import path from "node:path";
-// Access real Node modules because the app build aliases stdlib imports to browser shims.
-const fs = globalThis.process.getBuiltinModule("fs");
-const os = globalThis.process.getBuiltinModule("os");
+import * as fs from "node:fs";
+import * as os from "node:os";
 import { TSESLint } from "@typescript-eslint/utils";
 const { Linter } = TSESLint;
 import { parser } from "typescript-eslint";

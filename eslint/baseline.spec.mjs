@@ -1,12 +1,10 @@
 import path from "node:path";
 import { expect, test } from "vitest";
 
-// The application Vite config aliases stdlib imports to browser shims.
-const { spawnSync } = globalThis.process.getBuiltinModule("child_process");
-const { createRequire } = globalThis.process.getBuiltinModule("module");
-const { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } =
-    globalThis.process.getBuiltinModule("fs");
-const { tmpdir } = globalThis.process.getBuiltinModule("os");
+import { spawnSync } from "node:child_process";
+import { createRequire } from "node:module";
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 const require = createRequire(path.join(globalThis.process.cwd(), "package.json"));
 const cli = path.join(path.dirname(require.resolve("eslint/package.json")), "bin/eslint.js");
 const { scripts } = JSON.parse(
