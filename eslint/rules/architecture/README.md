@@ -1,7 +1,11 @@
 # eyeseetea/architecture
 
-Enforce Clean Architecture dependency directions and DHIS2 client boundaries.
-Enabled as a warning for `src/**/*.{ts,tsx}` by the EyeSeeTea config.
+Compatibility wrapper enforcing the combined checks of
+[layer-dependencies](../layer-dependencies/README.md),
+[http-client-access](../http-client-access/README.md), and
+[client-construction](../client-construction/README.md), with unchanged options.
+The reusable company policy enables those rules individually as warnings;
+disable them when enabling this wrapper to avoid duplicate reports.
 
 ## Rule Details
 

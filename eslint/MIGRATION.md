@@ -104,17 +104,17 @@ Review these before the first lint run:
 | Parser uses `./tsconfig.json`                                             | Include every linted TS file, or point `parserOptions.project` at a dedicated `tsconfig.eslint.json`. Preserve application build settings.                                                                                                                                       |
 | Typechecking includes `eslint/**/*.ts` and allows `.ts` import extensions | Include copied rules in a no-emit typecheck; use `allowImportingTsExtensions: true`.                                                                                                                                                                                             |
 | Source is under `src/`, with `$/*` imports                                | Adapt policy file globs, base import-path options, and TS aliases.                                                                                                                                                                                                               |
-| Layers are `src/domain`, `src/data`, `src/webapp`, and `src/scripts`      | Configure the architecture rule’s `paths` and `clientFactories` for the project layout. Roots and adapters take precedence over their containing layer. See the [architecture options](rules/architecture/README.md#options); no directory restructuring is required. |
+| Layers are `src/domain`, `src/data`, `src/webapp`, and `src/scripts`      | Configure `paths` on each architecture rule and `clientFactories` on `client-construction` for the project layout. Roots and adapters take precedence over their containing layer. See the [architecture options](rules/architecture/README.md#options); no directory restructuring is required. |
 | Domain/data use Futures                                                   | Review Promise restrictions and the two Future implementation exclusions. Projects using native Promises should adopt selected rules or maintain an explicitly adapted policy.                                                                                                   |
 | React, Material UI, and Testing Library conventions apply                 | Omit irrelevant framework modules and adapt company rules; the styling rule recommends styled-components but does not install it.                                                                                                                                                |
 | Unit tests use `*.spec.ts(x)`                                             | The framework testing preset covers `.spec` files, while company test overrides also cover `.test`, `__tests__`, and `src/tests`. Align both scopes with the project.                                                                                                            |
 | E2E tests use `src/tests/playwright` or `*.e2e.ts(x)`                     | Adapt both E2E checks and general test exclusions for other locations.                                                                                                                                                                                                           |
 | Generated files use skeleton paths                                        | Review global ignores and lint command targets. An ignored file receives no checks.                                                                                                                                                                                              |
 
-The architecture rule accepts layout, factory, and independent check options. The
-other custom rules have no options. Severity and file scopes can be changed through
-flat config. Monorepos need per-package parser projects and scoped
-config entries rather than assuming one root `src/` and one `tsconfig.json`.
+Architecture rules accept layout options; `client-construction` also accepts factory
+names, and the compatibility wrapper retains `checks`. Other custom rules have no
+options. Adjust severities and scopes through flat config; monorepos need per-package
+parser projects and scoped entries.
 
 ### Feature-based layouts
 
@@ -122,30 +122,39 @@ For repositories under `src/data/<feature>/`, presentation under `src/presentati
 and multiple composition roots, append an override after the company policy:
 
 ```js
+const paths = {
+    presentation: ["src/presentation/**"],
+    repositories: ["src/data/**/*Repository.ts"],
+    compositionRoots: [
+        "src/presentation/AppCompositionRoot.ts",
+        "src/presentation/TestCompositionRoot.ts"
+    ],
+    apiAdapters: ["src/data/common/utils/api-futures.ts", "src/types/d2-api.ts"]
+};
+
 export default [{
     files: ["src/**/*.{ts,tsx}"],
     rules: {
-        "eyeseetea/architecture": ["warn", {
-            paths: {
-                presentation: ["src/presentation/**"],
-                repositories: ["src/data/**/*Repository.ts"],
-                compositionRoots: [
-                    "src/presentation/AppCompositionRoot.ts",
-                    "src/presentation/TestCompositionRoot.ts"
-                ],
-                apiAdapters: ["src/data/common/utils/api-futures.ts"]
-            },
+        "eyeseetea/architecture": "off",
+        "eyeseetea/layer-dependencies": ["warn", { paths }],
+        "eyeseetea/http-client-access": ["warn", { paths }],
+        "eyeseetea/client-construction": ["warn", {
+            paths,
             clientFactories: ["createApp", "createTest"]
         }]
     }
 }];
 ```
 
-Replace the example filenames and factory names with actual project names. Add any
-client type wrapper to `apiAdapters`; supplied arrays replace defaults. Keep repository
-patterns narrow rather than granting client access to all data files. To adopt only
-layer checks, set `checks: { httpClientAccess: false, clientConstruction: false }`.
-The [policy-only composition](#incorporate-the-configuration) keeps framework presets
+Use actual filenames and factories; include client type wrappers in `apiAdapters`.
+Supplied arrays replace defaults. Keep repository patterns narrow: they grant client
+access. For layer checks only, disable `http-client-access` and `client-construction`
+in the final override. Each rule has independent severity and suppressions.
+
+Existing `eyeseetea/architecture` configurations, including `checks`, remain supported.
+Disable individual rules when enabling the wrapper to avoid duplicate reports;
+when switching away, update inline suppressions to the responsible rule.
+[Policy-only composition](#incorporate-the-configuration) leaves framework presets
 under the consuming project's control.
 
 ## 3. Establish a baseline and adopt in CI
@@ -171,6 +180,19 @@ reviewed baseline comparison or enforce selected rules in already cleaned scopes
 A total warning count alone can miss a new violation when an old one is removed.
 Linting only changed files also reports old findings within those files and can miss
 dependency changes elsewhere.
+
+### Native baseline alternative (used by this skeleton)
+
+The [native baseline profile](BASELINE.md) rejects count increases. Copy
+`baseline-config.mjs` and `empty-suppressions.json` with the policy, use the profile
+last in the root config instead of `eyeseetea-config.ts`, and copy the baseline scripts
+from `package.json`. The profile promotes policy warnings without changing scopes or options.
+
+Review findings before generating **project-specific** `eslint-suppressions.json`;
+never copy the skeleton's counts. Require `lint:new` in CI, prune after fixes, and
+keep `empty-suppressions.json` as `{}` for unsuppressed `lint:all` inspection.
+Matching is by file/rule count: replacing a violation with another in the same bucket
+can pass. See the baseline guide for adoption steps and limitations.
 
 ## 4. Harden incrementally
 

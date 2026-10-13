@@ -6,13 +6,15 @@ import { TSESLint } from "@typescript-eslint/utils";
 const { Linter } = TSESLint;
 import { parser } from "typescript-eslint";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import architecture, { type ArchitectureOptions } from "./rule";
+import type { ArchitectureOptions } from "./rule";
+import plugin from "../../eyeseetea-plugin.ts";
 
 function lintArchitecture(
     code: string,
     filename = "src/domain/entities/PolicyProbe.ts",
     options: ArchitectureOptions = {},
-    cwd = globalThis.process.cwd()
+    cwd = globalThis.process.cwd(),
+    independent = false
 ) {
     return new Linter({ cwd }).verify(
         code,
@@ -20,8 +22,28 @@ function lintArchitecture(
             {
                 files: ["**/*.ts"],
                 languageOptions: { parser },
-                plugins: { eyeseetea: { rules: { architecture } } },
-                rules: { "eyeseetea/architecture": ["warn", options] },
+                plugins: { eyeseetea: plugin },
+                rules: independent
+                    ? {
+                          "eyeseetea/layer-dependencies": [
+                              options.checks?.layerDependencies === false ? "off" : "warn",
+                              { ...(options.paths ? { paths: options.paths } : {}) },
+                          ],
+                          "eyeseetea/http-client-access": [
+                              options.checks?.httpClientAccess === false ? "off" : "warn",
+                              { ...(options.paths ? { paths: options.paths } : {}) },
+                          ],
+                          "eyeseetea/client-construction": [
+                              options.checks?.clientConstruction === false ? "off" : "warn",
+                              {
+                                  ...(options.paths ? { paths: options.paths } : {}),
+                                  ...(options.clientFactories
+                                      ? { clientFactories: options.clientFactories }
+                                      : {}),
+                              },
+                          ],
+                      }
+                    : { "eyeseetea/architecture": ["warn", options] },
             },
         ],
         { filename: path.resolve(cwd, filename) }
@@ -227,5 +249,28 @@ describe("alternative architecture layout", () => {
         expect(() =>
             lint("", "src/domain/Probe.ts", { checks: { typo: false } } as ArchitectureOptions)
         ).toThrow();
+    });
+    test.each([
+        ["import '@/presentation/View'; fetch('/api');", "src/domain/Probe.ts"],
+        ["import '@/presentation/View';", "src/data/users/Probe.ts"],
+        [
+            "import '@/data/users/UserRepository'; import { D2Api } from '@eyeseetea/d2-api'; new D2Api();",
+            "src/presentation/View.ts",
+        ],
+        [
+            "import { D2Api } from '@eyeseetea/d2-api'; new D2Api(); fetch('/api');",
+            "src/data/users/UserRepository.ts",
+        ],
+        [
+            "import '@/data/users/UserRepository'; import { D2Api } from '@eyeseetea/d2-api'; const createApp = () => new D2Api();",
+            "src/presentation/AppCompositionRoot.ts",
+        ],
+    ])("wrapper matches independently enabled rules: %s", (code, filename) => {
+        const combined = lintArchitecture(code, filename, options, cwd);
+        const separate = lintArchitecture(code, filename, options, cwd, true);
+        const diagnostics = (messages: typeof combined) =>
+            messages.map(({ ruleId: _ruleId, ...message }) => message);
+        expect(diagnostics(separate)).toEqual(diagnostics(combined));
+        expect(separate.every(message => message.ruleId !== "eyeseetea/architecture")).toBe(true);
     });
 });

@@ -36,7 +36,9 @@ export default [
     {
         files: ["src/**/*.{ts,tsx}"],
         rules: {
-            "eyeseetea/architecture": "warn",
+            "eyeseetea/layer-dependencies": "warn",
+            "eyeseetea/http-client-access": "warn",
+            "eyeseetea/client-construction": "warn",
             "eyeseetea/no-collection-mutation": "warn",
             "prefer-const": "warn",
             "no-var": "warn",

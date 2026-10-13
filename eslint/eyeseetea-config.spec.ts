@@ -77,26 +77,40 @@ describe("effective EyeSeeTea configuration", () => {
             expect(config!.plugins).not.toHaveProperty("company");
             expect(config!.plugins).not.toHaveProperty("local");
             if (filename.startsWith("src/")) {
-                expect(config?.rules?.["eyeseetea/architecture"]).toEqual(
-                    expect.arrayContaining([1])
-                );
+                for (const rule of [
+                    "layer-dependencies",
+                    "http-client-access",
+                    "client-construction",
+                ]) {
+                    expect(config?.rules?.[`eyeseetea/${rule}`]).toEqual(
+                        expect.arrayContaining([2])
+                    );
+                }
+                expect(config?.rules?.["eyeseetea/architecture"]).toBeUndefined();
                 expect(config?.rules?.["eyeseetea/no-collection-mutation"]).toEqual(
-                    expect.arrayContaining([1])
+                    expect.arrayContaining([2])
                 );
             } else {
-                expect(config!.rules!["eyeseetea/architecture"]).toBeUndefined();
+                for (const rule of [
+                    "architecture",
+                    "layer-dependencies",
+                    "http-client-access",
+                    "client-construction",
+                ]) {
+                    expect(config!.rules![`eyeseetea/${rule}`]).toBeUndefined();
+                }
                 expect(config!.rules!["eyeseetea/no-collection-mutation"]).toBeUndefined();
             }
         }
     });
-    test("styling is a warning and dangerous evaluation is an error", async () => {
+    test("baseline policy promotes styling while preserving correctness errors", async () => {
         const messages = await policyMessages(
             "import { makeStyles } from '@material-ui/core'; eval('code');",
             "src/webapp/components/share/Share.tsx"
         );
         expect(messages).toEqual(
             expect.arrayContaining([
-                expect.objectContaining({ ruleId: "no-restricted-imports", severity: 1 }),
+                expect.objectContaining({ ruleId: "no-restricted-imports", severity: 2 }),
                 expect.objectContaining({ ruleId: "no-eval", severity: 2 }),
             ])
         );
@@ -139,7 +153,7 @@ describe("effective EyeSeeTea configuration", () => {
             )
         ).toEqual([]);
     });
-    test("accessible E2E queries pass while CSS and test IDs warn", async () => {
+    test("accessible E2E queries pass while CSS and test IDs fail", async () => {
         const config = await new ESLint().calculateConfigForFile(
             "src/tests/playwright/probe.e2e.ts"
         );
@@ -153,6 +167,6 @@ describe("effective EyeSeeTea configuration", () => {
             ]
         );
         expect(result).toHaveLength(4);
-        expect(result.every(message => message.severity === 1)).toBe(true);
+        expect(result.every(message => message.severity === 2)).toBe(true);
     });
 });

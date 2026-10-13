@@ -61,6 +61,11 @@ legacy-code rollout, justified exceptions, and practices that still require revi
 
 Individual checks can also be run with `yarn typecheck`, `yarn prettify:check`, `yarn lint`, and `yarn test`.
 
+Lint uses a committed [ESLint baseline](eslint/BASELINE.md): `yarn lint:new` rejects
+errors above accepted legacy counts; `yarn lint:all` shows the backlog. Use
+`yarn lint:cached` locally and `yarn lint:baseline:prune` after legacy fixes.
+Review baseline increases explicitly; never regenerate in CI.
+
 ## Some development tips
 
 ### Data structures (`src/domain/entities/generic`)
