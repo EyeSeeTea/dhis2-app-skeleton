@@ -193,6 +193,14 @@ describe("alternative architecture layout", () => {
         ).toHaveLength(1);
         expect(lint("fetch('/api');", "src/data/users/UserRepository.ts")).toHaveLength(1);
     });
+    test("restricts constructors imported through a configured adapter", () => {
+        expect(
+            lint(
+                "import { D2Api as Client } from '@/data/common/utils/api-futures'; new Client();",
+                "src/data/users/UserRepository.ts"
+            )
+        ).toHaveLength(1);
+    });
     test("roots override presentation classification and permit named and arrow factories", () => {
         for (const [filename, factory] of [
             ["src/presentation/AppCompositionRoot.ts", "createApp"],
@@ -273,4 +281,70 @@ describe("alternative architecture layout", () => {
         expect(diagnostics(separate)).toEqual(diagnostics(combined));
         expect(separate.every(message => message.ruleId !== "eyeseetea/architecture")).toBe(true);
     });
+});
+
+describe.each([false, true])("boundary regressions (independent rules: %s)", independent => {
+    const lint = (code: string, filename: string) =>
+        lintArchitecture(code, filename, {}, globalThis.process.cwd(), independent);
+
+    test.each(["window", "globalThis", "self", "globalThis.window"])(
+        "rejects qualified HTTP through %s in repositories and presentation",
+        namespace => {
+            for (const filename of ["src/data/repositories/Probe.ts", "src/webapp/Probe.ts"]) {
+                expect(lint(`${namespace}.fetch('/api');`, filename)).toHaveLength(1);
+                expect(lint(`new ${namespace}['XMLHttpRequest']();`, filename)).toHaveLength(1);
+            }
+        }
+    );
+    test.each([
+        "globalThis.fetch('/api');",
+        "globalThis['document'].title;",
+        "self.navigator.language;",
+    ])("rejects qualified platform access in domain: %s", code =>
+        expect(lint(code, "src/domain/Probe.ts")).toHaveLength(1)
+    );
+    test("allows shadowed global namespaces", () => {
+        for (const filename of [
+            "src/domain/Probe.ts",
+            "src/data/repositories/Probe.ts",
+            "src/webapp/Probe.ts",
+        ]) {
+            expect(
+                lint(
+                    "function f(window: any, globalThis: any, self: any) { window.fetch(); globalThis.document; self['XMLHttpRequest'](); }",
+                    filename
+                )
+            ).toEqual([]);
+        }
+    });
+    test.each(["events", "path/posix", "fs/promises", "node:events", "node:test"])(
+        "rejects Node builtin imports from domain: %s",
+        source => expect(lint(`import '${source}';`, "src/domain/Probe.ts")).toHaveLength(1)
+    );
+    test("allows non-builtin packages with similar names", () => {
+        expect(
+            lint("import 'events-extra'; import 'path-to-regexp';", "src/domain/Probe.ts")
+        ).toEqual([]);
+    });
+    test("allows unrelated imports named D2Api, including aliases", () => {
+        expect(
+            lint("import { D2Api } from './Unrelated'; new D2Api();", "src/webapp/Probe.ts")
+        ).toEqual([]);
+        expect(
+            lint(
+                "import { D2Api as Client } from './Unrelated'; new Client();",
+                "src/webapp/Probe.ts"
+            )
+        ).toEqual([]);
+    });
+    test.each(["@eyeseetea/d2-api", "@eyeseetea/d2-api/2.40", "$/types/d2-api"])(
+        "still restricts DHIS2 constructor aliases from %s",
+        source =>
+            expect(
+                lint(
+                    `import { D2Api as Client } from '${source}'; new Client();`,
+                    "src/data/repositories/Probe.ts"
+                )
+            ).toHaveLength(1)
+    );
 });

@@ -38,7 +38,8 @@ export default ESLintUtils.RuleCreator(
                       ? member.property.name
                       : null;
                 if (typeof method !== "string") return;
-                const type = services.getTypeAtLocation(member.object);
+                const receiverType = services.getTypeAtLocation(member.object);
+                const type = checker.getBaseConstraintOfType(receiverType) ?? receiverType;
                 const types = type.isUnion() ? type.types : [type];
                 const mutates = types.some(type => {
                     if (checker.isArrayType(type) || checker.isTupleType(type))

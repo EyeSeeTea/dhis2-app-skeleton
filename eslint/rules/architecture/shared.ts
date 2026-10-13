@@ -2,6 +2,8 @@ import path from "node:path";
 import ts from "typescript";
 import { ESLintUtils, type TSESTree, type TSESLint } from "@typescript-eslint/utils";
 
+const { isBuiltin } = globalThis.process.getBuiltinModule("module");
+const globalNamespaces = new Set(["window", "globalThis", "self"]);
 const platformGlobals = new Set([
     "window",
     "document",
@@ -173,6 +175,16 @@ export function createArchitectureRule(
                           path.dirname(configFile)
                       ).options
                     : { baseUrl: path.join(context.cwd, "src"), paths: { "$/*": ["./*"] } });
+            const resolveModule = (source: string) =>
+                ts.resolveModuleName(source, context.filename, options, ts.sys).resolvedModule
+                    ?.resolvedFileName;
+            const isClientSource = (source: string) => {
+                const target = resolveModule(source);
+                return (
+                    /^@eyeseetea\/d2-api(\/|$)/.test(source) ||
+                    (target !== undefined && matches("apiAdapters", target))
+                );
+            };
             const report = (node: TSESTree.Node, message: string) =>
                 context.report({ node, messageId: "boundary", data: { message } });
             function checkImport(node: TSESTree.Node, source: unknown) {
@@ -181,13 +193,7 @@ export function createArchitectureRule(
                     typeof source !== "string"
                 )
                     return;
-                const resolved = ts.resolveModuleName(
-                    source,
-                    context.filename,
-                    options,
-                    ts.sys
-                ).resolvedModule;
-                const target = resolved?.resolvedFileName;
+                const target = resolveModule(source);
                 const targetMatches = (key: keyof typeof defaultPaths) =>
                     target !== undefined && matches(key, target);
                 const boundary = (layer: string, destination: string) =>
@@ -215,7 +221,9 @@ export function createArchitectureRule(
                 if (checks.httpClientAccess) {
                     if (
                         domain &&
-                        (httpPackages.test(source) || infrastructurePackages.test(source))
+                        (httpPackages.test(source) ||
+                            infrastructurePackages.test(source) ||
+                            isBuiltin(source))
                     )
                         boundary("Domain", "platform infrastructure");
                     else if ((repository || presentation) && httpPackages.test(source))
@@ -270,7 +278,9 @@ export function createArchitectureRule(
                             def.type === "ImportBinding" &&
                             def.node.type === "ImportSpecifier" &&
                             def.node.imported.type === "Identifier" &&
-                            def.node.imported.name === "D2Api"
+                            def.node.imported.name === "D2Api" &&
+                            def.parent.type === "ImportDeclaration" &&
+                            isClientSource(def.parent.source.value)
                     );
                     if (!importedApi) return;
                     const inFactory = sourceCode.getAncestors(node).some(ancestor => {
@@ -300,17 +310,46 @@ export function createArchitectureRule(
                         for (const reference of scope.references) {
                             if (reference.resolved?.defs.length) continue;
                             const name = reference.identifier.name;
-                            if (domain && platformGlobals.has(name))
+                            // Resolve qualified globals only when their namespace is unshadowed.
+                            let access: TSESTree.Node = reference.identifier;
+                            let qualifiedName = name;
+                            while (
+                                globalNamespaces.has(qualifiedName) &&
+                                access.parent?.type === "MemberExpression" &&
+                                access.parent.object === access
+                            ) {
+                                const member: TSESTree.MemberExpression = access.parent;
+                                const property = member.property;
+                                qualifiedName =
+                                    !member.computed && property.type === "Identifier"
+                                        ? property.name
+                                        : member.computed &&
+                                            property.type === "Literal" &&
+                                            typeof property.value === "string"
+                                          ? property.value
+                                          : "";
+                                access = member;
+                            }
+                            if (
+                                domain &&
+                                (platformGlobals.has(name) || platformGlobals.has(qualifiedName))
+                            )
                                 report(
                                     reference.identifier,
                                     "Domain must not access runtime platform APIs."
                                 );
-                            else if (repository && ["fetch", "XMLHttpRequest"].includes(name))
+                            else if (
+                                repository &&
+                                ["fetch", "XMLHttpRequest"].includes(qualifiedName)
+                            )
                                 report(
                                     reference.identifier,
                                     "Repositories access HTTP through d2-api."
                                 );
-                            else if (presentation && ["fetch", "XMLHttpRequest"].includes(name))
+                            else if (
+                                presentation &&
+                                ["fetch", "XMLHttpRequest"].includes(qualifiedName)
+                            )
                                 report(
                                     reference.identifier,
                                     "Move data access to a repository and call a composition-root use case."
