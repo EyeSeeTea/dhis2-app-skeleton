@@ -86,13 +86,11 @@ describe("effective EyeSeeTea configuration", () => {
                         expect.arrayContaining([2])
                     );
                 }
-                expect(config?.rules?.["eyeseetea/architecture"]).toBeUndefined();
                 expect(config?.rules?.["eyeseetea/no-collection-mutation"]).toEqual(
                     expect.arrayContaining([2])
                 );
             } else {
                 for (const rule of [
-                    "architecture",
                     "layer-dependencies",
                     "http-client-access",
                     "client-construction",

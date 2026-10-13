@@ -20,16 +20,15 @@ through TypeScript before matching the target against the configured paths.
 }]
 ```
 
-See [architecture options](../architecture/README.md#options) for `paths` groups,
+See [shared architecture options](../shared/README.md#options) for `paths` groups,
 globs, defaults, and replacement semantics. Roots and adapters override layer membership.
 
-This rule accepts no `checks` switches; select the rule and its severity directly.
-`clientFactories` applies only to `client-construction` and the compatibility wrapper.
+`clientFactories` applies only to `client-construction`.
 
 ## Limitations
 
 Checks direct syntax, not transitive dependencies or whole-program data flow;
-see [shared limitations](../architecture/README.md#limitations).
+see [shared limitations](../shared/README.md#limitations).
 
 ## When Not To Use It
 

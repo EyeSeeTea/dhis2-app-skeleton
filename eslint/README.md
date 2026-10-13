@@ -11,12 +11,12 @@ and project-specific overrides.
 [layer-dependencies](rules/layer-dependencies/README.md),
 [http-client-access](rules/http-client-access/README.md),
 [client-construction](rules/client-construction/README.md),
-the [architecture compatibility wrapper](rules/architecture/README.md),
 [no-collection-mutation](rules/no-collection-mutation/README.md), and
 [require-future-block-capture](rules/require-future-block-capture/README.md).
 
 Each rule lives in `rules/<rule-name>/` with `rule.ts`, `rule.spec.ts`, and
-`README.md`. Documentation includes rule details, examples, options, and limitations;
+`README.md`; shared architecture helpers and regression tests live in `rules/shared/`.
+Documentation includes rule details, examples, options, and limitations;
 rule metadata links to that reference through `meta.docs.url`.
 Policy integration tests live in `eyeseetea-config.spec.ts`.
 
@@ -41,7 +41,6 @@ The reusable policy enables all three as warnings. For layer checks only, append
 ```js
 export default [{
     rules: {
-        "eyeseetea/architecture": "off",
         "eyeseetea/layer-dependencies": "warn",
         "eyeseetea/http-client-access": "off",
         "eyeseetea/client-construction": "off"
@@ -49,9 +48,8 @@ export default [{
 }];
 ```
 
-The compatibility wrapper retains the original options, including `checks`, and
-shares the same implementation. Enable the wrapper or individual rules to avoid
-duplicate reports.
+The rules share [path matching and TypeScript resolution](rules/shared/README.md)
+while retaining independent configuration.
 
 ## Severity and legacy code
 

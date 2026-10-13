@@ -1,15 +1,13 @@
-# eyeseetea/architecture
+# Shared architecture configuration
 
-Compatibility wrapper enforcing the combined checks of
-[layer-dependencies](../layer-dependencies/README.md),
+The [layer-dependencies](../layer-dependencies/README.md),
 [http-client-access](../http-client-access/README.md), and
-[client-construction](../client-construction/README.md), with unchanged options.
-The reusable company policy enables those rules individually as warnings;
-disable them when enabling this wrapper to avoid duplicate reports.
+[client-construction](../client-construction/README.md) rules share path matching,
+TypeScript resolution, and boundary helpers. Enable and configure each rule independently.
 
 ## Rule Details
 
-Reports domain imports from data, presentation, the composition root, DHIS2 clients,
+The rules report domain imports from data, presentation, the composition root, DHIS2 clients,
 or platform infrastructure, and domain access to platform globals. Data must not
 import presentation or the composition root. Presentation must not import concrete
 data implementations. Repositories and presentation must not access HTTP directly.
@@ -42,10 +40,10 @@ import { D2Api } from "$/types/d2-api";
 ## Options
 
 The skeleton layout and `getWebappCompositionRoot` factory are the defaults.
-Pass one options object to adapt the layout without modifying the shared rule:
+Pass `paths` to each enabled rule; pass `clientFactories` only to `client-construction`:
 
 ```js
-"eyeseetea/architecture": ["warn", {
+"eyeseetea/client-construction": ["warn", {
     paths: {
         domain: ["src/domain/**"],
         data: ["src/data/**"],
@@ -57,12 +55,7 @@ Pass one options object to adapt the layout without modifying the shared rule:
         ],
         apiAdapters: ["src/data/common/utils/api-futures.ts"]
     },
-    clientFactories: ["createApp", "createTest"],
-    checks: {
-        layerDependencies: true,
-        httpClientAccess: true,
-        clientConstruction: true
-    }
+    clientFactories: ["createApp", "createTest"]
 }]
 ```
 
@@ -92,14 +85,6 @@ arrow/function expressions bound to named variables are supported. Construction
 requires both a configured composition-root file and an enclosing permitted factory.
 An empty factory list permits no construction.
 
-All checks default to `true` and can be toggled independently:
-
-- `layerDependencies`: domain → data/presentation/roots/adapters, data →
-  presentation/roots, and presentation → data imports.
-- `httpClientAccess`: domain platform APIs/imports, repository/presentation HTTP
-  access, and DHIS2 client/adapter import permissions.
-- `clientConstruction`: where imported named `D2Api` constructors may run.
-
 Diagnostics include the import specifier and resolved project-relative target.
 Type-aware parser compiler options take precedence; without a parser program, the
 rule reads the nearest `tsconfig.json` from ESLint's working directory. Missing local
@@ -111,11 +96,9 @@ Checks direct imports, re-exports, literal dynamic imports, and literal `require
 calls. TypeScript resolution honors the project configuration. Transitive dependencies,
 nonliteral imports, namespace constructors, and indirect factories require review.
 
-## When Not To Use It
+## Exceptions
 
-Configure paths and checks for a different directory structure or architecture.
-For a justified exception, use a narrow suppression with an explanation.
+Adapt paths for other layouts and use narrow, justified rule suppressions.
 External API repositories may need an HTTP exception; see
 [external API guidance](../http-client-access/README.md#when-not-to-use-it).
-Suppressing this wrapper also disables its layer and client-construction checks;
-use the individual rules when those checks should remain enabled.
+Disabling `http-client-access` leaves layer dependency and client-construction checks active.

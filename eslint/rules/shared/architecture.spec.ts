@@ -5,15 +5,15 @@ import { TSESLint } from "@typescript-eslint/utils";
 const { Linter } = TSESLint;
 import { parser } from "typescript-eslint";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import type { ArchitectureOptions } from "./rule";
+import type { ArchitectureOptions } from "./architecture.ts";
+type TestOptions = ArchitectureOptions & { disabledRules?: string[] };
 import plugin from "../../eyeseetea-plugin.ts";
 
 function lintArchitecture(
     code: string,
     filename = "src/domain/entities/PolicyProbe.ts",
-    options: ArchitectureOptions = {},
-    cwd = globalThis.process.cwd(),
-    independent = false
+    options: TestOptions = {},
+    cwd = globalThis.process.cwd()
 ) {
     return new Linter({ cwd }).verify(
         code,
@@ -22,27 +22,25 @@ function lintArchitecture(
                 files: ["**/*.ts"],
                 languageOptions: { parser },
                 plugins: { eyeseetea: plugin },
-                rules: independent
-                    ? {
-                          "eyeseetea/layer-dependencies": [
-                              options.checks?.layerDependencies === false ? "off" : "warn",
-                              { ...(options.paths ? { paths: options.paths } : {}) },
-                          ],
-                          "eyeseetea/http-client-access": [
-                              options.checks?.httpClientAccess === false ? "off" : "warn",
-                              { ...(options.paths ? { paths: options.paths } : {}) },
-                          ],
-                          "eyeseetea/client-construction": [
-                              options.checks?.clientConstruction === false ? "off" : "warn",
-                              {
-                                  ...(options.paths ? { paths: options.paths } : {}),
-                                  ...(options.clientFactories
-                                      ? { clientFactories: options.clientFactories }
-                                      : {}),
-                              },
-                          ],
-                      }
-                    : { "eyeseetea/architecture": ["warn", options] },
+                rules: {
+                    "eyeseetea/layer-dependencies": [
+                        options.disabledRules?.includes("layer-dependencies") ? "off" : "warn",
+                        { ...(options.paths ? { paths: options.paths } : {}) },
+                    ],
+                    "eyeseetea/http-client-access": [
+                        options.disabledRules?.includes("http-client-access") ? "off" : "warn",
+                        { ...(options.paths ? { paths: options.paths } : {}) },
+                    ],
+                    "eyeseetea/client-construction": [
+                        options.disabledRules?.includes("client-construction") ? "off" : "warn",
+                        {
+                            ...(options.paths ? { paths: options.paths } : {}),
+                            ...(options.clientFactories
+                                ? { clientFactories: options.clientFactories }
+                                : {}),
+                        },
+                    ],
+                },
             },
         ],
         { filename: path.resolve(cwd, filename) }
@@ -157,7 +155,7 @@ describe("alternative architecture layout", () => {
         }
     });
     afterAll(() => fs.rmSync(cwd, { recursive: true, force: true }));
-    const lint = (code: string, filename: string, overrides: ArchitectureOptions = {}) =>
+    const lint = (code: string, filename: string, overrides: TestOptions = {}) =>
         lintArchitecture(code, filename, { ...options, ...overrides }, cwd);
     test.each([
         "import { View } from '@/presentation/View';",
@@ -226,22 +224,22 @@ describe("alternative architecture layout", () => {
             )
         ).toHaveLength(1);
     });
-    test("toggles checks independently", () => {
+    test("disables rules independently", () => {
         expect(
             lint("import '@/presentation/View'; fetch('/api');", "src/domain/Probe.ts", {
-                checks: { layerDependencies: false },
+                disabledRules: ["layer-dependencies"],
             })
         ).toHaveLength(1);
         expect(
             lint("import '@/presentation/View'; fetch('/api');", "src/domain/Probe.ts", {
-                checks: { httpClientAccess: false },
+                disabledRules: ["http-client-access"],
             })
         ).toHaveLength(1);
         expect(
             lint(
                 "import { D2Api } from '@eyeseetea/d2-api'; new D2Api();",
                 "src/data/users/UserRepository.ts",
-                { checks: { clientConstruction: false } }
+                { disabledRules: ["client-construction"] }
             )
         ).toEqual([]);
     });
@@ -254,37 +252,41 @@ describe("alternative architecture layout", () => {
     });
     test("rejects misspelled options", () => {
         expect(() =>
-            lint("", "src/domain/Probe.ts", { checks: { typo: false } } as ArchitectureOptions)
+            lint("", "src/domain/Probe.ts", { paths: { typo: [] } } as ArchitectureOptions)
         ).toThrow();
     });
     test.each([
-        ["import '@/presentation/View'; fetch('/api');", "src/domain/Probe.ts"],
-        ["import '@/presentation/View';", "src/data/users/Probe.ts"],
+        [
+            "import '@/presentation/View'; fetch('/api');",
+            "src/domain/Probe.ts",
+            ["layer-dependencies", "http-client-access"],
+        ],
+        ["import '@/presentation/View';", "src/data/users/Probe.ts", ["layer-dependencies"]],
         [
             "import '@/data/users/UserRepository'; import { D2Api } from '@eyeseetea/d2-api'; new D2Api();",
             "src/presentation/View.ts",
+            ["layer-dependencies", "http-client-access", "client-construction"],
         ],
         [
             "import { D2Api } from '@eyeseetea/d2-api'; new D2Api(); fetch('/api');",
             "src/data/users/UserRepository.ts",
+            ["client-construction", "http-client-access"],
         ],
         [
             "import '@/data/users/UserRepository'; import { D2Api } from '@eyeseetea/d2-api'; const createApp = () => new D2Api();",
             "src/presentation/AppCompositionRoot.ts",
+            [],
         ],
-    ])("wrapper matches independently enabled rules: %s", (code, filename) => {
-        const combined = lintArchitecture(code, filename, options, cwd);
-        const separate = lintArchitecture(code, filename, options, cwd, true);
-        const diagnostics = (messages: typeof combined) =>
-            messages.map(({ ruleId: _ruleId, ...message }) => message);
-        expect(diagnostics(separate)).toEqual(diagnostics(combined));
-        expect(separate.every(message => message.ruleId !== "eyeseetea/architecture")).toBe(true);
+    ])("reports independent rule IDs for mixed boundaries: %s", (code, filename, expected) => {
+        const messages = lintArchitecture(code as string, filename as string, options, cwd);
+        expect(messages.map(message => message.ruleId).sort()).toEqual(
+            (expected as string[]).map(name => `eyeseetea/${name}`).sort()
+        );
     });
 });
 
-describe.each([false, true])("boundary regressions (independent rules: %s)", independent => {
-    const lint = (code: string, filename: string) =>
-        lintArchitecture(code, filename, {}, globalThis.process.cwd(), independent);
+describe("boundary regressions", () => {
+    const lint = (code: string, filename: string) => lintArchitecture(code, filename);
 
     test.each(["window", "globalThis", "self", "globalThis.window"])(
         "rejects qualified HTTP through %s in repositories and presentation",

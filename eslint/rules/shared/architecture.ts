@@ -35,11 +35,6 @@ export type ArchitectureOptions = {
         >
     >;
     clientFactories?: string[];
-    checks?: {
-        layerDependencies?: boolean;
-        httpClientAccess?: boolean;
-        clientConstruction?: boolean;
-    };
 };
 
 const defaultPaths = {
@@ -70,12 +65,12 @@ function compileGlob(pattern: string): RegExp {
     return new RegExp(expression + "$");
 }
 
-type ArchitectureCheck = NonNullable<ArchitectureOptions["checks"]>;
+type ArchitectureCheck = "layerDependencies" | "httpClientAccess" | "clientConstruction";
 
 export function createArchitectureRule(
     ruleName: string,
     description: string,
-    check?: keyof ArchitectureCheck
+    check: ArchitectureCheck
 ) {
     return ESLintUtils.RuleCreator(
         name =>
@@ -107,25 +102,12 @@ export function createArchitectureRule(
                                 ])
                             ),
                         },
-                        ...(!check || check === "clientConstruction"
+                        ...(check === "clientConstruction"
                             ? {
                                   clientFactories: {
                                       type: "array",
                                       items: { type: "string", minLength: 1 },
                                       uniqueItems: true,
-                                  },
-                              }
-                            : {}),
-                        ...(!check
-                            ? {
-                                  checks: {
-                                      type: "object",
-                                      additionalProperties: false,
-                                      properties: {
-                                          layerDependencies: { type: "boolean" },
-                                          httpClientAccess: { type: "boolean" },
-                                          clientConstruction: { type: "boolean" },
-                                      },
                                   },
                               }
                             : {}),
@@ -154,12 +136,6 @@ export function createArchitectureRule(
             const repository = matches("repositories", filename);
             const presentation = !root && !apiAdapter && matches("presentation", filename);
             const factories = configuration.clientFactories ?? ["getWebappCompositionRoot"];
-            const checks = {
-                layerDependencies: !check || check === "layerDependencies",
-                httpClientAccess: !check || check === "httpClientAccess",
-                clientConstruction: !check || check === "clientConstruction",
-                ...configuration.checks,
-            };
             const sourceCode = context.sourceCode;
             const program = sourceCode.parserServices?.program;
             const configFile = !program && ts.findConfigFile(context.cwd, ts.sys.fileExists);
@@ -189,7 +165,7 @@ export function createArchitectureRule(
                 context.report({ node, messageId: "boundary", data: { message } });
             function checkImport(node: TSESTree.Node, source: unknown) {
                 if (
-                    (!checks.layerDependencies && !checks.httpClientAccess) ||
+                    (check !== "layerDependencies" && check !== "httpClientAccess") ||
                     typeof source !== "string"
                 )
                     return;
@@ -201,7 +177,7 @@ export function createArchitectureRule(
                         node,
                         `${layer} must not import ${destination} through '${source}'${target ? ` (resolved to ${normalize(path.relative(context.cwd, target))})` : ""}.${guidance ? ` ${guidance}` : ""}`
                     );
-                if (checks.layerDependencies) {
+                if (check === "layerDependencies") {
                     if (
                         domain &&
                         (targetMatches("data") ||
@@ -218,7 +194,7 @@ export function createArchitectureRule(
                     if (presentation && targetMatches("data"))
                         boundary("Presentation", "data implementations");
                 }
-                if (checks.httpClientAccess) {
+                if (check === "httpClientAccess") {
                     if (
                         domain &&
                         (httpPackages.test(source) ||
@@ -269,7 +245,7 @@ export function createArchitectureRule(
                         checkImport(node, node.arguments[0].value);
                 },
                 NewExpression(node) {
-                    if (!checks.clientConstruction || node.callee.type !== "Identifier") return;
+                    if (check !== "clientConstruction" || node.callee.type !== "Identifier") return;
                     let scope: TSESLint.Scope.Scope | null = sourceCode.getScope(node);
                     let variable;
                     while (scope && !variable) {
@@ -308,7 +284,7 @@ export function createArchitectureRule(
                         );
                 },
                 "Program:exit"() {
-                    if (!checks.httpClientAccess) return;
+                    if (check !== "httpClientAccess") return;
                     for (const scope of sourceCode.scopeManager?.scopes ?? []) {
                         for (const reference of scope.references) {
                             if (reference.resolved?.defs.length) continue;

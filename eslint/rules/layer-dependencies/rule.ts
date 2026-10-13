@@ -1,4 +1,4 @@
-import { createArchitectureRule } from "../architecture/shared.ts";
+import { createArchitectureRule } from "../shared/architecture.ts";
 
 export default createArchitectureRule(
     "layer-dependencies",
