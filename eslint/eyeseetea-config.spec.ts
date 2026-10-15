@@ -51,6 +51,10 @@ describe("type assertions", () => {
             const wide = dog as Animal;
             const constant = ["a", "b"] as const;
             const narrow = animal as Dog;
+            const opaque = dog as unknown;
+            const safeArray = [dog] as Animal[];
+            const unsafeArray = [animal] as Dog[];
+            const doubleAssertion = animal as unknown as Dog;
         `,
             { filePath: "policy-probe.ts" }
         );
@@ -58,7 +62,7 @@ describe("type assertions", () => {
             message =>
                 message.ruleId === "@typescript-eslint/no-unsafe-type-assertion" || message.fatal
         );
-        expect(messages).toHaveLength(1);
+        expect(messages).toHaveLength(3);
         expect(messages[0]!.ruleId).toBe("@typescript-eslint/no-unsafe-type-assertion");
     });
 });
@@ -151,12 +155,60 @@ describe("effective EyeSeeTea configuration", () => {
             )
         ).toEqual([]);
     });
+    test("allows generic any constraints while rejecting other explicit any in every scope", async () => {
+        for (const filename of [
+            "src/domain/probe.ts",
+            "src/domain/probe.spec.ts",
+            "src/tests/playwright/probe.e2e.ts",
+        ]) {
+            const config = await new ESLint().calculateConfigForFile(filename);
+            const messages = new Linter().verify(
+                `
+                type Direct<T extends any> = T;
+                type Callback<T extends (...args: any[]) => any> = T;
+                type Default<T = any> = T;
+                type ConstrainedDefault<T extends any = any> = T;
+                let value: any;
+                function bad(arg: any): any {
+                    return arg;
+                }
+                `,
+                [
+                    {
+                        languageOptions: { parser },
+                        rules: { "no-restricted-syntax": config!.rules!["no-restricted-syntax"] },
+                    },
+                ]
+            );
+            expect(messages).toHaveLength(5);
+            expect(messages.every(message => message.ruleId === "no-restricted-syntax")).toBe(true);
+        }
+    });
+    test("test fixtures allow mutation while production still checks it", async () => {
+        for (const filename of [
+            "src/domain/probe.spec.ts",
+            "src/tests/probe.ts",
+            "src/tests/playwright/probe.e2e.ts",
+        ]) {
+            const config = await new ESLint().calculateConfigForFile(filename);
+            expect(config?.rules?.["eyeseetea/no-collection-mutation"]).toEqual([0]);
+        }
+        const config = await new ESLint().calculateConfigForFile("src/domain/probe.ts");
+        expect(config?.rules?.["eyeseetea/no-collection-mutation"]).toEqual([2]);
+        expect(config?.rules?.["array-callback-return"]).toEqual(expect.arrayContaining([0]));
+    });
     test("accessible E2E queries pass while CSS and test IDs fail", async () => {
         const config = await new ESLint().calculateConfigForFile(
             "src/tests/playwright/probe.e2e.ts"
         );
         const result = new Linter().verify(
-            "page.getByRole('button'); page.locator('.button'); page.getByTestId('submit'); page.$('.button'); page.$$('.button');",
+            `
+            page.getByRole('button');
+            page.locator('.button');
+            page.getByTestId('submit');
+            page.$('.button');
+            page.$$('.button');
+            `,
             [
                 {
                     languageOptions: { parser },

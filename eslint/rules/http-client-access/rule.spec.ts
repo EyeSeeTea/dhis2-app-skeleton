@@ -5,6 +5,32 @@ import { describe, expect, test } from "vitest";
 import rule from "./rule";
 
 describe("http-client-access", () => {
+    test("allows platform types and shadowed values but reports runtime globals", () => {
+        const messages = new TSESLint.Linter().verify(
+            `
+            type Payload = Blob;
+            type Qualified = globalThis.Blob;
+            new Blob();
+            new globalThis.Blob();
+            function local(Blob: () => void) {
+                Blob();
+            }
+            `,
+            [
+                {
+                    files: ["**/*.ts"],
+                    languageOptions: { parser },
+                    plugins: { eyeseetea: { rules: { "http-client-access": rule } } },
+                    rules: { "eyeseetea/http-client-access": "warn" },
+                },
+            ],
+            { filename: path.resolve("src/domain/Probe.ts") }
+        );
+        expect(messages).toHaveLength(2);
+        expect(messages.every(message => message.ruleId === "eyeseetea/http-client-access")).toBe(
+            true
+        );
+    });
     test("reports direct HTTP without enforcing layer imports", () => {
         const messages = new TSESLint.Linter().verify(
             "import '$/data/repositories/UserD2Repository'; fetch('/api');",

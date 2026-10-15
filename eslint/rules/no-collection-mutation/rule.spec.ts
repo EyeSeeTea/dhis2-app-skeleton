@@ -37,7 +37,15 @@ describe("collection mutation", () => {
     test("detects typed array, Map, and Set mutation including computed access", async () => {
         expect(
             await lintMutation(
-                "const xs = [1]; xs.push(2); xs['sort'](); const map = new Map<string, number>(); map.set('a', 1); const set = new Set<number>(); set.add(1);"
+                `
+                const xs = [1];
+                xs.push(2);
+                xs['sort']();
+                const map = new Map<string, number>();
+                map.set('a', 1);
+                const set = new Set<number>();
+                set.add(1);
+                `
             )
         ).toHaveLength(4);
     });

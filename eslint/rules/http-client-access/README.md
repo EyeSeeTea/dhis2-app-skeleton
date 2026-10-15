@@ -7,6 +7,8 @@ Check platform and DHIS2 client access. Enabled as a warning for `src/**/*.{ts,t
 Reports domain platform globals and infrastructure imports, direct HTTP access in
 repositories/presentation, and DHIS2 client or adapter imports outside repositories,
 composition roots, and adapters. Shadowed platform names and local classes are allowed.
+Type-only platform references such as `payload: Blob` are allowed; runtime access
+such as `new Blob()` in domain code is reported.
 It does not enforce application-layer imports or constructor locations.
 
 ## Options

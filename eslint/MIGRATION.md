@@ -26,8 +26,10 @@ do not expect fixtures to run unchanged in another application.
 
 ### Runtime and dependencies
 
-Use Node 24.13.1 or a compatible newer Node 24 release consistently in developer shells,
-CI, and the editor's ESLint runtime. The `.mjs` config imports local `.ts` files
+This repository pins Node 24; use a consistent runtime in developer shells, CI,
+and the editor's ESLint runtime. Native type stripping is enabled by default in
+Node 22.18+ and does not itself require Node 24. Verify the complete dependency
+stack on the consuming project's chosen runtime. The `.mjs` config imports local `.ts` files
 using native type stripping. Installing a TypeScript parser alone does not enable
 TypeScript execution. Older runtimes require a separately configured loader or a
 compiled JavaScript distribution. An optional `eslint/package.json` containing
@@ -205,7 +207,7 @@ export default [
         rules: {
             "eyeseetea/no-collection-mutation": "error",
             "@typescript-eslint/no-floating-promises": "error",
-            "@typescript-eslint/no-explicit-any": "error",
+            "@typescript-eslint/no-explicit-any": "error", // Optional stricter local policy: includes constraints.
         },
     },
     {
@@ -255,7 +257,7 @@ an earlier rule by ignoring files. Use a scoped rule override to change its seve
 When modifying options for `no-restricted-syntax` or `no-restricted-imports`, provide
 the complete intended options: later arrays replace earlier options rather than
 appending selectors or paths. In particular, replacing `no-restricted-syntax` to allow
-`toPromise()` can also remove cast and test assertion checks. For substantial selector
+`toPromise()` can also remove explicit-any and test assertion checks. For substantial selector
 changes, maintain an explicit policy adaptation with tests rather than relying on
 array indexes in the upstream config.
 
@@ -276,3 +278,21 @@ References: [ESLint rule overrides](https://eslint.org/docs/latest/use/configure
 [ESLint CLI](https://eslint.org/docs/latest/use/command-line-interface),
 [typed parser configuration](https://typescript-eslint.io/packages/parser/), and
 [Node TypeScript execution](https://nodejs.org/docs/latest-v24.x/api/typescript.html).
+
+### Older TypeScript consumers
+
+`allowImportingTsExtensions` requires TypeScript 5+ and a no-emit (or declaration-only)
+typecheck. On TypeScript 4.9, ESLint can execute these rules through Node, but that
+does not typecheck the tooling. Use a separate tooling project with a compatible
+TypeScript 5+ compiler, or distribute compiled JavaScript rules with declarations;
+do not silently drop tooling typechecking.
+
+For Promise adapters, composition roots, scripts, and migrations, use documented
+file-specific exceptions where interop is necessary. Promise value and type checks
+are separate restrictions; preserve the other syntax selectors when overriding
+them. Do not exempt whole layers.
+
+CPR downstream review reported lint time increasing from 6.1s to 17.7s (2.9×),
+with 2.6s attributed to type information and approximately 9s to new rules, mostly
+`no-unsafe-*`. These figures have not been independently reproduced here. Profile
+identical source, dependencies, and runtime before attributing costs or optimizing.

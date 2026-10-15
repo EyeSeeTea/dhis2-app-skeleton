@@ -5,9 +5,6 @@
     }
   },
   "src/domain/entities/generic/Collection.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 3
-    },
     "@typescript-eslint/no-unsafe-return": {
       "count": 3
     },
@@ -22,17 +19,14 @@
     }
   },
   "src/domain/entities/generic/Either.ts": {
-    "@typescript-eslint/no-explicit-any": {
+    "@typescript-eslint/no-unsafe-return": {
       "count": 2
     },
-    "@typescript-eslint/no-unsafe-return": {
+    "no-restricted-syntax": {
       "count": 2
     }
   },
   "src/domain/entities/generic/Future.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 5
-    },
     "@typescript-eslint/no-unsafe-argument": {
       "count": 1
     },
@@ -50,28 +44,25 @@
     },
     "eyeseetea/no-collection-mutation": {
       "count": 3
+    },
+    "no-restricted-syntax": {
+      "count": 3
     }
   },
   "src/domain/entities/generic/HashMap.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 2
-    },
     "@typescript-eslint/no-unsafe-type-assertion": {
+      "count": 1
+    },
+    "no-restricted-syntax": {
       "count": 1
     }
   },
   "src/domain/entities/generic/Rec.ts": {
     "@typescript-eslint/no-unsafe-type-assertion": {
       "count": 6
-    },
-    "no-restricted-syntax": {
-      "count": 3
     }
   },
   "src/domain/entities/generic/Struct.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    },
     "@typescript-eslint/no-unsafe-member-access": {
       "count": 1
     },
@@ -80,12 +71,12 @@
     },
     "@typescript-eslint/no-unsafe-type-assertion": {
       "count": 4
+    },
+    "no-restricted-syntax": {
+      "count": 1
     }
   },
   "src/domain/entities/generic/__tests__/Future.spec.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    },
     "@typescript-eslint/no-unsafe-argument": {
       "count": 1
     },
@@ -94,10 +85,8 @@
     },
     "@typescript-eslint/no-unsafe-type-assertion": {
       "count": 1
-    }
-  },
-  "src/domain/entities/generic/__tests__/HashMap.spec.ts": {
-    "eyeseetea/no-collection-mutation": {
+    },
+    "no-restricted-syntax": {
       "count": 1
     }
   },
@@ -205,11 +194,6 @@
     },
     "eyeseetea/http-client-access": {
       "count": 2
-    }
-  },
-  "src/webapp/utils/__tests__/objects-table.spec.tsx": {
-    "eyeseetea/no-collection-mutation": {
-      "count": 1
     }
   }
 }

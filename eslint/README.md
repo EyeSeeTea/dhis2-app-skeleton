@@ -64,8 +64,20 @@ too. Other framework warnings remain advisory; review them before adding
 `--max-warnings=0`. See [BASELINE.md](BASELINE.md) for commands and limitations.
 
 Definite safety/correctness checks are **errors**: `no-eval`, `no-implied-eval`,
-`no-new-func`, `array-callback-return`, and `react-hooks/rules-of-hooks`.
+`no-new-func`, and `react-hooks/rules-of-hooks`.
 Existing project errors, including the Future capture rule, remain enabled.
+
+`array-callback-return` is disabled because it matches method names without checking
+receiver types: legitimate production `Future.map` callbacks returning void are
+reported as array errors. Restricting it to production would retain these false
+positives. This trades away detection of missing returns in array callbacks such
+as `map`, `filter`, and `sort`; no equivalent check currently replaces it. Restoring
+that coverage requires a type-aware rule limited to Array/ReadonlyArray receivers.
+
+The explicit-`any` restriction allows generic constraints, including function
+constraints, but still reports defaults such as `<T = any>` and
+`<T extends any = any>`. Defaults introduce `any` when callers omit the type
+argument; prefer a specific default or `unknown` where the contract permits it.
 
 Use a narrow `eslint-disable-next-line <rule> -- <reason>` for a justified exception.
 Prefer explaining the adapter, legacy constraint, or library contract over disabling
@@ -76,8 +88,8 @@ that necessarily implement the abstraction; new business code receives no blanke
 
 | Coding convention | Automated checks | Level / limits |
 | --- | --- | --- |
-| Immutability | `prefer-const`, `no-var`, `no-param-reassign` including properties; local collection mutation rule | Warn. Typed Array/tuple, standard Map/Set mutators; custom methods called `push` are allowed. Arbitrary object mutation, aliasing, and shared-state analysis still require review. |
-| Type safety | Explicit `any`; type-aware unsafe assignment, argument, call, member access, return, and type assertion rules; restricted `as unknown` and `as Type[]` | Warn. Safe widening and `as const` are allowed. Type guards and `satisfies` are preferred. |
+| Immutability | `prefer-const`, `no-var`, `no-param-reassign` including properties; local collection mutation rule | Warn. Typed Array/tuple, standard Map/Set mutators in production; test fixture mutation is allowed; custom methods called `push` are allowed. Arbitrary object mutation, aliasing, and shared-state analysis still require review. |
+| Type safety | Explicit `any` outside generic constraints; type-aware unsafe assignment, argument, call, member access, return, and type assertion rules | Warn. Safe widening, including `as unknown`, and `as const` are allowed. Type guards and `satisfies` are preferred. |
 | Layer dependencies | Layer dependency rule resolves imports using TypeScript configuration; checks static imports, re-exports, literal dynamic imports and `require` | Warn. Domain → data/UI/platform and data → UI are forbidden; presentation → concrete data is reported. Configurable layout paths. Checks direct dependencies, not transitive architectural purity. |
 | API boundaries | d2-api import boundaries, aliased named `D2Api` construction, HTTP imports and platform HTTP globals | Warn. Repository/client adapter/composition-root imports allowed. By default, named client construction belongs in `getWebappCompositionRoot` in `CompositionRoot.ts`; roots, factory names, and individual architecture checks are configurable. Namespace constructors, indirect factory calls, and nonliteral dynamic imports need review. |
 | Asynchronous code | Promise value/type references in domain/data; production `toPromise()` calls; existing Future capture rule | Warn, except capture errors. Tests allow Promises and `toPromise`. `Future.block` async callbacks remain valid. Inferred Promise returns and APIs exposed through aliases are not fully covered. |

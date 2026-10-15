@@ -1,7 +1,8 @@
 # eyeseetea/no-collection-mutation
 
 Prefer new collections over in-place mutations. Enabled as a warning for
-`src/**/*.{ts,tsx}` by the EyeSeeTea config. Requires TypeScript type information.
+production `src/**/*.{ts,tsx}` by the EyeSeeTea config. Test scopes are excluded
+to allow mutable fixture builders. Requires TypeScript type information.
 
 ## Rule Details
 

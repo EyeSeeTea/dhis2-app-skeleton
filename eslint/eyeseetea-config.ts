@@ -9,17 +9,13 @@ const tests = [
     "src/tests/**",
     "src/tests/playwright/**",
 ];
-const syntax = [
-    {
-        selector:
-            "TSAsExpression[typeAnnotation.type='TSUnknownKeyword'], TSTypeAssertion[typeAnnotation.type='TSUnknownKeyword']",
-        message: "Do not use as unknown to bypass a type contract; validate or narrow the value.",
-    },
-    {
-        selector:
-            "TSAsExpression[typeAnnotation.type='TSArrayType'], TSTypeAssertion[typeAnnotation.type='TSArrayType']",
-        message: "Do not cast to Type[]; use a typed binding, satisfies, or a type guard.",
-    },
+const anySyntax = {
+    selector: "TSAnyKeyword:not(TSTypeParameter > .constraint):not(TSTypeParameter .constraint *)",
+    message:
+        "Use a specific type or unknown; any is only allowed in generic constraints, not defaults.",
+};
+const productionSyntax = [
+    anySyntax,
     {
         selector:
             "CallExpression[callee.type='MemberExpression'][callee.property.name='toPromise']",
@@ -43,11 +39,12 @@ export default [
             "prefer-const": "warn",
             "no-var": "warn",
             "no-param-reassign": ["warn", { props: true }],
-            "array-callback-return": "error",
+            // Name-based matching also flags valid Future.map callbacks; see README tradeoff.
+            "array-callback-return": "off",
             "no-eval": "error",
             "no-implied-eval": "error",
             "no-new-func": "error",
-            "no-restricted-syntax": ["warn", ...syntax],
+            "no-restricted-syntax": ["warn", ...productionSyntax],
             "no-restricted-imports": [
                 "warn",
                 {
@@ -83,7 +80,7 @@ export default [
                     ],
                 },
             ],
-            "@typescript-eslint/no-explicit-any": "warn",
+            "@typescript-eslint/no-explicit-any": "off",
             "@typescript-eslint/no-unsafe-assignment": "warn",
             "@typescript-eslint/no-unsafe-argument": "warn",
             "@typescript-eslint/no-unsafe-call": "warn",
@@ -114,7 +111,7 @@ export default [
             // Async Future.block callbacks remain valid; do not ban async/await.
             "no-restricted-syntax": [
                 "warn",
-                ...syntax,
+                ...productionSyntax,
                 {
                     selector: "TSTypeReference[typeName.name='Promise']",
                     message: "Return FutureData instead of Promise in domain and data.",
@@ -126,9 +123,10 @@ export default [
         files: tests,
         plugins: { "testing-library": testingLibrary },
         rules: {
+            "eyeseetea/no-collection-mutation": "off",
             "no-restricted-syntax": [
                 "warn",
-                ...syntax.slice(0, 2),
+                anySyntax,
                 {
                     selector:
                         "CallExpression[callee.type='MemberExpression'][callee.property.name=/^(toBeTruthy|toBeDefined)$/]",
@@ -146,7 +144,7 @@ export default [
         rules: {
             "no-restricted-syntax": [
                 "warn",
-                ...syntax.slice(0, 2),
+                anySyntax,
                 {
                     selector:
                         "CallExpression[callee.type='MemberExpression'][callee.property.name=/^(locator|getByTestId)$/], CallExpression[callee.type='MemberExpression'][callee.property.name='$'], CallExpression[callee.type='MemberExpression'][callee.property.name='$$']",

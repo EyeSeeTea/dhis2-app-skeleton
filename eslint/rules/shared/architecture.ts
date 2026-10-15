@@ -287,7 +287,8 @@ export function createArchitectureRule(
                     if (check !== "httpClientAccess") return;
                     for (const scope of sourceCode.scopeManager?.scopes ?? []) {
                         for (const reference of scope.references) {
-                            if (reference.resolved?.defs.length) continue;
+                            if (!reference.isValueReference || reference.resolved?.defs.length)
+                                continue;
                             const name = reference.identifier.name;
                             // Resolve qualified globals only when their namespace is unshadowed.
                             let access: TSESTree.Node = reference.identifier;
