@@ -3,3 +3,4 @@ node_modules
 *.min.js
 *.min.css
 src/locales/
+.est_ai/reference
