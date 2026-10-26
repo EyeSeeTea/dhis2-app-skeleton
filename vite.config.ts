@@ -31,7 +31,7 @@ export default ({ mode }): UserConfig => {
         ],
         test: {
             environment: "jsdom",
-            include: ["**/*.spec.{ts,tsx}"],
+            include: ["src/**/*.spec.{ts,tsx,mjs}"],
             setupFiles: "./src/tests/setup.ts",
             exclude: ["**/node_modules/**", "**/src/tests/playwright/**"],
             globals: true,

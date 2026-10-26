@@ -1,18 +1,18 @@
 import { TSESLint } from "@typescript-eslint/utils";
 import { describe, expect, test } from "vitest";
 
-import requireFutureBlockCapture from "./require-future-block-capture";
+import requireFutureBlockCapture from "./rule";
 
 function lint(source: string) {
     const linter = new TSESLint.Linter({ configType: "flat" });
     const config = {
         languageOptions: { ecmaVersion: 2022, sourceType: "module" },
         plugins: {
-            local: {
+            eyeseetea: {
                 rules: { "require-future-block-capture": requireFutureBlockCapture },
             },
         },
-        rules: { "local/require-future-block-capture": "error" },
+        rules: { "eyeseetea/require-future-block-capture": "error" },
     } satisfies TSESLint.FlatConfig.Config;
 
     return linter.verifyAndFix(source, config, {});

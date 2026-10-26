@@ -1,0 +1,199 @@
+{
+  "src/data/__tests__/api-futures.spec.ts": {
+    "eyeseetea/http-client-access": {
+      "count": 2
+    }
+  },
+  "src/domain/entities/generic/Collection.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-type-assertion": {
+      "count": 9
+    },
+    "eyeseetea/no-collection-mutation": {
+      "count": 9
+    },
+    "no-restricted-syntax": {
+      "count": 3
+    }
+  },
+  "src/domain/entities/generic/Either.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "no-restricted-syntax": {
+      "count": 2
+    }
+  },
+  "src/domain/entities/generic/Future.ts": {
+    "@typescript-eslint/no-unsafe-argument": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-type-assertion": {
+      "count": 1
+    },
+    "eyeseetea/http-client-access": {
+      "count": 1
+    },
+    "eyeseetea/no-collection-mutation": {
+      "count": 3
+    },
+    "no-restricted-syntax": {
+      "count": 3
+    }
+  },
+  "src/domain/entities/generic/HashMap.ts": {
+    "@typescript-eslint/no-unsafe-type-assertion": {
+      "count": 1
+    },
+    "no-restricted-syntax": {
+      "count": 1
+    }
+  },
+  "src/domain/entities/generic/Rec.ts": {
+    "@typescript-eslint/no-unsafe-type-assertion": {
+      "count": 6
+    }
+  },
+  "src/domain/entities/generic/Struct.ts": {
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-type-assertion": {
+      "count": 4
+    },
+    "no-restricted-syntax": {
+      "count": 1
+    }
+  },
+  "src/domain/entities/generic/__tests__/Future.spec.ts": {
+    "@typescript-eslint/no-unsafe-argument": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-type-assertion": {
+      "count": 1
+    },
+    "no-restricted-syntax": {
+      "count": 1
+    }
+  },
+  "src/domain/usecases/GetUserReportUseCase.ts": {
+    "eyeseetea/no-collection-mutation": {
+      "count": 1
+    }
+  },
+  "src/domain/usecases/__tests__/GetCurrentUserUseCase.spec.ts": {
+    "eyeseetea/layer-dependencies": {
+      "count": 1
+    }
+  },
+  "src/domain/usecases/__tests__/GetUserReportUseCase.spec.ts": {
+    "@typescript-eslint/no-unsafe-argument": {
+      "count": 1
+    }
+  },
+  "src/scripts/UsersReportScript.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "eyeseetea/client-construction": {
+      "count": 1
+    },
+    "eyeseetea/http-client-access": {
+      "count": 1
+    },
+    "eyeseetea/layer-dependencies": {
+      "count": 2
+    },
+    "no-restricted-syntax": {
+      "count": 1
+    }
+  },
+  "src/scripts/dev/UpdatePoScript.ts": {
+    "eyeseetea/no-collection-mutation": {
+      "count": 1
+    }
+  },
+  "src/utils/i18n-typed.ts": {
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/utils/ts-utils.ts": {
+    "@typescript-eslint/no-unsafe-type-assertion": {
+      "count": 1
+    }
+  },
+  "src/utils/uid.ts": {
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 2
+    }
+  },
+  "src/webapp/components/users-table/__tests__/UsersTable.spec.tsx": {
+    "eyeseetea/layer-dependencies": {
+      "count": 1
+    },
+    "testing-library/prefer-explicit-assert": {
+      "count": 1
+    }
+  },
+  "src/webapp/pages/app/App.tsx": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "no-restricted-syntax": {
+      "count": 1
+    }
+  },
+  "src/webapp/pages/app/Dhis2App.tsx": {
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 6
+    },
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-type-assertion": {
+      "count": 2
+    },
+    "eyeseetea/client-construction": {
+      "count": 2
+    },
+    "eyeseetea/http-client-access": {
+      "count": 2
+    }
+  }
+}

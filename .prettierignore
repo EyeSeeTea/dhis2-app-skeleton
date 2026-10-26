@@ -3,3 +3,5 @@ node_modules
 *.min.js
 *.min.css
 src/locales/
+# Generated and formatted by ESLint's native suppression commands.
+eslint-suppressions.json
