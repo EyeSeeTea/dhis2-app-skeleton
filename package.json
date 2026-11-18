@@ -68,14 +68,14 @@
         "typedoc": "^0",
         "typescript": "5.7.3",
         "typescript-eslint": "^8",
-        "vite": "^7.3.6",
+        "vite": "^7.3.7",
         "vite-bundle-visualizer": "^0",
         "vite-plugin-checker": "^0.14.5",
         "vite-plugin-node-polyfills": "^0.28.0",
         "vitest": "^4.1.11"
     },
     "resolutions": {
-        "@dhis2/cli-app-scripts/vite": "^7.3.6",
+        "@dhis2/cli-app-scripts/vite": "^7.3.7",
         "@dhis2/cli-helpers-engine/tar": "^7.5.21",
         "@eyeseetea/d2-ui-components/moment": "^2.31.0",
         "@types/react": "18.2.22",
