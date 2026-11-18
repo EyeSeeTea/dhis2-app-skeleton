@@ -147,6 +147,18 @@ Note that `yarn npm audit` and Dependency-Track disagree on severity: `uuid` is 
 
 ---
 
+## Pinned direct dependencies
+
+Direct dependencies held at an exact version because a later release breaks something here. They are not resolutions, but they decay the same way, so each one carries a **drop when**.
+
+#### `@dhis2/cli-app-scripts: 12.11.1`
+
+- **Why:** 12.11.3, 12.11.4 and 12.11.8 add `__MANIFEST_APP_TITLE` and `__MANIFEST_APP_DESCRIPTION` to `en.pot` and to the generated translations whenever there is no `d2.config.js`. Those strings are for DHIS2 app platform manifests, and this project builds its manifest with `d2-manifest`. On 12.11.8, `yarn localize` still adds both keys. 12.11.9 was still held by `npmMinimalAgeGate` at that check.
+- **Fixes:** Nothing. It keeps unused strings out of the translation files.
+- **Drop when:** a release stops adding the `__MANIFEST_*` keys without a `d2.config.js`. Test it by raising the version, running `yarn localize` and checking `i18n/en.pot`.
+
+---
+
 ## Rejected pins
 
 Tried, verified to break a consumer, and reverted. Recorded so nobody re-tries them.
@@ -185,6 +197,20 @@ Recorded here rather than in `resolutions` because **no version resolves them**.
 - **Impact:** build tooling only. Dependency-Track scores it high; the GitHub advisory database rates it medium.
 - **Drop when:** `request` leaves the tree.
 
+#### `picomatch@2.3.2` and `picomatch@4.0.4`: GHSA-fc5q-39xc-vjpf
+
+- **Chain:** build and test tooling only: `vite`, `vitest`, `tinyglobby`, `fdir`, `@rollup/pluginutils`, `vite-plugin-checker`, `rollup-plugin-visualizer`, `micromatch`, `anymatch`, `readdirp` and `jest-util`.
+- **Why it cannot be fixed:** the advisory covers **all versions `<= 4.0.7`**, and 4.0.7 is the latest published release.
+- **Impact:** the ReDoS needs an attacker to supply the glob pattern. Every pattern here comes from the repository's own configuration, and picomatch never reaches the browser bundle.
+- **Drop when:** `picomatch` publishes a fix. Then `yarn up -R picomatch`.
+
+#### `glob@10.5.0` and `glob@11.1.0`: GHSA-3g3m-2fjr-6pw4. `minimatch@7.4.9`, `minimatch@9.0.9` and `minimatch@10.2.6`: GHSA-g3hv-75wg-m249
+
+- **Chain:** `glob@10` through `archiver-utils` (`@dhis2/cli-app-scripts` → `archiver`), `glob@11` through `workbox-build` (`@dhis2/cli-app-scripts`). `minimatch@7` through `depcheck`, `minimatch@9` through `glob@10`, `minimatch@10` through `glob@11`, `@typescript-eslint/typescript-estree` and `typedoc`.
+- **Why it is not fixed here:** both advisories are fixed only on a new major, `glob@14.0.2` and `minimatch@11.0.1`, and no released parent requests them yet. The exception is `@typescript-eslint/typescript-estree@8.73.0`, which requests `minimatch@^11.0.1` and is still held by `npmMinimalAgeGate`. Forcing a new major on parents that never tested it is what broke `minimatch@3` in the `brace-expansion` rejected pin.
+- **Impact:** build tooling only, both medium. The `minimatch` advisory needs an attacker-supplied pattern, and every pattern here comes from the repository's own configuration. The `glob` advisory is about a walk that keeps going after its `AbortSignal` cancels it.
+- **Drop when:** each parent requests the patched major. For `minimatch@10` through `typescript-estree`, that is `yarn up` of `typescript-eslint` and `@typescript-eslint/*` once 8.73.0 clears the age gate.
+
 ---
 
 ## Decay-monitoring checklist
@@ -196,6 +222,7 @@ When auditing, treat any of these as a signal that a pin has gone stale:
 - **A pin that holds a consumer below its declared range.** Compare the resolution against what the parents actually request: `grep -E '^\s+<pkg>: "npm:' yarn.lock | sort | uniq -c`. If a parent declares `^3.3.16` and the pin forces `3.3.8`, the pin is not protecting anything: it is overriding a package's own compatibility statement, and it cannot receive patches either.
 - **A floor below the highest patched version of its own advisories.** A new advisory can land on the floor itself, as `tmp` shows. Re-read every advisory an entry lists when a new one appears for the same package.
 - **A scanner alert whose prose contradicts the advisory's own data.** An advisory's description is written when it is published and is not rewritten when a backport lands, so it can say a line has no fix while the machine-readable ranges already record one. Read the ranges (`gh api advisories/<GHSA> --jq '.vulnerabilities[]'`) against the published version list, and treat the summary as a hint.
+- **Alerts against the `vite@8` entry in `yarn.lock`.** It is recorded but never installed: see the vitest note below. Scanners that read `yarn.lock`, such as Dependabot, can still raise alerts against it. Confirm with `yarn why vite -R` that the reported version is not installed before acting on them, and do not add a pin for it.
 - **A pin whose removal changes nothing.** Delete it, reinstall, and compare **the resolved versions**, not the lockfile bytes. A pin can rewrite a descriptor, change the lockfile, and still leave every installed version where it was.
 
 ---
@@ -205,5 +232,5 @@ When auditing, treat any of these as a signal that a pin has gone stale:
 - **The vite 7 upgrade does not require ESLint 9.** `vite-plugin-checker@0.11.0` supports `vite >=5.4.20` while still accepting `eslint >=7`; only 0.12.0 raises the floor to `eslint >=9.39.1`. An application on ESLint 8 can take the vite, vitest and esbuild fixes without touching its linter.
 - **vitest 3 → 4 needs `/// <reference types="vitest/config" />`** in the file that configures vitest. GHSA-82fw-gwwq-j7x9 has no fix on 3.x. In vitest 4 only `vitest/config` adds the `test` key to vite's config types. With the old reference the tests still run, but the `test` block either becomes a type error (a config object, as here) or silently stops being type-checked (a config returned from a function). Expect a `vite@8` entry in `yarn.lock` afterwards: vitest 4 declares `vite` as both a dependency and a peer, yarn records the newest 8.x for the dependency, and the peer wins, so nothing from it is installed.
 - **Moving from `@dhis2/d2-i18n-extract` / `@dhis2/d2-i18n-generate` to `@dhis2/cli-app-scripts`.** The scripts become `d2-app-scripts i18n extract -p src/ -o i18n/` and `d2-app-scripts i18n generate -n <namespace> -p ./i18n/ -o ./src/locales/`, and the dependency chain needs the `@dhis2/cli-app-scripts`, `@dhis2/cli-helpers-engine`, `execa`, `external-editor`, `http-proxy-agent`, `latest-version`, `request`, `i18next-conv` and `styled-jsx` resolutions above.
-    - **Keep `@dhis2/cli-app-scripts` at exactly `12.11.1`.** 12.11.3 and 12.11.4 add `__MANIFEST_APP_TITLE` and `__MANIFEST_APP_DESCRIPTION` to `en.pot` and to the generated translations whenever there is no `d2.config.js`. Those strings are for DHIS2 app platform manifests, and this project builds its manifest with `d2-manifest`. Unpin when a release stops adding them without a `d2.config.js`.
+    - **Keep `@dhis2/cli-app-scripts` at exactly `12.11.1`** unless the application has a `d2.config.js`. See "Pinned direct dependencies".
     - `en.pot` gets its `msgstr` filled with the source string instead of left empty. What the application displays does not change: `i18n.t()` returns the same text for every key in every locale.
