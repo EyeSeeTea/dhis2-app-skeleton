@@ -89,7 +89,7 @@
         "latest-version/package-json": "^7.0.0",
         "lodash": "^4.18.0",
         "node-fetch": "^2.6.7",
-        "qs": "^6.15.3",
+        "qs": "^6.16.1",
         "react-linkify/linkify-it": "^5.0.2",
         "request/form-data": "^2.5.6",
         "request/tough-cookie": "^4.1.3",

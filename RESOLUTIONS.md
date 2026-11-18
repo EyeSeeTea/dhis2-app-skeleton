@@ -84,12 +84,11 @@ Note that `yarn npm audit` and Dependency-Track disagree on severity: `uuid` is 
 - **Fixes:** GHSA-v245-v573-v5vm, GHSA-22p9-wv53-3rq4 (high): quadratic-complexity DoS.
 - **Drop when:** `@eyeseetea/d2-ui-components` drops or replaces `react-linkify`.
 
-#### `qs: ^6.15.3`
+#### `qs: ^6.16.1`
 
 - **Why:** `@eyeseetea/d2-api` requests `qs` at exactly `6.9.7` and `request` requests `~6.5.2`; without the pin both resolve _downwards_ into the advisories below. It also binds `url` (through the browser polyfills). `@eyeseetea/d2-api` makes it **runtime**, so changes to it are verified with the test suite and a build, not only with `yarn install`. `request`'s only use here, `fetchAndExtract` in `@dhis2/cli-helpers-engine`, passes no `qs` option.
-- **Fixes:** GHSA-6rw7-vpxm-498p and GHSA-q8mj-m7cp-5q26 (medium), GHSA-w7fw-mjwx-w883 (low).
-- ⚠️ **The floor does not cover GHSA-4mjr-xmp4-gh2g or GHSA-x5fp-wj9c-mxmx** (both medium, fixed in 6.16.0). The range admits 6.16.0 and the lockfile resolves it, so the tree is clean, but a lockfile held at 6.15.3 would not be.
-- **Drop when:** every consumer requests `qs >= 6.16.0` natively. `@eyeseetea/d2-api` is the blocker.
+- **Fixes:** GHSA-6rw7-vpxm-498p, GHSA-q8mj-m7cp-5q26, GHSA-4mjr-xmp4-gh2g and GHSA-x5fp-wj9c-mxmx (medium), GHSA-w7fw-mjwx-w883 (low). The floor is 6.16.1 because of GHSA-6pq8-jhm2-2vcw (medium), which affects `>= 6.7.0, <= 6.16.0`. The range resolves to 6.17.1. Checked with a request through `D2Api` against a local server: with both the fetch and the xhr backend, the query string is the same as the one qs 6.16.0 produces.
+- **Drop when:** every consumer requests `qs >= 6.16.1` natively. `@eyeseetea/d2-api` is the blocker.
 
 #### `@dhis2/cli-app-scripts/vite: ^7.3.7`
 
