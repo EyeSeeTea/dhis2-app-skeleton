@@ -5,127 +5,127 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-18T09:22:03.836Z\n"
-"PO-Revision-Date: 2026-08-18T09:22:03.837Z\n"
+"POT-Creation-Date: 2026-09-16T15:00:39.595Z\n"
+"PO-Revision-Date: 2026-09-16T15:00:39.595Z\n"
 
 msgid "Manage"
-msgstr ""
+msgstr "Manage"
 
 msgid "Back"
-msgstr ""
+msgstr "Back"
 
 msgid "Help"
-msgstr ""
+msgstr "Help"
 
 msgid "Close"
-msgstr ""
+msgstr "Close"
 
 msgid "(+{{count}} more)"
 msgid_plural "(+{{count}} more)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(+{{count}} more)"
+msgstr[1] "(+{{count}} more)"
 
 msgid "Refresh"
-msgstr ""
+msgstr "Refresh"
 
 msgid "Export CSV"
-msgstr ""
+msgstr "Export CSV"
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Cancel"
 
 msgid "Copy username"
-msgstr ""
+msgstr "Copy username"
 
 msgid "Copied {{username}}"
-msgstr ""
+msgstr "Copied {{username}}"
 
 msgid "Failed to copy to clipboard"
-msgstr ""
+msgstr "Failed to copy to clipboard"
 
 msgid "Show roles"
-msgstr ""
+msgstr "Show roles"
 
 msgid "(none)"
-msgstr ""
+msgstr "(none)"
 
 msgid "Roles for {{name}}"
-msgstr ""
+msgstr "Roles for {{name}}"
 
 msgid "Disable user"
-msgstr ""
+msgstr "Disable user"
 
 msgid "Disable users"
-msgstr ""
+msgstr "Disable users"
 
 msgid "You are about to disable {{count}} user(s)"
 msgid_plural "You are about to disable {{count}} user(s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "You are about to disable {{count}} user(s)"
+msgstr[1] "You are about to disable {{count}} user(s)"
 
 msgid "Disabled {{count}} users (stub)"
 msgid_plural "Disabled {{count}} users (stub)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Disabled {{count}} users (stub)"
+msgstr[1] "Disabled {{count}} users (stub)"
 
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgid "Username"
-msgstr ""
+msgstr "Username"
 
 msgid "User groups"
-msgstr ""
+msgstr "User groups"
 
 msgid "User roles"
-msgstr ""
+msgstr "User roles"
 
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 msgid "Disabled"
-msgstr ""
+msgstr "Disabled"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Enabled"
 
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 msgid "Search by name or username"
-msgstr ""
+msgstr "Search by name or username"
 
 msgid "Only the first {{count}} users have been exported"
 msgid_plural "Only the first {{count}} users have been exported"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Only the first {{count}} users have been exported"
+msgstr[1] "Only the first {{count}} users have been exported"
 
 msgid "Hello {{name}}"
-msgstr ""
+msgstr "Hello {{name}}"
 
 msgid "Detail page"
-msgstr ""
+msgstr "Detail page"
 
 msgid "Some help"
-msgstr ""
+msgstr "Some help"
 
 msgid "Roles: {{total}}"
-msgstr ""
+msgstr "Roles: {{total}}"
 
 msgid "Groups: {{total}}"
-msgstr ""
+msgstr "Groups: {{total}}"
 
 msgid "Administrator"
-msgstr ""
+msgstr "Administrator"
 
 msgid "Users"
-msgstr ""
+msgstr "Users"
 
 msgid "Browse users with filters and actions"
-msgstr ""
+msgstr "Browse users with filters and actions"
 
 msgid "Search by name"
-msgstr ""
+msgstr "Search by name"
