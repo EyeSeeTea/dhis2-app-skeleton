@@ -196,6 +196,7 @@ Recorded here rather than in `resolutions` because **no version resolves them**.
 - **Why it cannot be fixed:** the advisory is patched at 11.1.1, but `request` imports `uuid/v4`, and that subpath was removed in uuid v7. Forcing the patched version fails at load; see "Rejected pins".
 - **Impact:** build tooling only. Dependency-Track scores it high; the GitHub advisory database rates it medium.
 - **Drop when:** `request` leaves the tree.
+- **Approval:** accepted by @cgbautista in https://github.com/EyeSeeTea/dhis2-app-skeleton/pull/121#issuecomment-6984611519 and dismissed as "won't fix" in https://github.com/EyeSeeTea/dhis2-app-skeleton/security/code-scanning/735
 
 #### `picomatch@2.3.2` and `picomatch@4.0.4`: GHSA-fc5q-39xc-vjpf
 
